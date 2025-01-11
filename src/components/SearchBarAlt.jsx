@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import "./SearchBarAlt.css";
 import { CiSearch } from "react-icons/ci";
 
-const SearchBar = () => {
+const SearchBarAlt = () => {
   const [searchTerm, setSearchTerm] = useState("");
+
+  const clearInput = () => {
+    setSearchTerm("");
+  };
 
   return (
     <div className="search-bar">
@@ -19,8 +23,13 @@ const SearchBar = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      {searchTerm && (
+        <button className="clear-button" onClick={clearInput}>
+          ✖
+        </button>
+      )}
     </div>
   );
 };
 
-export default SearchBar;
+export default SearchBarAlt;

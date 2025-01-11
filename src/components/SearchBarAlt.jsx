@@ -23,11 +23,12 @@ const SearchBarAlt = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      {searchTerm && (
-        <button className="clear-button" onClick={clearInput}>
-          ✖
-        </button>
-      )}
+      <button
+        className={`clear-button ${searchTerm ? "show" : "hide"}`}
+        onClick={clearInput}
+      >
+        ✖
+      </button>
     </div>
   );
 };

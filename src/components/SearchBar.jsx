@@ -7,18 +7,19 @@ const SearchBar = () => {
 
   return (
     <div className="search-bar">
-      <div className="icon-container">
-        <CiSearch
-          className={`search-icon ${searchTerm ? "animated" : ""}`}
-        />
-      </div>
-      <input
+        <p className="search-text">Search</p>
+        <input
         type="text"
-        placeholder="Search"
+        // placeholder="Search"
         className="search-input"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      <div className="icon-container">
+        <CiSearch
+          className={`search-icon`}
+        />
+      </div>
     </div>
   );
 };

@@ -16,28 +16,19 @@
     background: #e8e8e8;
     border-radius: 20px;
     padding: 20px;
-    width: 600px; /* 너비 수정 */
-    max-width: 90%;
+    width: auto;
+    min-width: 20%;
+    max-width: 90vw;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: rgb(178, 178, 178);
-    cursor: pointer;
   }
   
   .modal-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 30px;
     margin-bottom: 20px;
+    justify-content: space-between;
   }
   
   .checkbox-container {
@@ -53,13 +44,29 @@
     background: #aef060;
     color: #484848;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     padding: 5px 10px;
     cursor: pointer;
+    min-width: 100px;
+    min-height: 40px;
+    text-align: center; 
   }
   
   .apply-button:hover {
     background: #88e916;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 30px;
+    color: rgb(178, 178, 178);
+    cursor: pointer;
+    margin-left: auto;
+  }
+
+  .close-button:hover {
+    color: #ff5555;
   }
   
   .modal-content {

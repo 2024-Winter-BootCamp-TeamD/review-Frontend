@@ -47,9 +47,6 @@ const Modal = ({ isOpen, onClose, onApply }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-container">
-        <button className="close-button" onClick={onClose}>
-          &times;
-        </button>
         <div className="modal-controls">
           <label className="checkbox-container">
             <input
@@ -63,6 +60,9 @@ const Modal = ({ isOpen, onClose, onApply }) => {
             적용({selectedCount})
           </button>
           <SearchBar />
+          <button className="close-button" onClick={onClose}>
+            &times;
+          </button>
         </div>
         <div className="modal-content">
           {options.map((option, index) => (

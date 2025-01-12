@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SelectionModal.css';
 import SelectionModalItem from './SelectionModalItem';
+import SearchBar from './SearchBarAlt.jsx';
 
 const Modal = ({ isOpen, onClose, onApply }) => {
   const [options, setOptions] = useState([
@@ -61,6 +62,7 @@ const Modal = ({ isOpen, onClose, onApply }) => {
           <button className="apply-button" onClick={handleApply}>
             적용({selectedCount})
           </button>
+          <SearchBar />
         </div>
         <div className="modal-content">
           {options.map((option, index) => (

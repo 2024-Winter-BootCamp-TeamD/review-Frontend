@@ -7,8 +7,9 @@
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     z-index: 1000;
+    padding-top: 50px;
   }
   
   .modal-container {

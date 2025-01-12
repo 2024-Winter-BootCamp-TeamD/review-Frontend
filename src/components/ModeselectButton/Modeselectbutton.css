@@ -1,0 +1,23 @@
+.modeselect-button {
+    width: 264px;
+    height: 145px;
+    background-color: #B9FF66;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .mode-description {
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .mode-name {
+    font-size: 32px;
+    margin: 0;
+  }
+  

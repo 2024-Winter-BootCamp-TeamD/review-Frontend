@@ -1,16 +1,18 @@
 import React from "react";
 import "./Modeselectbutton.css";
 
-function Modeselectbutton({
-  description = "Follow coding conventions.",
-  modeName = "Clean Code",
-}) {
+function ModeSelectButton({ description, modeName, isSelected, onClick, modeColor = "333" }) {
   return (
-    <button className="modeselect-button">
+    <button
+      className={`modeselect-button ${isSelected ? "selected" : ""}`}
+      onClick={onClick}
+    >
       <p className="mode-description">{description}</p>
-      <p className="mode-name">{modeName}</p>
+      <p className="mode-name" style={{ color: modeColor }}>
+        {modeName}
+      </p>
     </button>
   );
 }
 
-export default Modeselectbutton;
+export default ModeSelectButton;

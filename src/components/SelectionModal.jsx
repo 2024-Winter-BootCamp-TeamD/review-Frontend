@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './SelectionModal.css';
-import Option from './SelectionModalItem';
+import SelectionModalItem from './SelectionModalItem';
 
 const Modal = ({ isOpen, onClose, onApply }) => {
   const [options, setOptions] = useState([
@@ -12,7 +12,6 @@ const Modal = ({ isOpen, onClose, onApply }) => {
 
   const [selectAll, setSelectAll] = useState(false);
 
-  // 모든 옵션이 선택되었는지 감지하고 "ALL" 체크박스를 업데이트
   useEffect(() => {
     const allSelected = options.every((option) => option.selected);
     setSelectAll(allSelected);
@@ -36,11 +35,10 @@ const Modal = ({ isOpen, onClose, onApply }) => {
 
   const handleApply = () => {
     const selectedOptions = options.filter((option) => option.selected);
-    onApply(selectedOptions); // 선택된 항목을 상위 컴포넌트로 전달
-    onClose(); // 모달 닫기
+    onApply(selectedOptions);
+    onClose();
   };
 
-  // 선택된 항목 개수 계산
   const selectedCount = options.filter((option) => option.selected).length;
 
   if (!isOpen) return null;
@@ -58,15 +56,15 @@ const Modal = ({ isOpen, onClose, onApply }) => {
               checked={selectAll}
               onChange={handleSelectAll}
             />
-            ALL
+            All
           </label>
           <button className="apply-button" onClick={handleApply}>
             적용({selectedCount})
           </button>
         </div>
-        <div>
+        <div className="modal-content">
           {options.map((option, index) => (
-            <Option
+            <SelectionModalItem
               key={index}
               name={option.name}
               isSelected={option.selected}

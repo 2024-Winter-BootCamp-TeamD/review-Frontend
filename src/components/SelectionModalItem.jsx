@@ -1,9 +1,9 @@
 import React from 'react';
 import './SelectionModalItem.css';
 
-const Option = ({ name, isSelected, onChange }) => {
+const SelectionModalItem = ({ name, isSelected, onChange }) => {
   return (
-    <div className="option-item">
+    <div className="selection-modal-item">
       <label className="checkbox-container">
         <input
           type="checkbox"
@@ -16,4 +16,4 @@ const Option = ({ name, isSelected, onChange }) => {
   );
 };
 
-export default Option;
+export default SelectionModalItem;

@@ -1,0 +1,25 @@
+.sidebar-button {
+    width: 200px;
+    padding: 10px 20px;
+    padding-left: 20px;
+    margin: 10px 0;
+    background-color: #091904;
+    color: white;
+    text-align: left;
+    text-decoration: none;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-button:hover {
+    background-color: #133508;
+}
+
+.sidebar-button.active {
+    background-color: #AEF060;
+    font-weight: bold;
+    cursor: default;
+    color: #3D3C3C;
+  }

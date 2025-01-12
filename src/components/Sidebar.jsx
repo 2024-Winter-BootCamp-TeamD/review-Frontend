@@ -24,7 +24,7 @@ const Sidebar = () => {
           onClick={() => handleButtonClick(buttonText)}
         />
       ))}
-      <div className="sidebar-rounded-bottom"></div>
+      {/* <div className="sidebar-rounded-bottom"></div> */}
     </div>
   );
 };

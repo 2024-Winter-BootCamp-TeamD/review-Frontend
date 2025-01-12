@@ -34,9 +34,9 @@ html, body {
     mask-composite: exclude;
   }
   
-  .sidebar-rounded-bottom {
+  /* .sidebar-rounded-bottom {
     position: absolute;
-    bottom: -11.55px;
+    bottom: -11px;
     right: -28.45px;
     width: 40px;
     height: 40px;
@@ -45,7 +45,9 @@ html, body {
     mask: radial-gradient(circle at top right, transparent 50%, black 51%);
     -webkit-mask-composite: exclude;
     mask-composite: exclude;
-  }
+
+    clip-path: inset(0 0 28% 0);
+  } */
   
   .sidebar-logo {
     padding-top: 15vh;

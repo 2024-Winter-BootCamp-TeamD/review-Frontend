@@ -1,31 +1,87 @@
+/* 전체 아이템 스타일 */
 .selection-modal-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 15px;
-    border-radius: 15px;
-    background-color: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 2px 5px rgba(0, 5, 0, 1);
-    transition: background-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 15px;
+  border-radius: 15px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.selection-modal-item:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+/* 체크 컨테이너 스타일 */
+.check-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+  border: 2px solid #b0b0b0;
+  border-radius: 50%;
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+
+.check-container.checked {
+  border-color: #4caf50;
+}
+
+.circle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.checkmark {
+  width: 26px;
+  height: 26px;
+  position: absolute;
+  top: -8px;
+  left: -8px;
+}
+
+/* 체크 생성 애니메이션 */
+.animate-draw {
+  stroke-dasharray: 36;
+  stroke-dashoffset: 36;
+  animation: draw-check 0.4s ease forwards;
+  stroke-linecap: round;
+}
+
+@keyframes draw-check {
+  to {
+    stroke-dashoffset: 0;
   }
-  
-  .selection-modal-item:hover {
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+/* 체크 제거 애니메이션 */
+.animate-erase {
+  stroke-dasharray: 36;
+  stroke-dashoffset: 0;
+  animation: erase-check 0.4s ease forwards;
+  stroke-linecap: round;
+}
+
+@keyframes erase-check {
+  to {
+    stroke-dashoffset: 36;
   }
-  
-  .checkbox-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .checkbox-container input {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
-  
+}
+
+/* 항목 이름 */
+.item-name {
+  font-size: 16px;
+  color: #333;
+}

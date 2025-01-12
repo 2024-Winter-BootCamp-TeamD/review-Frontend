@@ -14,6 +14,7 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
+      <div className="sidebar-rounded-top"></div>
       <h1 className="sidebar-logo">CODIFY</h1>
       {buttons.map((buttonText) => (
         <SidebarButton
@@ -23,6 +24,7 @@ const Sidebar = () => {
           onClick={() => handleButtonClick(buttonText)}
         />
       ))}
+      <div className="sidebar-rounded-bottom"></div>
     </div>
   );
 };

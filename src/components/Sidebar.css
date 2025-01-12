@@ -18,6 +18,33 @@ html, body {
     flex-direction: column;
     align-items: center;
     padding-top: 20px;
+    position: relative;
+  }
+
+  .sidebar-rounded-top {
+    position: absolute;
+    top: -11.55px;
+    right: -28.45px;
+    width: 40px;
+    height: 40px;
+    background-color: #091904;
+    -webkit-mask: radial-gradient(circle at bottom right, transparent 50%, black 100%);
+    mask: radial-gradient(circle at bottom right, transparent 50%, black 51%);
+    -webkit-mask-composite: exclude;
+    mask-composite: exclude;
+  }
+  
+  .sidebar-rounded-bottom {
+    position: absolute;
+    bottom: -11.55px;
+    right: -28.45px;
+    width: 40px;
+    height: 40px;
+    background-color: #091904;
+    -webkit-mask: radial-gradient(circle at top right, transparent 50%, black 100%);
+    mask: radial-gradient(circle at top right, transparent 50%, black 51%);
+    -webkit-mask-composite: exclude;
+    mask-composite: exclude;
   }
   
   .sidebar-logo {

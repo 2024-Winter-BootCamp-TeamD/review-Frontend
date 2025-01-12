@@ -1,0 +1,53 @@
+/* Option.css */
+.option-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  
+  .option-item:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+  }
+  
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .checkbox-container input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+  
+  .remove-button {
+    background-color: #ff4d4f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+  }
+  
+  .remove-button:hover {
+    background-color: #d9363e;
+  }
+  
+  .remove-button:focus {
+    outline: none;
+    box-shadow: 0 0 2px 2px rgba(255, 77, 79, 0.5);
+  }
+  

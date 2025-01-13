@@ -6,11 +6,11 @@ const NotificationButton = ({ hasNotification }) => {
   const styles = {
     button: {
       position: 'fixed',
-      top: '50px',
-      right: '50px',
+      top: '15px',
+      right: '21px',
     },
     icon: {
-      fontSize: '52px',
+      fontSize: '40px',
       color: '#191A23',
     },
     dot: {

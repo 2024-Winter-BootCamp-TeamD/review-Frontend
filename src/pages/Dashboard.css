@@ -14,32 +14,83 @@
     justify-content: space-between;
     align-items: center;
     background-color: #ffffff;
-    padding: 40px; /* 헤더 패딩을 2배로 */
-    border-radius: 20px; /* 둥글기 증가 */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 그림자 강화 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.0); /* 그림자 강화 */
   }
   
-  .profile-section {
+    .profile-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 20vh;
+        width: 20vh;
+        min-width: 300px; /* 최소 너비 제한 */
+        max-width: 400px; /* 최대 너비 제한 */
+    }
+    
+    .profile-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .profile-image {
+        width: 10vh; /* 부모 컨테이너의 50% 너비 */
+        height: auto; /* 비율에 따라 높이 자동 조정 */
+        border-radius: 50%;
+        padding-bottom: 0px;
+    }      
+    
+    .profile-info {
+        display: flex;
+        height: 35px;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .username {
+        font-size: 20px; /* 텍스트 크기 */
+    }
+    
+    .commits {
+        font-size: 18px; /* 텍스트 크기 */
+        color: #555;
+        margin: 5px 0 0 0;
+    }
+
+    .profile-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      
+    .github-graph {
     display: flex;
-    align-items: center;
-    gap: 20px; /* 프로필 요소 간 간격 증가 */
-  }
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    height: 20vh;
+    width: auto; /* 그래프 크기를 유동적으로 */
+    }
+    
+    .github-graph h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+    }
+    
+    .contributions-graph {
+        width: auto; /* 너비를 유동적으로 설정 */
+        height: 100%; /* 부모 컨테이너의 높이에 맞춤 */
+        object-fit: contain; /* 그래프 비율 유지하면서 높이에 맞게 조정 */
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+      }
   
-  .profile-image {
-    width: 120px; /* 이미지 크기 2배로 */
-    height: 120px; /* 높이도 2배 */
-    border-radius: 50%; /* 둥근 모서리 유지 */
-  }
-  
-  .username {
-    font-size: 36px; /* 텍스트 크기 2배로 */
-    margin: 0;
-  }
-  
-  .commits {
-    font-size: 28px; /* 커밋 정보 텍스트 크기 증가 */
-    color: #555;
-  }
   
   .github-graph {
     font-size: 28px; /* 그래프 텍스트 크기 증가 */
@@ -79,7 +130,7 @@
     background-color: #ffffff;
     padding: 40px; /* 차트 컨테이너 패딩 증가 */
     border-radius: 8px; /* 둥근 모서리 확대 */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6); /* 그림자 강화 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
     height: 50vh;
   }
   

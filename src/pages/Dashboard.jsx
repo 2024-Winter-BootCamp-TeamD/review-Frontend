@@ -67,21 +67,26 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* Header */}
       <header className="dashboard-header">
-
-        <div className="profile-section">
-          <img
-            src="https://avatars.githubusercontent.com/u/68336444?v=4"
-            alt="GitHub Profile"
-            className="profile-image"
-          />
-          <div>
-            <h3 className="username">Username</h3>
-            <p className="commits">Commits: 42</p>
-          </div>
+        <div className="profile-container">
+            <div className="profile-section">
+                <img
+                src="https://avatars.githubusercontent.com/u/68336444?v=4"
+                alt="GitHub Profile"
+                className="profile-image"
+                />
+                <div className="profile-info">
+                <h3 className="username">Username</h3>
+                </div>
+            </div>
         </div>
-        
+
+        {/* GitHub Contributions Graph */}
         <div className="github-graph">
-          <p>GitHub Activity Graph (placeholder)</p>
+            <img
+            src="https://ghchart.rshah.org/Nekerworld" /* GitHub 그래프 URL */
+            alt="GitHub Contributions"
+            className="contributions-graph"
+            />
         </div>
       </header>
 

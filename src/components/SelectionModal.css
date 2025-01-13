@@ -1,0 +1,148 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    z-index: 1000;
+    padding-top: 50px;
+  }
+  
+  .modal-container {
+    background: #e8e8e8;
+    border-radius: 20px;
+    padding: 20px;
+    width: auto;
+    min-width: 20%;
+    max-width: 90vw;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  .modal-controls {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 20px;
+    justify-content: space-between;
+  }
+  
+  .apply-button {
+    background: #aef060;
+    color: #484848;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+    min-width: 100px;
+    min-height: 40px;
+    text-align: center; 
+  }
+  
+  .apply-button:hover {
+    background: #88e916;
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 40px;
+    color: rgb(178, 178, 178);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  
+  @keyframes wiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(5deg); }
+    50% { transform: rotate(-5deg); }
+    75% { transform: rotate(2.5deg); }
+    100% { transform: rotate(0deg); }
+  }
+  
+  .close-button:hover {
+    color: #ff5555;
+    animation: wiggle 0.5s ease-in-out;
+  }
+  
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+/* 체크 컨테이너 스타일 */
+.check-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  border: 2px solid #b0b0b0;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.3s ease;
+}
+
+.check-container.checked {
+  border-color: #4caf50;
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.checkmark {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: -8px;
+  left: -8px;
+}
+
+.animate-draw {
+  stroke-dasharray: 36;
+  stroke-dashoffset: 36;
+  animation: draw-check 0.4s ease forwards;
+  stroke-linecap: round;
+}
+
+@keyframes draw-check {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-erase {
+  stroke-dasharray: 36;
+  stroke-dashoffset: 0;
+  animation: erase-check 0.4s ease forwards;
+  stroke-linecap: round;
+}
+
+@keyframes erase-check {
+  to {
+    stroke-dashoffset: 36;
+  }
+}
+
+/* All 체크박스 레이블 */
+.checkbox-label {
+  font-size: 16px;
+  color: #333;
+  margin-left: -30px;
+}

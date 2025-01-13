@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import './Sidebar.css';
-import SidebarButton from './SidebarButton.jsx';
+import SidebarButton from '../SidebarButton/SidebarButton.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
   const buttons = ['Dashboard', 'History', 'Repositories', 'Report'];
   const [activeButton, setActiveButton] = useState('Dashboard');
+  const navigate = useNavigate();
 
   const handleButtonClick = (label) => {
     setActiveButton(label);
+    // 라우팅 경로 매핑
+    if (label === 'Dashboard') {
+      navigate('/');
+    } else if (label === 'History') {
+      navigate('/history');
+    } else if (label === 'Repositories') {
+      navigate('/repositories');
+    } else if (label === 'Report') {
+      navigate('/report');
+    }
     console.log(`${label} button clicked!`);
-    // 추가 동작 (예: 라우팅) 구현 가능
   };
 
   return (

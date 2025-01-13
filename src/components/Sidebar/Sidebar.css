@@ -1,0 +1,54 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.sidebar {
+  position: fixed;        /* 고정 */
+  top: 0;                 /* 상단에 */
+  left: 0;                /* 왼쪽 끝에 */
+  width: 250px;
+  height: 100vh;
+  background-color: #091904;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  z-index: 1000;          /* 다른 콘텐츠보다 위에 보이도록 */
+}
+
+.sidebar-rounded-top {
+  position: absolute;
+  top: -11.55px;
+  right: -28.45px;
+  width: 40px;
+  height: 40px;
+  background-color: #091904;
+  -webkit-mask: radial-gradient(circle at bottom right, transparent 50%, black 100%);
+  mask: radial-gradient(circle at bottom right, transparent 50%, black 51%);
+  -webkit-mask-composite: exclude;
+  mask-composite: exclude;
+}
+
+.sidebar-logo {
+  padding-top: 15vh;
+  font-size: 48px;
+  margin-bottom: 3vh;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  margin-left: 250px; /* Sidebar의 폭과 동일하게 여백 추가 */
+}

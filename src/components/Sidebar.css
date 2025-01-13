@@ -1,0 +1,67 @@
+/* Sidebar.css */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #091904;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    position: relative;
+  }
+
+  .sidebar-rounded-top {
+    position: absolute;
+    top: -11.55px;
+    right: -28.45px;
+    width: 40px;
+    height: 40px;
+    background-color: #091904;
+    -webkit-mask: radial-gradient(circle at bottom right, transparent 50%, black 100%);
+    mask: radial-gradient(circle at bottom right, transparent 50%, black 51%);
+    -webkit-mask-composite: exclude;
+    mask-composite: exclude;
+  }
+  
+  /* .sidebar-rounded-bottom {
+    position: absolute;
+    bottom: -11px;
+    right: -28.45px;
+    width: 40px;
+    height: 40px;
+    background-color: #091904;
+    -webkit-mask: radial-gradient(circle at top right, transparent 50%, black 100%);
+    mask: radial-gradient(circle at top right, transparent 50%, black 51%);
+    -webkit-mask-composite: exclude;
+    mask-composite: exclude;
+
+    clip-path: inset(0 0 28% 0);
+  } */
+  
+  .sidebar-logo {
+    padding-top: 15vh;
+    font-size: 48px;
+    margin-bottom: 3vh;
+  }
+  
+  .app {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+  }
+  

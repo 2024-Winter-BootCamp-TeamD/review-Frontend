@@ -1,6 +1,10 @@
 .modeselect-button {
-  width: 264px;
-  height: 145px;
+  min-width: 350px;
+  min-height: 145px;
+  width: 15vw;
+  height: 15vh;
+  max-width: 600px;
+  max-height: 400px;
   background-color: #ffffff;
   border: none;
   border-radius: 20px;
@@ -9,9 +13,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding-left: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 0px 0px 0px 0px;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.8);
   transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: calc(0.1 * min(15vb, 15vh));
 }
 
 .modeselect-button.selected {
@@ -19,16 +24,17 @@
 }
 
 .modeselect-button:hover {
-  transform: scale(1.05); /* 호버 시 약간 확대 */
+  transform: scale(1.03); /* 호버 시 약간 확대 */
 }
 
 .mode-description {
-  font-size: 14px;
-  margin: 0;
+  font-size: 0.8em;
+  margin: 0px 0px 15px 10px;
   color: #333;
 }
 
 .mode-name {
-  font-size: 32px;
-  margin: 0;
+  font-size: 2em;
+  margin: 0px 0px 0px 8px;
+  font-weight: bold;
 }

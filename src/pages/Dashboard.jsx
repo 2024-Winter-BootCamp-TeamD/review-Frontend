@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import NotificationButton from "../components/NotificationButton/NotificationButton.jsx";
-import ModeSelectButton from "../components/ModeselectButton/Modeselectbutton.jsx";
+import ModeSelectButton from "../components/ModeselectButton/ModeSelectButton.jsx";
 import "./Dashboard.css";
-import { LineChart, Line, YAxis, Tooltip } from "recharts";
-import { PieChart, Pie, Cell } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
   const initialData = {
@@ -69,6 +67,7 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* Header */}
       <header className="dashboard-header">
+
         <div className="profile-section">
           <img
             src="https://avatars.githubusercontent.com/u/68336444?v=4"
@@ -80,13 +79,14 @@ const Dashboard = () => {
             <p className="commits">Commits: 42</p>
           </div>
         </div>
+        
         <div className="github-graph">
           <p>GitHub Activity Graph (placeholder)</p>
         </div>
       </header>
 
       {/* Mode Select Buttons */}
-      <div className="mode-select">
+      <div className="mode-select" style={{ justifyContent: "space-between" }}>
         {modes.map((mode) => (
           <ModeSelectButton
             key={mode.modeName}
@@ -99,46 +99,65 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Graphs */}
+
+      {/* Charts */}
       <div className="charts">
         <div className="line-chart">
-          <h3>Average Grades by Date</h3>
-          <LineChart width={400} height={300} data={chartData}>
-            <YAxis
-              type="number"
-              domain={[0, 7]}
-              ticks={[0, 1, 2, 3, 4, 5, 6, 7]}
-              tickFormatter={(value) =>
-                Object.keys(gradeToValue).find((key) => gradeToValue[key] === value) || ""
-              }
-              allowDecimals={false}
-            />
-            <Tooltip
-              formatter={(value) =>
-                Object.keys(gradeToValue).find((key) => gradeToValue[key] === value) || "N/A"
-              }
-              labelFormatter={(label) => `Date: ${label}`}
-            />
-            <Line type="monotone" dataKey="gradeValue" stroke="#8884d8" dot />
-          </LineChart>
+          <h3>Average Grades</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <XAxis
+                dataKey="date"
+                tickFormatter={(value) => `Date: ${value}`}
+                axisLine={true}
+                tickLine={true}
+                tick={false}
+              />
+              <YAxis
+                type="number"
+                domain={[0, 7]}
+                ticks={[0, 1, 2, 3, 4, 5, 6, 7]}
+                tickFormatter={(value) =>
+                  Object.keys(gradeToValue).find((key) => gradeToValue[key] === value) || ""
+                }
+                allowDecimals={false}
+              />
+              <Tooltip
+                formatter={(value) =>
+                  Object.keys(gradeToValue).find((key) => gradeToValue[key] === value) || "N/A"
+                }
+                labelFormatter={(label) => `Date: ${label}`}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="gradeValue" 
+                stroke="#8884d8" 
+                strokeWidth={8}
+                shad
+                dot />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
         <div className="pie-chart">
-          <h3>Mode Distribution</h3>
-          <PieChart width={300} height={300}>
-            <Pie
-              data={pieChartData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              label
-            >
-              {pieChartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-          </PieChart>
+          <h3>Issue Types</h3>
+          <h6>Based on the latest 10 reviews</h6>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={pieChartData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius="80%"
+                label
+              >
+                {pieChartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

@@ -1,0 +1,13 @@
+/* src/components/Chart/Chart.css */
+
+.chart-wrapper {
+  width: 90%; 
+  height: 100%;
+  padding: 30px;
+  margin-right: 10px;
+}
+
+#chart-container {
+  width: 100%;
+  height: 100%;
+}

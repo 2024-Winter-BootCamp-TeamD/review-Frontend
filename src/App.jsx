@@ -5,9 +5,9 @@ import History from "./pages/History";
 import Repositories from "./pages/Repositories";
 import Report from "./pages/Report";
 import Sidebar from "./components/Sidebar/Sidebar";
+import NotificationButton from "./components/NotificationButton/NotificationButton";
 
 import "./App.css";
-import NotificationButton from "./components/NotificationButton/NotificationButton";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
             <Route path="/report" element={<Report />} />
           </Routes>
         </div>
-        <NotificationButton />
+        <NotificationButton className="notification-button" />
       </div>
     </Router>
   );

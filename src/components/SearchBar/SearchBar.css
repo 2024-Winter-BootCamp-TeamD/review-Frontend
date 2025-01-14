@@ -1,48 +1,49 @@
 .search-bar {
-    display: flex;
-    align-items: center;
-    width: 500px; /* 이 값을 수정하면 검색 바 전체 길이 변합니다 */
-    height: 40px;
-    background-color: #ffffff;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius: 23px;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-    padding: 0px 10px;
-  }
-  .search-text {
-    flex: 0 0 80px;
-    border: none;
-    outline: none;
-    font-size: 20px;
-    font-weight: 800;
-    color: #333333;
-    background-color: transparent;
-  }
-  
-  .search-input {
-    flex: 1 1 100px;
-    border: none;
-    outline: none;
-    font-size: 20px;
-    font-weight: 600;
-    color: #333333;
-    background-color: transparent;
-  }
-  
-  .search-input::placeholder {
-    color: #cccccc;
-  }
-  
-  .icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-  }
-  
-  .search-icon {
-    font-size: 24px;
-    color: #333333;
-    transition: transform 0.5s ease, opacity 0.5s ease;
-  }
-  
+  display: flex;
+  align-items: center;
+  width: 500px; /* 이 값을 수정하면 검색 바 전체 길이 변합니다 */
+  height: 40px;
+  background-color: #ffffff;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 23px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  padding: 0px 10px;
+}
+.search-text {
+  flex: 0 0 80px;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-weight: 800;
+  color: #333333;
+  background-color: transparent;
+}
+
+.search-input {
+  flex: 1 1 100px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-weight: 8000;
+  color: #333333;
+  background-color: transparent;
+}
+
+.search-input::placeholder {
+  color: #cccccc;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.search-icon {
+  font-size: 24px;
+  color: #333333;
+  transition:
+    transform 0.5s ease,
+    opacity 0.5s ease;
+}

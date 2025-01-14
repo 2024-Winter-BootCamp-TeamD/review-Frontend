@@ -1,24 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import "./SearchBar.css";
 import { CiSearch } from "react-icons/ci";
 
-const SearchBar = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-
+const SearchBar = ({ value, onChange }) => {
   return (
     <div className="search-bar">
-        <p className="search-text">Search</p>
-        <input
+      <p className="search-text">Search</p>
+      <input
         type="text"
-        // placeholder="Search"
         className="search-input"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={value}
+        onChange={onChange}
+        placeholder="Find a repository..."
       />
       <div className="icon-container">
-        <CiSearch
-          className={`search-icon`}
-        />
+        <CiSearch className={`search-icon`} />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
     flex-direction: column;
     gap: 2vh; /* 요소 간 간격 (높이에 비례) */
     padding: 4vw; /* 좌우 여백 (너비에 비례) */
-    margin-top: 5vh;
+    margin-top: -3vh;
     gap: 3vh;
   }
   
@@ -13,22 +13,22 @@
     align-items: center;
     background-color: #ffffff;
     width: 100%;
-    height: 15vh; /* 헤더 높이 */
+    height: 30vh; /* 헤더 높이 */
   }
   
   .profile-container {
     background-color: #ffffff;
     padding: 1vw;
     border-radius: 1.5vw;
-    box-shadow: 0.2vw 0.4vw 1vw rgba(0, 0, 0, 0.6);
+    box-shadow: 0vw 2px 4px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1vw;
-    height: 15vh; /* 고정 높이 */
-    width: 15vw; /* 고정 너비 */
+    height: 30vh; /* 고정 높이 */
+    width: 30vh; /* 고정 너비 */
     min-width: 300px; /* 최소 너비 */
-    max-width: 400px; /* 최대 너비 */
+    border-radius: 8px;
   }
 
   .profile-section {
@@ -38,15 +38,16 @@
   }
   
   .profile-image {
-    width: 10vh;
+    width: 20vh;
     height: auto; /* 비율에 따라 높이 자동 조정 */
     border-radius: 50%;
     padding-bottom: 0px;
   }
   
   .username {
-    font-size: 20px;
-    margin-top: -0.5vh;
+    font-size: 5vh;
+    margin-top: 0;
+    margin-bottom: 0;
   }
   
   .github-graph {
@@ -58,6 +59,11 @@
     height: 15vh; /* 헤더 높이에 맞게 조정 */
     font-size: 1.5vw; /* 폰트 크기 조정 */
     color: #777;
+    box-shadow: 0vw 2px 4px rgba(0, 0, 0, 0.2);
+    height: 30vh; /* 고정 높이 */
+    padding-left: 2%;
+    padding-right: 2%;
+    border-radius: 8px;
   }
 
   .contributions-graph {

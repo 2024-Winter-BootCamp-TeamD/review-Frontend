@@ -4,6 +4,37 @@ import "./Dashboard.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const Dashboard = () => {
+  const username = "Lauiee"; //Default
+  const [profileLoaded, setProfileLoaded] = useState(false)
+  useEffect(() => {
+    setProfileLoaded(true);
+  }, []);
+  const Username = ({ username }) => {
+    const [fontSize, setFontSize] = useState("24px");
+  
+    useEffect(() => {
+      if (username.length > 10) {
+        setFontSize("2vh"); // 글자 길이가 10자를 넘으면 폰트 크기를 줄임
+      } else {
+        setFontSize("3.5vh"); // 기본 폰트 크기
+      }
+    }, [username]);
+    return (
+      <h3
+        className="username"
+        style={{
+          fontSize: fontSize, // 동적으로 폰트 크기 설정
+          textAlign: "center",
+          wordWrap: "break-word",
+          whiteSpace: "normal",
+          maxWidth: "100%",
+        }}
+      >
+        {username || "Username"}
+      </h3>
+    );
+  };
+
   const initialData = {
     Basic: [
       { date: "2025-01-10", grade: "A" },
@@ -120,21 +151,23 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* Header */}
       <header className="dashboard-header">
-        <div className="profile-container">
-            <div className="profile-section">
-                <img
-                src="https://avatars.githubusercontent.com/u/68336444?v=4"
-                alt="GitHub Profile"
-                className="profile-image"
-                />
-                <h3 className="username">Username</h3>
-            </div>
-        </div>
+        {profileLoaded && (
+          <div className="profile-container">
+              <div className="profile-section">
+                  <img
+                  src={`https://avatars.githubusercontent.com/${username}`}
+                  alt="GitHub Profile"
+                  className="profile-image"
+                  />
+                  <Username username={username} />
+              </div>
+          </div>
+        )}
 
         {/* GitHub Contributions Graph */}
         <div className="github-graph">
             <img
-            src="https://ghchart.rshah.org/Nekerworld" /* GitHub 그래프 URL */
+            src={`https://ghchart.rshah.org/${username}`} /* GitHub 그래프 URL */
             alt="GitHub Contributions"
             className="contributions-graph"
             />
@@ -200,14 +233,14 @@ const Dashboard = () => {
                 type="monotone" 
                 dataKey="gradeValue" 
                 stroke="#000000" 
-                strokeWidth={8}
+                strokeWidth={4}
                 filter="url(#lineShadow)"
                 shad
                 dot={({ cx, cy }) => (
                   <circle
                     cx={cx}
                     cy={cy}
-                    r={5} // 점의 크기
+                    r={7} // 점의 크기
                     fill="#FFFFFF" // 점의 색상
                     stroke="#000000" // 점의 외곽선 제거
                   />

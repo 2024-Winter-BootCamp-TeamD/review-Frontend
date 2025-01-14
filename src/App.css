@@ -1,50 +1,35 @@
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 20px;
+/* html, body에 overflow:hidden을 추가하여 스크롤이 생기지 않도록 함 */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
 }
 
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+#root {
+  max-width: 1920px;
+  max-height: 1080px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.dashboard-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.mode-select {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.chart-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* 추가: app 레이아웃 */
+/* App 레이아웃 */
 .app {
   display: flex;
-  height: 100vh;
+  height: 100vh;   /* 화면 전체 높이 */
+  position: relative;
 }
 
+/* 콘텐츠 영역은 사이드바와 함께 화면에 꽉 차게 */
 .content {
   flex-grow: 1;
-  padding: 20px;
-  margin-left: 250px; /* Sidebar의 폭과 동일하게 여백 추가 */
+  padding: 10px;   /* 필요시 padding 조정 */
+}
+
+/* NotificationButton을 화면 오른쪽 상단에 고정 */
+.notification-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
 }

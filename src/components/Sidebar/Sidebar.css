@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -9,9 +10,9 @@ html, body {
 }
 
 .sidebar {
-  position: fixed;        /* 고정 */
-  top: 0;                 /* 상단에 */
-  left: 0;                /* 왼쪽 끝에 */
+  position: fixed; /* 고정 */
+  top: 0; /* 상단에 */
+  left: 0; /* 왼쪽 끝에 */
   width: 15%;
   min-width: 300px;
   height: 100vh;
@@ -21,7 +22,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   padding-top: 10%;
-  z-index: 1000;          /* 다른 콘텐츠보다 위에 보이도록 */
+  z-index: 1000; /* 다른 콘텐츠보다 위에 보이도록 */
 }
 
 .sidebar-rounded-top {
@@ -31,7 +32,11 @@ html, body {
   width: 40px;
   height: 40px;
   background-color: #091904;
-  -webkit-mask: radial-gradient(circle at bottom right, transparent 50%, black 100%);
+  -webkit-mask: radial-gradient(
+    circle at bottom right,
+    transparent 50%,
+    black 100%
+  );
   mask: radial-gradient(circle at bottom right, transparent 50%, black 51%);
   -webkit-mask-composite: exclude;
   mask-composite: exclude;

@@ -698,11 +698,11 @@ const CheckboxRound = styled.div`
   background-color: ${(props) => (props.checked ? "#4A90E2" : "white")};
   border-radius: 50%;
   border: 2px solid #4a90e2;
-  margin-right: 10px;
+  margin-right: 5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 10px;
+  margin-left: 38px;
   cursor: pointer;
 
   &::after {

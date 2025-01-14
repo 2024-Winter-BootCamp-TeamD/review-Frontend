@@ -29,6 +29,32 @@ const Dashboard = () => {
   };
 
   const gradeToValue = { S: 7, A: 6, B: 5, C: 4, D: 3, E: 2, F: 1, 0: 0 };
+  // 라인차트 툴팁 컴포넌트
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const gradeValue = payload[0].value; // 첫 번째 데이터의 값 가져오기
+      const gradeKey = Object.keys(gradeToValue).find(
+        (key) => gradeToValue[key] === gradeValue
+      ); // gradeValue에 해당하는 등급 찾기
+      return (
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            padding: "10px",
+            border: "1px solid #CCCCCC",
+            borderRadius: "5px",
+            textAlign: "left",
+          }}
+        >
+          <p style={{ margin: 0 }}>{label}</p>
+          <p style={{ margin: 0 }}>
+            <strong>Average Grade:</strong> {gradeKey || "N/A"}
+          </p>
+        </div>
+      );
+    }
+    return null; // 툴팁이 활성화되지 않으면 아무것도 렌더링하지 않음
+  };  
 
   const [selectedMode, setSelectedMode] = useState("Basic");
   const [chartData, setChartData] = useState([]);
@@ -151,12 +177,7 @@ const Dashboard = () => {
                 }
                 allowDecimals={false}
               />
-              <Tooltip
-                formatter={(value) =>
-                  Object.keys(gradeToValue).find((key) => gradeToValue[key] === value) || "N/A"
-                }
-                labelFormatter={(label) => `Date: ${label}`}
-              />
+              <Tooltip content={<CustomTooltip/>}/>
               <Line 
                 type="monotone" 
                 dataKey="gradeValue" 

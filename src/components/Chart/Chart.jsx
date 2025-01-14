@@ -5,7 +5,6 @@ import ExportData from 'highcharts/modules/export-data';
 import Accessibility from 'highcharts/modules/accessibility';
 import './Chart.css';
 
-// 모듈 초기화: 모듈이 함수인지 확인 후 호출
 if (Exporting && typeof Exporting === 'function') {
   Exporting(Highcharts);
 }
@@ -16,8 +15,11 @@ if (Accessibility && typeof Accessibility === 'function') {
   Accessibility(Highcharts);
 }
 
-const Chart = ({ onSliceClick }) => {
+const Chart = ({ onSliceClick, selectedMode }) => {
   useEffect(() => {
+    // 원래 animate 함수(초기 애니메이션용)를 저장합니다.
+    const originalAnimate = Highcharts.seriesTypes.pie.prototype.animate;
+    
     (function (H) {
       H.seriesTypes.pie.prototype.animate = function (init) {
         const series = this,
@@ -82,14 +84,14 @@ const Chart = ({ onSliceClick }) => {
       };
     })(Highcharts);
   
-    Highcharts.chart('chart-container', {
+    const chart = Highcharts.chart('chart-container', {
       chart: {
         type: 'pie',
         backgroundColor: 'transparent',
+        reflow: false,
         events: {
           load: function () {
             const chart = this;
-            // 중앙에 Total / 42 텍스트 추가 (두 줄), y 좌표를 조금 위로 조정
             chart.renderer.label(
               'Total<br>42',
               chart.plotLeft + chart.plotWidth / 2,
@@ -108,6 +110,12 @@ const Chart = ({ onSliceClick }) => {
               .attr({ align: 'center' })
               .add()
               .toFront();
+            // 최초 애니메이션 완료 후, 애니메이션 함수를 무효화하여 이후 호출 시 효과가 나타나지 않도록 함.
+            Highcharts.seriesTypes.pie.prototype.animate = function (init) {
+              if (init) {
+                this.points.forEach(point => point.graphic.attr({ opacity: 0 }));
+              }
+            };
           }
         }
       },
@@ -118,9 +126,7 @@ const Chart = ({ onSliceClick }) => {
         pointFormat:
           '<span style="color:{point.color}">\u25cf</span> {point.name}: <b>{point.percentage:.1f}%</b>'
       },
-      accessibility: {
-        point: { valueSuffix: '%' }
-      },
+      accessibility: { point: { valueSuffix: '%' } },
       plotOptions: {
         pie: {
           allowPointSelect: true,
@@ -134,10 +140,13 @@ const Chart = ({ onSliceClick }) => {
           point: {
             events: {
               click: function() {
-                // this.name 값은 클릭한 피 시리즈의 모드 이름
-                if(onSliceClick) {
+                if (onSliceClick) {
                   onSliceClick(this.name);
                 }
+                // 클릭 시에는 무효화된 animate 함수로 인해 애니메이션 없이 opacity를 즉시 변경
+                this.series.points.forEach(pt => {
+                  pt.graphic.attr({ opacity: pt === this ? 1 : 0.3 });
+                });
               }
             }
           }

@@ -1,7 +1,7 @@
 .search-bar {
   display: flex;
   align-items: center;
-  width: 500px; /* 이 값을 수정하면 검색 바 전체 길이 변합니다 */
+  width: 450px; /* 이 값을 수정하면 검색 바 전체 길이 변합니다 */
   height: 40px;
   background-color: #ffffff;
   border: 2px solid rgba(0, 0, 0, 0.1);

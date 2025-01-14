@@ -1,5 +1,5 @@
 import React from "react";
-import "./Modeselectbutton.css";
+import "./ModeSelectButton.css";
 
 function ModeSelectButton({ description, modeName, isSelected, onClick, modeColor = "333" }) {
   return (

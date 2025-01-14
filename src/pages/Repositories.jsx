@@ -1,16 +1,16 @@
 import React from "react";
 import styled from "styled-components";
-import SearchBar from "../components/SearchBar/SearchBar"; // SearchBar 컴포넌트 import 추가
+import SearchBar from "../components/SearchBar/SearchBar";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react"; // useState 추가
+import { useState } from "react";
 import PublicIcon from "@mui/icons-material/Public";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
 import BugReportIcon from "@mui/icons-material/BugReport";
 
 const RepositoryContainer = styled.div`
-  width: 46%; // 각 컨테이너의 너비를 전체의 48%로 설정
+  width: 46%;
   height: 57rem;
   background-color: #f0f0f0;
   border-radius: 20px;
@@ -18,8 +18,8 @@ const RepositoryContainer = styled.div`
   box-shadow:
     0px 4px 8px 3px rgba(0, 0, 0, 0.15),
     0px 1px 3px 0px rgba(0, 0, 0, 0.3);
-  padding: 20px; // 내부 여백 추가
-  overflow: hidden; // 추가된 부분
+  padding: 20px;
+  overflow: hidden;
 `;
 
 const RepositoryTitle = styled.h1`
@@ -36,11 +36,11 @@ const RepositoryTitle = styled.h1`
 
 const RepositoriesWrapper = styled.div`
   display: flex;
-  gap: 85px; // space-between 대신 gap 사용
-  justify-content: center; // space-between 대신 center 사용
-  max-width: 1450px; // 전체 너비 제한
-  margin: 0 auto; // 중앙 정렬
-  padding: 0 40px; // 좌우 여백
+  gap: 85px;
+  justify-content: center;
+  max-width: 1450px;
+  margin: 0 auto;
+  padding: 0 40px;
   margin-top: 30px;
   margin-bottom: 30px;
 `;
@@ -49,15 +49,13 @@ const SearchBarWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 25px;
-  margin-bottom: 25px; // 타이틀과의 간격 조정
+  margin-bottom: 25px;
 `;
 
 const RepositoryWrapper = styled.div`
-  height: calc(
-    100% - 120px
-  ); // 컨테이너 높이에서 타이틀과 검색바 영역을 뺀 높이
+  height: calc(100% - 120px);
   margin-top: 20px;
-  overflow-y: auto; // 세로 스크롤 활성화
+  overflow-y: auto;
 
   /* 스크롤바 스타일링 (선택사항) */
   &::-webkit-scrollbar {
@@ -80,17 +78,17 @@ const RepositoryItem = styled.div`
   background: #ffffff;
   border-radius: 20px;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
-  display: flex; // 추가: flex 레이아웃 적용
-  align-items: center; // 추가: 세로 중앙 정렬
-  gap: 15px; // 추가: 이미지와 텍스트 사이 간격
-  position: relative; // 아이콘 위치 조정을 위해 추가
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  position: relative;
 `;
 
 const RepoImage = styled.img`
-  width: 60px; // 정사각형 크기 설정
+  width: 60px;
   height: 60px;
-  border-radius: 8px; // 선택적: 이미지 모서리 둥글게
-  object-fit: cover; // 이미지 비율 유지
+  border-radius: 8px;
+  object-fit: cover;
 `;
 
 const IconWrapper = styled.div`
@@ -102,7 +100,7 @@ const IconWrapper = styled.div`
   justify-content: center;
   width: 24px;
   height: 24px;
-  color: #666; // MUI 아이콘 색상 설정
+  color: #666;
 
   &:hover {
     background-color: #f0f0f0;
@@ -115,7 +113,7 @@ const RepoContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  text-align: left; // 왼쪽 정렬 추가
+  text-align: left;
 `;
 
 const RepoHeader = styled.div`
@@ -142,9 +140,9 @@ const RepoDescription = styled.p`
   font-size: 14px;
   margin: 0;
   max-width: 19rem;
-  white-space: nowrap; // 한 줄로 제한
-  overflow: hidden; // 넘치는 텍스트 숨기기
-  text-overflow: ellipsis; // 말줄임표 표시
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const RepoStats = styled.div`
@@ -179,7 +177,7 @@ const getLanguageColor = (language) => {
     "C++": "#f34b7d",
     C: "#555555",
   };
-  return colors[language] || "#858585"; // 기본 색상
+  return colors[language] || "#858585";
 };
 
 const Language = styled.span`
@@ -273,6 +271,17 @@ const Repositories = () => {
 
   const [selectedRepos, setSelectedRepos] = useState([]);
 
+  const [searchTermUnselected, setSearchTermUnselected] = useState("");
+  const [searchTermSelected, setSearchTermSelected] = useState("");
+
+  const filteredUnselectedRepos = unselectedRepos.filter((repo) =>
+    repo.name.toLowerCase().includes(searchTermUnselected.toLowerCase())
+  );
+
+  const filteredSelectedRepos = selectedRepos.filter((repo) =>
+    repo.name.toLowerCase().includes(searchTermSelected.toLowerCase())
+  );
+
   const handleSelect = (repo) => {
     setUnselectedRepos(unselectedRepos.filter((r) => r.id !== repo.id));
     setSelectedRepos([...selectedRepos, repo]);
@@ -288,10 +297,13 @@ const Repositories = () => {
       <RepositoryContainer>
         <RepositoryTitle>Unselected</RepositoryTitle>
         <SearchBarWrapper>
-          <SearchBar />
+          <SearchBar
+            value={searchTermUnselected}
+            onChange={(e) => setSearchTermUnselected(e.target.value)}
+          />
         </SearchBarWrapper>
         <RepositoryWrapper>
-          {unselectedRepos.map((repo) => (
+          {filteredUnselectedRepos.map((repo) => (
             <RepositoryItem key={repo.id}>
               <RepoImage src={repo.image} alt="Repository thumbnail" />
               <RepoContent>
@@ -328,10 +340,13 @@ const Repositories = () => {
       <RepositoryContainer>
         <RepositoryTitle>Selected</RepositoryTitle>
         <SearchBarWrapper>
-          <SearchBar />
+          <SearchBar
+            value={searchTermSelected}
+            onChange={(e) => setSearchTermSelected(e.target.value)}
+          />
         </SearchBarWrapper>
         <RepositoryWrapper>
-          {selectedRepos.map((repo) => (
+          {filteredSelectedRepos.map((repo) => (
             <RepositoryItem key={repo.id}>
               <RepoImage src={repo.image} alt="Repository thumbnail" />
               <RepoContent>

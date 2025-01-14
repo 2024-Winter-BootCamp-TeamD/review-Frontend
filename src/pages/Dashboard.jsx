@@ -79,17 +79,16 @@ const Dashboard = () => {
     ),
   }));
 
-  const PIE_COLORS = ["#AEF060", "#DCDCDC00", "#343C2F", "#AEF06075"];
+  // 왼쪽 범례 하이라이트 색 | 하이라이트되지 않은 차트 색 (투명) | 왼쪽 범례 하이라이트 되지 않은 색
+  const PIE_COLORS = ["#AEF060", "#DCDCDC00", "#343C2F"];
   const [highlightIndex, setHighlightIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setHighlightIndex((prevIndex) => (prevIndex + 1) % pieChartData.length);
-    }, 8000); // 2초마다 변경
+    }, 5000); // 5초마다 변경
     return () => clearInterval(interval); // 컴포넌트 언마운트 시 클리어
   }, [pieChartData.length]);
-
-  const COLORS = ["#FF794E", "#9B9B9B", "#70BF73", "#4DABF5", "#FFCD39"];
 
   return (
     <div className="dashboard-container">
@@ -130,7 +129,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-
       {/* Charts */}
       <div className="charts">
         <div className="line-chart">
@@ -169,7 +167,6 @@ const Dashboard = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-
         <div className="donut-chart-container">
           <div className="chart-wrapper">
             <div className="chart-title">
@@ -177,7 +174,6 @@ const Dashboard = () => {
               <p>Based on the latest 10 reviews</p>
             </div>
           </div>
-
           <div className="content-wrapper">
             <div className="legend">
               {pieChartData.map((entry, index) => (
@@ -187,13 +183,14 @@ const Dashboard = () => {
                   style={{
                     backgroundColor:
                       highlightIndex === index ? PIE_COLORS[0] : PIE_COLORS[2],
+                    color:
+                      highlightIndex === index ? "#000000" : "#FFFFFF",
                   }}
                 >
                   {entry.name}
                 </div>
               ))}
             </div>
-
             <div className="chart">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -224,26 +221,7 @@ const Dashboard = () => {
                     innerRadius="25%"
                     fill="#DCDCDC" // 배경 색상
                     isAnimationActive={false} // 애니메이션 비활성화
-                    label={({ percent, x, y }) => (
-                      <text
-                        x={x}
-                        y={y}
-                        fill="#000000" // 텍스트 색상
-                        textAnchor="middle"
-                        dominantBaseline="central"
-                        style={{
-                          fontSize: "14px",
-                          fontWeight: "bold",
-                          background: "#FFFFFF",
-                          padding: "5px",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        {`${Math.round(percent * 100)}%`}
-                      </text>
-                    )}
                   />
-
                   {/* 하이라이트 및 실제 데이터 차트 */}
                   <Pie
                     data={pieChartData}
@@ -265,13 +243,51 @@ const Dashboard = () => {
                       />
                     ))}
                   </Pie>
+                  {/* 레이블용 Pie */}
+                  <Pie
+                    data={pieChartData}
+                    dataKey="value"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius="50%"
+                    innerRadius="25%"
+                    fill="none" // 도넛 조각은 렌더링하지 않음
+                    stroke="none"
+                    label={({ percent, x, y }) => (
+                      <g>
+                        {/* 배경 박스 */}
+                        <rect
+                          x={x - 25}
+                          y={y - 10}
+                          width={50}
+                          height={20}
+                          fill="#FFFFFF"
+                          rx={5}
+                          ry={50}
+                        />
+                        {/* 텍스트 */}
+                        <text
+                          x={x}
+                          y={y}
+                          fill="#000000"
+                          textAnchor="middle"
+                          dominantBaseline="central"
+                          style={{
+                            fontSize: "14px",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {`${Math.round(percent * 100)}%`}
+                        </text>
+                      </g>
+                    )}
+                  />
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

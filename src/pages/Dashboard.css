@@ -2,9 +2,9 @@
     display: flex;
     flex-direction: column;
     gap: 2vh; /* 요소 간 간격 (높이에 비례) */
-    padding: 2vw; /* 좌우 여백 (너비에 비례) */
-    margin: 0 auto;
-    gap: 6vh;
+    padding: 4vw; /* 좌우 여백 (너비에 비례) */
+    margin-top: 5vh;
+    gap: 3vh;
   }
   
   .dashboard-header {
@@ -82,8 +82,10 @@
   .charts {
     display: flex;
     justify-content: space-between;
+    margin-top: 2vh;
+    align-items: flex-end;
     gap: 2vw; /* 차트 간 간격 */
-    height: 50vh; /* 차트 영역 높이 */
+    height: 40vh; /* 차트 영역 높이 */
   }
   
   .line-chart {
@@ -96,6 +98,7 @@
     border-radius: 1vw;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
     min-width: 400px; /* 차트 최소 너비 */
+    height: 40vh;
     margin: 0% 0% 0% 0%;
   }
   
@@ -113,8 +116,8 @@
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
     padding: 20px;
-    width: 800px; /* 전체 컨테이너 너비 */
-    height: 50vh; /* 전체 컨테이너 높이 */
+    width: 30vw; /* 전체 컨테이너 너비 */
+    height: 40vh; /* 전체 컨테이너 높이 */
   }
   
   .chart-wrapper {
@@ -149,6 +152,7 @@
     width: 100%; /* 부모의 너비에 맞춤 */
     height: 100%; /* 부모의 높이에 맞춤 */
     z-index: 1; /* Issue Type 텍스트 아래 배치 */
+    margin-top: -6vh;
   }
 
   .legend {

@@ -159,7 +159,7 @@ const Dashboard = () => {
       <div className="charts">
         <div className="line-chart">
           <h3>Average Grades</h3>
-          <ResponsiveContainer width="90%" height="90%">
+          <ResponsiveContainer width="90%" height="85%">
             <LineChart data={chartData}>
               <XAxis
                 dataKey="date"
@@ -170,21 +170,49 @@ const Dashboard = () => {
               />
               <YAxis
                 type="number"
-                domain={[0, 7]}
-                ticks={[0, 1, 2, 3, 4, 5, 6, 7]}
+                domain={[0, 7]} // Y축 범위
+                ticks={[0, 1, 2, 3, 4, 5, 6, 7]} // Y축 틱 값
                 tickFormatter={(value) =>
                   Object.keys(gradeToValue).find((key) => gradeToValue[key] === value) || ""
-                }
+                } // 라벨 값 설정
                 allowDecimals={false}
+                axisLine={true} // 세로축 선 제거
+                tickLine={false} // 라벨과 연결된 가로선 제거
+                tick={{
+                  fontWeight: "bold", // 라벨 볼드 효과
+                  dx: -20, // 라벨을 Y축에서 왼쪽(-)으로 10px 이동
+                  fontSize: 12,
+                  fill: "#000000", // 텍스트 색상
+                }}
               />
+              <defs>
+                <filter id="lineShadow" x="-50%" y="-50%" width="400%" height="400%">
+                  <feDropShadow
+                    dx="8"       /* X축으로 그림자 이동 */
+                    dy="10"       /* Y축으로 그림자 이동 */
+                    stdDeviation="12" /* 그림자 흐림 정도 */
+                    floodColor="#000000" /* 그림자 색상 */
+                  />
+                </filter>
+              </defs>
               <Tooltip content={<CustomTooltip/>}/>
               <Line 
                 type="monotone" 
                 dataKey="gradeValue" 
-                stroke="#8884d8" 
+                stroke="#000000" 
                 strokeWidth={8}
+                filter="url(#lineShadow)"
                 shad
-                dot />
+                dot={({ cx, cy }) => (
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={5} // 점의 크기
+                    fill="#FFFFFF" // 점의 색상
+                    stroke="#000000" // 점의 외곽선 제거
+                  />
+                )}
+                 />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -226,23 +254,28 @@ const Dashboard = () => {
                         x2="1"
                         y2="1"
                       >
-                        <stop offset="0%" stopColor={highlightIndex === index ? "#AEF06095" : "#DCDCDC00"} /> {/* 시작 색상 */}
-                        <stop offset="100%" stopColor={highlightIndex === index ? "#29E7CD85" : "#DCDCDC00"} /> {/* 끝 색상 */}
+                        <stop offset="0%" stopColor={highlightIndex === index ? "#2BE7CC" : "#DCDCDC00"} /> {/* 시작 색상 */}
+                        <stop offset="100%" stopColor={highlightIndex === index ? "#AEF06099" : "#DCDCDC00"} /> {/* 끝 색상 */}
                       </linearGradient>
                     ))}
                   </defs>
                   {/* 배경용 도넛 차트 */}
                   <Pie
-                    data={pieChartData} // 동일한 데이터 사용
+                    data={pieChartData}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius="70%" // 배경 차트 크기
+                    outerRadius="70%"
                     innerRadius="25%"
-                    fill="#DCDCDC" // 배경 색상
-                    isAnimationActive={false} // 애니메이션 비활성화
-                  />
+                    strokeWidth={5}
+                    isAnimationActive={false}
+                  >
+                    {/* 각 조각의 색상을 설정 */}
+                    {pieChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={index === 0 ? "#ABABAB" : index === 1 ? "#727272" : "#DCDCDC"} />
+                    ))}
+                  </Pie>
                   {/* 하이라이트 및 실제 데이터 차트 */}
                   <Pie
                     data={pieChartData}
@@ -250,7 +283,7 @@ const Dashboard = () => {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={highlightIndex === pieChartData.indexOf(highlightIndex) ? "30%" : "60%"} // 선택된 조각은 약간 작게
+                    outerRadius={highlightIndex === pieChartData.indexOf(highlightIndex) ? "30%" : "65%"} // 선택된 조각은 약간 작게
                     innerRadius={highlightIndex === pieChartData.indexOf(highlightIndex) ? "1%" : "10%"} // 선택된 조각은 중심에 가까워짐
                     stroke="none"
                   >
@@ -270,7 +303,7 @@ const Dashboard = () => {
                     dataKey="value"
                     cx="50%"
                     cy="50%"
-                    outerRadius="50%"
+                    outerRadius="60%"
                     innerRadius="25%"
                     fill="none" // 도넛 조각은 렌더링하지 않음
                     stroke="none"

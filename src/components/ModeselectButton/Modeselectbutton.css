@@ -16,7 +16,7 @@
   margin: 0.5vw; /* 버튼 간격 */
   box-shadow: 0 0.5vh 0.5vh rgba(0, 0, 0, 0.8);
   transition: background-color 0.3s ease, transform 0.2s ease;
-  font-size: clamp(16px, 1.5vw, 24px); /* 동적 폰트 크기 */
+  font-size: clamp(16px, 2vw, 24px); /* 동적 폰트 크기 */
 }
 
 .modeselect-button.selected {
@@ -28,13 +28,13 @@
 }
 
 .mode-description {
-  font-size: clamp(12px, 0.6vw, 18px); /* 설명 텍스트 크기 */
+  font-size: clamp(12px, 0.7vw, 24px); /* 설명 텍스트 크기 */
   margin: 0px 0px 10px 10px;
   color: #333;
 }
 
 .mode-name {
-  font-size: clamp(18px, 2vw, 30px); /* 모드 이름 텍스트 크기 */
+  font-size: clamp(18px, 2vw, 36px); /* 모드 이름 텍스트 크기 */
   margin: 0px 0px 0px 8px;
   font-weight: bold;
 }

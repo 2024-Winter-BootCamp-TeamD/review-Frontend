@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import History from "./pages/History";
-import Repositories from "./pages/Repositories";
-import Report from "./pages/Report";
-import Sidebar from "./components/Sidebar/Sidebar";
-import NotificationButton from "./components/NotificationButton/NotificationButton";
+import Dashboard from "./pages/Dashboard.jsx";
+import History from "./pages/History.jsx";
+import Repositories from "./pages/Repositories.jsx";
+import Report from "./pages/Report.jsx";
+import Sidebar from "./components/Sidebar/Sidebar.jsx";
 
 import "./App.css";
+import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
         <Sidebar />
         <div className="content">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/history" element={<History />} />
             <Route path="/repositories" element={<Repositories />} />
             <Route path="/report" element={<Report />} />

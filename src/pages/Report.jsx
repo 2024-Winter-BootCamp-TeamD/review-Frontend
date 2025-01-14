@@ -216,6 +216,13 @@ const Report = () => {
       item.issueType.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // 모달 닫기 함수
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedItems(new Set()); // 선택된 항목 초기화
+    setSearchQuery(""); // 검색어도 초기화
+  };
+
   return (
     <ReportWrapper>
       <PageTitle>Report</PageTitle>
@@ -282,7 +289,7 @@ const Report = () => {
       </ButtonWrapper>
 
       {isModalOpen && (
-        <ModalOverlay onClick={() => setIsModalOpen(false)}>
+        <ModalOverlay onClick={handleCloseModal}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <ModalHeader>
               <ButtonCheckboxContainer>
@@ -303,7 +310,7 @@ const Report = () => {
                   onChange={handleSearchChange}
                 />
               </SearchBarWrapper>
-              <CloseButton onClick={() => setIsModalOpen(false)}>
+              <CloseButton onClick={handleCloseModal}>
                 <CloseIcon />
               </CloseButton>
             </ModalHeader>
@@ -433,6 +440,7 @@ const ReportItem = styled.div`
   gap: 45px;
   margin-top: 10px;
   margin-left: 20px;
+  margin-bottom: 10px;
   padding: 20px;
   background: #ffffff;
   border-radius: 20px;
@@ -475,7 +483,6 @@ const ReportList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   margin-left: 20px;
   overflow-y: auto;
   width: 90rem;

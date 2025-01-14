@@ -22,7 +22,7 @@ function App() {
             <Route path="/report" element={<Report />} />
           </Routes>
         </div>
-        <NotificationButton />
+        <NotificationButton className="notification-button" />
       </div>
     </Router>
   );

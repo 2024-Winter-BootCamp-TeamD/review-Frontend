@@ -152,12 +152,12 @@ const Dashboard = () => {
       {/* Header */}
       <header className="dashboard-header">
         {profileLoaded && (
-          <div className="profile-container">
-              <div className="profile-section">
+          <div className="dashboard-profile-container">
+              <div className="dashboard-profile-section">
                   <img
                   src={`https://avatars.githubusercontent.com/${username}`}
                   alt="GitHub Profile"
-                  className="profile-image"
+                  className="dashboard-profile-image"
                   />
                   <Username username={username} />
               </div>
@@ -165,17 +165,17 @@ const Dashboard = () => {
         )}
 
         {/* GitHub Contributions Graph */}
-        <div className="github-graph">
+        <div className="dashboard-github-graph">
             <img
             src={`https://ghchart.rshah.org/${username}`} /* GitHub 그래프 URL */
             alt="GitHub Contributions"
-            className="contributions-graph"
+            className="dashboard-contributions-graph"
             />
         </div>
       </header>
 
       {/* Mode Select Buttons */}
-      <div className="mode-select" style={{ justifyContent: "space-between" }}>
+      <div className="dashboard-mode-select" style={{ justifyContent: "space-between" }}>
         {modes.map((mode) => (
           <ModeSelectButton
             key={mode.modeName}
@@ -189,8 +189,8 @@ const Dashboard = () => {
       </div>
 
       {/* Charts */}
-      <div className="charts">
-        <div className="line-chart">
+      <div className="dashboard-charts">
+        <div className="dashboard-line-chart">
           <h3>Average Grades</h3>
           <ResponsiveContainer width="90%" height="85%">
             <LineChart data={chartData}>
@@ -249,19 +249,19 @@ const Dashboard = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="donut-chart-container">
-          <div className="chart-wrapper">
-            <div className="chart-title">
+        <div className="dashboard-donut-chart-container">
+          <div className="dashboard-chart-wrapper">
+            <div className="dashboard-chart-title">
               <h3>Issue Type</h3>
               <p>Based on the latest 10 reviews</p>
             </div>
           </div>
-          <div className="content-wrapper">
+          <div className="dashboard-content-wrapper">
             <div className="legend">
               {pieChartData.map((entry, index) => (
                 <div
                   key={index}
-                  className="legend-item"
+                  className="dashboard-legend-item"
                   style={{
                     backgroundColor:
                       highlightIndex === index ? PIE_COLORS[0] : PIE_COLORS[2],
@@ -273,7 +273,7 @@ const Dashboard = () => {
                 </div>
               ))}
             </div>
-            <div className="chart">
+            <div className="dashboard-chart">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   {/* 그라데이션 정의 */}
@@ -325,7 +325,7 @@ const Dashboard = () => {
                         key={`cell-${index}`}
                         fill={`url(#gradient-${index})`}
                         className={
-                          highlightIndex === index ? "floating" : "" 
+                          highlightIndex === index ? "dashboard-floating" : "" 
                         }
                       />
                     ))}

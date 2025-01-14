@@ -56,10 +56,38 @@ const Dashboard = () => {
     { modeName: "Study", description: "Hint Only.", modeColor: "#FFCD39" },
   ];
 
-  const pieChartData = modes.map((mode) => ({
-    name: mode.modeName,
-    value: Math.floor(Math.random() * 500) + 100, // 임시 데이터
+  const issueCategories = ["Clean Code", "Memory", "Execution Time"];
+  const recentReviews = [
+    { id: 1, issues: ["Execution Time"] },
+    { id: 2, issues: ["Memory"] },
+    { id: 3, issues: ["Clean Code"] },
+    { id: 4, issues: ["Execution Time"] },
+    { id: 5, issues: ["Execution Time"] },
+    { id: 6, issues: ["Memory"] },
+    { id: 7, issues: ["Execution Time"] },
+    { id: 8, issues: ["Execution Time"] },
+    { id: 9, issues: ["Memory"] },
+    { id: 10, issues: ["Clean Code"] },
+  ];
+
+  // 리뷰 데이터를 집계하여 각 카테고리별 문제 발생 횟수를 계산
+  const pieChartData = issueCategories.map((category) => ({
+    name: category,
+    value: recentReviews.reduce(
+      (count, review) => count + (review.issues.includes(category) ? 1 : 0),
+      0
+    ),
   }));
+
+  const PIE_COLORS = ["#AEF060", "#DCDCDC00", "#343C2F", "#AEF06075"];
+  const [highlightIndex, setHighlightIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHighlightIndex((prevIndex) => (prevIndex + 1) % pieChartData.length);
+    }, 8000); // 2초마다 변경
+    return () => clearInterval(interval); // 컴포넌트 언마운트 시 클리어
+  }, [pieChartData.length]);
 
   const COLORS = ["#FF794E", "#9B9B9B", "#70BF73", "#4DABF5", "#FFCD39"];
 
@@ -74,9 +102,7 @@ const Dashboard = () => {
                 alt="GitHub Profile"
                 className="profile-image"
                 />
-                <div className="profile-info">
                 <h3 className="username">Username</h3>
-                </div>
             </div>
         </div>
 
@@ -109,7 +135,7 @@ const Dashboard = () => {
       <div className="charts">
         <div className="line-chart">
           <h3>Average Grades</h3>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="90%" height="90%">
             <LineChart data={chartData}>
               <XAxis
                 dataKey="date"
@@ -143,30 +169,112 @@ const Dashboard = () => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="pie-chart">
-          <h3>Issue Types</h3>
-          <h6>Based on the latest 10 reviews</h6>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={pieChartData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius="80%"
-                label
-              >
-                {pieChartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
+
+        <div className="donut-chart-container">
+          <div className="chart-wrapper">
+            <div className="chart-title">
+              <h3>Issue Type</h3>
+              <p>Based on the latest 10 reviews</p>
+            </div>
+          </div>
+
+          <div className="content-wrapper">
+            <div className="legend">
+              {pieChartData.map((entry, index) => (
+                <div
+                  key={index}
+                  className="legend-item"
+                  style={{
+                    backgroundColor:
+                      highlightIndex === index ? PIE_COLORS[0] : PIE_COLORS[2],
+                  }}
+                >
+                  {entry.name}
+                </div>
+              ))}
+            </div>
+
+            <div className="chart">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  {/* 그라데이션 정의 */}
+                  <defs>
+                    {pieChartData.map((entry, index) => (
+                      <linearGradient
+                        id={`gradient-${index}`}
+                        key={`gradient-${index}`}
+                        x1="0"
+                        y1="0"
+                        x2="1"
+                        y2="1"
+                      >
+                        <stop offset="0%" stopColor={highlightIndex === index ? "#AEF06095" : "#DCDCDC00"} /> {/* 시작 색상 */}
+                        <stop offset="100%" stopColor={highlightIndex === index ? "#29E7CD85" : "#DCDCDC00"} /> {/* 끝 색상 */}
+                      </linearGradient>
+                    ))}
+                  </defs>
+                  {/* 배경용 도넛 차트 */}
+                  <Pie
+                    data={pieChartData} // 동일한 데이터 사용
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius="70%" // 배경 차트 크기
+                    innerRadius="25%"
+                    fill="#DCDCDC" // 배경 색상
+                    isAnimationActive={false} // 애니메이션 비활성화
+                    label={({ percent, x, y }) => (
+                      <text
+                        x={x}
+                        y={y}
+                        fill="#000000" // 텍스트 색상
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        style={{
+                          fontSize: "14px",
+                          fontWeight: "bold",
+                          background: "#FFFFFF",
+                          padding: "5px",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        {`${Math.round(percent * 100)}%`}
+                      </text>
+                    )}
+                  />
+
+                  {/* 하이라이트 및 실제 데이터 차트 */}
+                  <Pie
+                    data={pieChartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={highlightIndex === pieChartData.indexOf(highlightIndex) ? "30%" : "60%"} // 선택된 조각은 약간 작게
+                    innerRadius={highlightIndex === pieChartData.indexOf(highlightIndex) ? "1%" : "10%"} // 선택된 조각은 중심에 가까워짐
+                    stroke="none"
+                  >
+                    {pieChartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={`url(#gradient-${index})`}
+                        className={
+                          highlightIndex === index ? "floating" : "" 
+                        }
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default Dashboard

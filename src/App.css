@@ -1,5 +1,6 @@
 /* html, body에 overflow:hidden을 추가하여 스크롤이 생기지 않도록 함 */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -16,14 +17,14 @@ html, body {
 /* App 레이아웃 */
 .app {
   display: flex;
-  height: 100vh;   /* 화면 전체 높이 */
+  height: 100vh; /* 화면 전체 높이 */
   position: relative;
 }
 
 /* 콘텐츠 영역은 사이드바와 함께 화면에 꽉 차게 */
 .content {
   flex-grow: 1;
-  padding: 10px; 
+  padding: 10px;
 }
 
 /* NotificationButton을 화면 오른쪽 상단에 고정 */

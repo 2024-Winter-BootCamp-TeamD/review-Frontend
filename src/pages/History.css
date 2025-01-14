@@ -1,8 +1,8 @@
 /* src/pages/History.css */
 /* History 페이지 전체 컨테이너 */
 .history-container {
-    position: relative;
-    width: 100%;
+        position: relative;
+        width: 100%;
     height: 100vh;
     display: flex;
     flex-direction: column;

@@ -1,34 +1,36 @@
 .sidebar-button {
-    width: 60%; /* 부모 요소(사이드바)의 폭에 맞춤 */
-    height: auto;
-    padding: 0.3vh;
-    margin: 10px 0;
-    background-color: #091904;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    position: relative;
-    font-size: calc(1rem + 0.5vw); /* 사이드바 크기에 따라 텍스트 크기 조정 */
+  width: 60%; /* 부모 요소(사이드바)의 폭에 맞춤 */
+  height: auto;
+  padding: 0.3vh;
+  margin: 10px 0;
+  background-color: #091904;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+  position: relative;
+  font-size: calc(1rem + 0.5vw); /* 사이드바 크기에 따라 텍스트 크기 조정 */
 }
 
 .sidebar-button:hover {
-    background-color: #133508;
-    transform: translateY(-2px);
+  background-color: #133508;
+  transform: translateY(-2px);
 }
 
 .sidebar-button:active {
-    background-color: #AEF060;
-    transform: translateY(1px) scale(0.98);
+  background-color: #aef060;
+  transform: translateY(1px) scale(0.98);
 }
 
 .sidebar-button.active {
-    background-color: #AEF060;
-    font-weight: bold;
-    cursor: default;
-    color: #3D3C3C;
-    transform: scale(1.03);
+  background-color: #aef060;
+  font-weight: bold;
+  cursor: default;
+  color: #3d3c3c;
+  transform: scale(1.03);
 }

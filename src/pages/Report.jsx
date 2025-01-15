@@ -688,7 +688,7 @@ const SearchBarWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center; // 수직(상하) 중앙 정렬
-  margin-right: 10rem;
+  margin-right: 15rem;
 `;
 
 // 새로운 styled components 추가
@@ -698,7 +698,7 @@ const CheckboxRound = styled.div`
   background-color: ${(props) => (props.checked ? "#4A90E2" : "white")};
   border-radius: 50%;
   border: 2px solid #4a90e2;
-  margin-right: 5px;
+  margin-right: 43px;
   display: inline-flex;
   align-items: center;
   justify-content: center;

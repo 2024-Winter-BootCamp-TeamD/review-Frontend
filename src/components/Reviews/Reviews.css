@@ -1,3 +1,4 @@
+/* src/components/Reviews/Reviews.css */
 .reviews-container {
     width: 850px;
     max-height: 79%; /* 한화면에 리스트 4개 보이게 할려면 65%로 설정 */
@@ -19,6 +20,7 @@
     box-sizing: border-box;
     background-color: #F3F3F3; /* 배경색 설정 */
     font-size: 15px;
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
 }
 
 .review-summary {

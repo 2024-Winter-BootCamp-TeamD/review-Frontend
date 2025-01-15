@@ -1,0 +1,72 @@
+.reviews-container {
+    width: 800px;
+    height: 70%; /* 리뷰리스트 영역의 세로 길이의 70% */
+    overflow-y: auto;
+    overflow-x: hidden; /* 가로 스크롤 제거 */
+    margin-bottom: -30px;
+    margin-top: 23px;
+    margin-left: 8px;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    width: 775px;
+    min-height: 57px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    background-color: #F3F3F3; /* 배경색 설정 */
+    font-size: 15px;
+}
+
+.review-summary {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-top: 12px;
+}
+
+.review-mode {
+    flex: 1;
+    font-weight: bold;
+    text-align: left;
+    margin-left: 40px;
+}
+
+/* 각 모드에 해당하는 색상 (소문자 클래스 적용) */
+.review-mode.clean {
+    color: #9E9E9E;
+}
+.review-mode.optimize {
+    color: #4CAF50;
+}
+.review-mode.newbie {
+    color: #2196F3;
+}
+.review-mode.study {
+    color: #FFC107;
+}
+.review-mode.basic {
+    color: #FF5722;
+}
+
+.review-link {
+    flex: 1.5;
+    margin-left: -180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+.review-date {
+    margin-right: 35px;
+}
+
+.review-arrow { 
+    margin-right: 20px;
+    font-size: 18px;
+}

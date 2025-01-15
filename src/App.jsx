@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard.jsx";
 import History from "./pages/History.jsx";
@@ -12,23 +12,21 @@ import NotificationButton from "./components/NotificationButton/NotificationButt
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <div className="app">
         <Sidebar />
         <div className="content">
+          <NotificationButton />
           <Routes>
-            <Route path="/history" element={<History />} />
-            <Route path="/repositories" element={<Repositories />} />
-            <Route path="/report" element={<Report />} />
+            <Route path="/index.html" element={<Navigate to="/" replace />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/history" element={<History />} />
-            <Route path="/repositories" element={<Repositories />} />
             <Route path="/report" element={<Report />} />
+            <Route path="/repositories" element={<Repositories />} />
           </Routes>
         </div>
-        <NotificationButton className="notification-button" />
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 

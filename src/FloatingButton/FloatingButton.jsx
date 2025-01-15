@@ -1,3 +1,4 @@
+//Reference: https://wsss.tistory.com/167
 import React, { useState } from "react";
 import "./FloatingButton.css";
 
@@ -9,6 +10,11 @@ const FloatingButton = () => {
     setSelectedButton({ text, backgroundColor });
     setIsOpen(false); // 메뉴 닫기
   };
+
+  const handleDashboardButtonClick = () => {
+    // 나중에 이 링크 수정하면 됨
+    window.location.href="https://github.com/2024-Winter-BootCamp-TeamD/review-Frontend"
+  }
 
   const toggleMenu = () => {
     setIsOpen((prev) => !prev);
@@ -48,7 +54,7 @@ const FloatingButton = () => {
 
       {/* Dashboard 버튼 */}
       <div
-        onClick={() => handleButtonClick("D", "#E6E6E6")}
+        onClick={handleDashboardButtonClick}
         className="floatingbutton-menu-item floatingbutton-dashboard"
         style={{ backgroundColor: "#E6E6E6" }}
       >
@@ -59,7 +65,6 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("C", "#BC6FCD")}
         className="floatingbutton-menu-item floatingbutton-clean-code"
-        style={{ backgroundColor: "#BC6FCD" }}
       >
         <span className="floatingbutton-item-text">C</span>
       </div>
@@ -68,7 +73,6 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("O", "#70BF73")}
         className="floatingbutton-menu-item floatingbutton-optimize"
-        style={{ backgroundColor: "#70BF73" }}
       >
         <span className="floatingbutton-item-text">O</span>
       </div>
@@ -77,7 +81,6 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("N", "#4DABF5")}
         className="floatingbutton-menu-item floatingbutton-newbie"
-        style={{ backgroundColor: "#4DABF5" }}
       >
         <span className="floatingbutton-item-text">N</span>
       </div>
@@ -86,7 +89,6 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("S", "#FFCD39")}
         className="floatingbutton-menu-item floatingbutton-study"
-        style={{ backgroundColor: "#FFCD39" }}
       >
         <span className="floatingbutton-item-text">S</span>
       </div>
@@ -95,7 +97,6 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("B", "#FF794E")}
         className="floatingbutton-menu-item floatingbutton-basic"
-        style={{ backgroundColor: "#FF794E" }}
       >
         <span className="floatingbutton-item-text">B</span>
       </div>

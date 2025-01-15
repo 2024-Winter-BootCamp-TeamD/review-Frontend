@@ -205,14 +205,15 @@
  }
  
  .floatingbutton-dashboard {
-    background-color: #9E9E9E;
+    background-color: #E6E6e6;
     box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
     text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
  }
  
  .floatingbutton-dashboard:hover {
-    background-color: #666666;
+    background-color: #9E9E9E;
     text-shadow: none;
+    cursor: pointer;
  }
  
  .floatingbutton-clean-code {
@@ -224,6 +225,7 @@
  .floatingbutton-clean-code:hover {
     background-color: #752E84;
     text-shadow: none;
+    cursor: pointer;
  }
  
  .floatingbutton-optimize {
@@ -235,6 +237,7 @@
  .floatingbutton-optimize:hover {
     background-color: #2F6A32;
     text-shadow: none;
+    cursor: pointer;
  }
  
  .floatingbutton-newbie {
@@ -246,6 +249,7 @@
  .floatingbutton-newbie:hover {
     background-color: #086691;
     text-shadow: none;
+    cursor: pointer;
  }
  
  .floatingbutton-study {
@@ -257,6 +261,7 @@
  .floatingbutton-study:hover {
     background-color: #805F00;
     text-shadow: none;
+    cursor: pointer;
  }
  
  .floatingbutton-basic {
@@ -268,9 +273,10 @@
  .floatingbutton-basic:hover {
     background-color: #B83C14;
     text-shadow: none;
+    cursor: pointer;
  }
  
- .floatingbutton-credit {
+ /* .floatingbutton-credit {
     margin: 24px 20px 120px 0;
     text-align: right;
     color: #EEEEEE;
@@ -285,4 +291,4 @@
  
  .floatingbutton-credit a:hover {
     text-decoration: underline;
- }
+ } */

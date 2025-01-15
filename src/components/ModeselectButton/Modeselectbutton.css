@@ -1,6 +1,6 @@
 .modeselect-button {
-  min-width: 200px; /* 버튼 최소 너비 */
-  min-height: 120px; /* 버튼 최소 높이 */
+  min-width: 260px; /* 버튼 최소 너비 */
+  min-height: 140px; /* 버튼 최소 높이 */
   width: 12vw; /* 화면 너비의 12% */
   height: 12vh; /* 화면 높이의 12% */
   max-width: 500px; /* 버튼 최대 너비 */
@@ -13,8 +13,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  margin: 0.5vw; /* 버튼 간격 */
-  box-shadow: 0 0.6vh 0.1vh rgba(0, 0, 0, 1);
+  box-shadow: 0 0.4vh 0.1vh rgba(0, 0, 0, 1);
   transition:
     background-color 0.3s ease,
     transform 0.2s ease;

@@ -6,25 +6,17 @@ import Reviews from '../components/Reviews/Reviews';
 
 const History = () => {
   const [selectedReview, setSelectedReview] = useState('');
-  const [selectedMode, setSelectedMode] = useState(''); 
-  // 검색어 상태
+  const [selectedMode, setSelectedMode] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleReviewClick = (content) => {
     setSelectedReview(content);
   };
 
-  // 차트에서 특정 모드 클릭 시 모드 토글
   const handleSliceClick = (mode) => {
-    if (selectedMode === mode) {
-      setSelectedMode(''); 
-    } else {
-      setSelectedMode(mode);
-    }
+    setSelectedMode(prevMode => (prevMode === mode ? '' : mode));
   };
 
-  // 컴포넌트 로드시 창 리사이즈 이벤트 발생
-  // (이로 인해 페이지의 박스 크기가 올바르게 재계산됩니다)
   useEffect(() => {
     window.dispatchEvent(new Event('resize'));
   }, []);
@@ -38,7 +30,6 @@ const History = () => {
       <div className="content-wrapper">
         <div className="left-container">
 
-          {/* 차트 영역 */}
           <div className="chart-box">
             <p className="box-title">Mode Statistics</p>
             <Chart onSliceClick={handleSliceClick} selectedMode={selectedMode} />
@@ -64,23 +55,14 @@ const History = () => {
             </div>
           </div>
 
-          {/* 리뷰 리스트 영역 */}
           <div className="reviewList-box">
             <p className="box-title">All reviews</p>
-
-            {/* 검색창 - SearchBar */}
             <div className="searchbar-container" style={{ width: '300px' }}>
-              {/*
-                value: 현재 검색어
-                onChange: 입력 변화 시 setSearchTerm
-              */}
               <SearchBar 
                 value={searchTerm} 
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-
-            {/* 리뷰 목록 컴포넌트(검색어와 선택된 모드 전달) */}
             <Reviews 
               onReviewClick={handleReviewClick} 
               selectedMode={selectedMode}
@@ -88,8 +70,7 @@ const History = () => {
             />
           </div>
         </div>
-        
-        {/* 오른쪽 영역: 상세 리뷰 */}
+
         <div className="right-container">
           <div className="reviewDetails-box">
             <p className="box-title">Review</p>

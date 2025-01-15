@@ -52,7 +52,6 @@ const Dashboard = () => {
       { date: "2025-01-13", grade: "S" },
       { date: "2025-01-14", grade: "S" },
     ],
-    //A,B,D,S,F,G
     Optimize: [
       { date: "2025-01-09", grade: "F" },
       { date: "2025-01-10", grade: "D" },

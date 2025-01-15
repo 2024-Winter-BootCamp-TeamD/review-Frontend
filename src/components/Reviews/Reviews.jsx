@@ -1,4 +1,3 @@
-//src/components/Reviews/Reviews.jsx
 import React from 'react';
 import './Reviews.css';
 

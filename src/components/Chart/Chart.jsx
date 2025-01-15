@@ -17,7 +17,6 @@ if (Accessibility && typeof Accessibility === 'function') {
 
 const Chart = ({ onSliceClick, selectedMode }) => {
   useEffect(() => {
-    // 원래 animate 함수(초기 애니메이션용)를 저장합니다.
     const originalAnimate = Highcharts.seriesTypes.pie.prototype.animate;
 
     (function (H) {
@@ -84,7 +83,6 @@ const Chart = ({ onSliceClick, selectedMode }) => {
       };
     })(Highcharts);
 
-    // 차트 생성
     const chart = Highcharts.chart('chart-container', {
       chart: {
         type: 'pie',
@@ -113,7 +111,6 @@ const Chart = ({ onSliceClick, selectedMode }) => {
               .add()
               .toFront();
 
-            // 최초 로드 후에는 애니메이션 함수를 비워서 재호출되지 않도록 함
             Highcharts.seriesTypes.pie.prototype.animate = function () {};
           },
         },
@@ -123,7 +120,7 @@ const Chart = ({ onSliceClick, selectedMode }) => {
       tooltip: {
         headerFormat: '',
         pointFormat:
-          '<span style="color:{point.color}">\u25cf</span> {point.name}: <b>{point.percentage:.1f}%</b>',
+          '<span style="color:{point.color}">●</span> {point.name}: <b>{point.percentage:.1f}%</b>',
       },
       accessibility: { point: { valueSuffix: '%' } },
       plotOptions: {
@@ -142,11 +139,6 @@ const Chart = ({ onSliceClick, selectedMode }) => {
                 if (onSliceClick) {
                   onSliceClick(this.name);
                 }
-                const selectedPoint = this;
-                this.series.points.forEach((pt) => {
-                  const isSelected = pt === selectedPoint;
-                  pt.graphic.attr({ opacity: isSelected ? 1 : 0.3 });
-                });
               },
             },
           },

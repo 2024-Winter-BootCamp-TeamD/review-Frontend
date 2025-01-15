@@ -34,3 +34,24 @@ body {
   right: 20px;
   z-index: 1000;
 }
+
+/* 두 버튼을 나란히 배치 */
+.top-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: absolute;
+  top: -25px;
+  right: 80px;
+  gap: 10px; /* 버튼 간격 */
+}
+
+/* NotificationButton 스타일 */
+.notification-button {
+  margin: 0; /* 기존 margin 제거 */
+}
+
+/* ModeSwitchButton 스타일 */
+.mode-switch-button {
+  margin: 0; /* 기존 margin 제거 */
+}

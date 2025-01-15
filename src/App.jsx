@@ -8,6 +8,7 @@ import Sidebar from "./components/Sidebar/Sidebar.jsx";
 
 import "./App.css";
 import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
+import ModeSwitchButton from "./components/ModeSwitchButton/ModeSwitchButton.jsx";
 
 function App() {
   return (
@@ -22,7 +23,10 @@ function App() {
             <Route path="/report" element={<Report />} />
           </Routes>
         </div>
-        <NotificationButton className="notification-button" />
+        <div className="top-buttons">
+          <ModeSwitchButton />
+          <NotificationButton />
+        </div>
       </div>
     </Router>
   );

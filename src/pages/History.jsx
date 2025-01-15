@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./History.css";
 import Chart from '../components/Chart/Chart';
 import SearchBar from '../components/SearchBar/SearchBar';
@@ -6,13 +6,15 @@ import Reviews from '../components/Reviews/Reviews';
 
 const History = () => {
   const [selectedReview, setSelectedReview] = useState('');
-  const [selectedMode, setSelectedMode] = useState(''); // 선택된 모드 관리
+  const [selectedMode, setSelectedMode] = useState(''); 
+  // 검색어 상태
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleReviewClick = (content) => {
     setSelectedReview(content);
   };
 
-  // Chart에서 클릭 이벤트 발생 시 호출할 콜백 함수
+  // 차트에서 특정 모드 클릭 시 모드 토글
   const handleSliceClick = (mode) => {
     if (selectedMode === mode) {
       setSelectedMode(''); 
@@ -20,6 +22,12 @@ const History = () => {
       setSelectedMode(mode);
     }
   };
+
+  // 컴포넌트 로드시 창 리사이즈 이벤트 발생
+  // (이로 인해 페이지의 박스 크기가 올바르게 재계산됩니다)
+  useEffect(() => {
+    window.dispatchEvent(new Event('resize'));
+  }, []);
 
   return (
     <div className="history-container">
@@ -29,9 +37,10 @@ const History = () => {
 
       <div className="content-wrapper">
         <div className="left-container">
+
+          {/* 차트 영역 */}
           <div className="chart-box">
             <p className="box-title">Mode Statistics</p>
-            {/* Chart에 onSliceClick와 selectedMode 전달 */}
             <Chart onSliceClick={handleSliceClick} selectedMode={selectedMode} />
             <div className="chart-legend">
               {['BASIC', 'CLEAN', 'OPTIMIZE', 'NEWBIE', 'STUDY'].map((mode) => (
@@ -44,7 +53,8 @@ const History = () => {
                       mode === 'CLEAN' ? '#9E9E9E' :
                       mode === 'OPTIMIZE' ? '#4CAF50' :
                       mode === 'NEWBIE' ? '#2196F3' :
-                      mode === 'STUDY' ? '#FFC107' : '#ccc'
+                      mode === 'STUDY' ? '#FFC107' :
+                      '#ccc'
                     }}>
                     <span className="legend-label">{mode}</span>
                   </div>
@@ -53,16 +63,33 @@ const History = () => {
               ))}
             </div>
           </div>
+
+          {/* 리뷰 리스트 영역 */}
           <div className="reviewList-box">
             <p className="box-title">All reviews</p>
+
+            {/* 검색창 - SearchBar */}
             <div className="searchbar-container" style={{ width: '300px' }}>
-              <SearchBar />
+              {/*
+                value: 현재 검색어
+                onChange: 입력 변화 시 setSearchTerm
+              */}
+              <SearchBar 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            {/* Reviews에 selectedMode prop 전달 */}
-            <Reviews onReviewClick={handleReviewClick} selectedMode={selectedMode} />
-          </div>  
+
+            {/* 리뷰 목록 컴포넌트(검색어와 선택된 모드 전달) */}
+            <Reviews 
+              onReviewClick={handleReviewClick} 
+              selectedMode={selectedMode}
+              searchTerm={searchTerm}
+            />
+          </div>
         </div>
         
+        {/* 오른쪽 영역: 상세 리뷰 */}
         <div className="right-container">
           <div className="reviewDetails-box">
             <p className="box-title">Review</p>

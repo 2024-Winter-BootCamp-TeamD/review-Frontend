@@ -1,3 +1,5 @@
+// src/components/Chart/Chart.jsx
+
 import React, { useEffect } from 'react';
 import Highcharts from 'highcharts';
 import Exporting from 'highcharts/modules/exporting';
@@ -84,23 +86,26 @@ const Chart = ({ onSliceClick, selectedMode }) => {
       };
     })(Highcharts);
   
+    // 차트 생성
     const chart = Highcharts.chart('chart-container', {
       chart: {
         type: 'pie',
         backgroundColor: 'transparent',
-        reflow: false,
+        // 1) 여기서 reflow를 true로 바꿔주세요.
+        reflow: true, 
         events: {
           load: function () {
             const chart = this;
-            chart.renderer.label(
-              'Total<br>42',
-              chart.plotLeft + chart.plotWidth / 2,
-              chart.plotTop + chart.plotHeight / 2 - 30,
-              null,
-              null,
-              null,
-              true
-            )
+            chart.renderer
+              .label(
+                'Total<br>42',
+                chart.plotLeft + chart.plotWidth / 2,
+                chart.plotTop + chart.plotHeight / 2 - 30,
+                null,
+                null,
+                null,
+                true
+              )
               .css({
                 color: '#000',
                 fontSize: '24px',
@@ -110,12 +115,9 @@ const Chart = ({ onSliceClick, selectedMode }) => {
               .attr({ align: 'center' })
               .add()
               .toFront();
-            // 최초 애니메이션 완료 후, 애니메이션 함수를 무효화하여 이후 호출 시 효과가 나타나지 않도록 함.
-            Highcharts.seriesTypes.pie.prototype.animate = function (init) {
-              if (init) {
-                this.points.forEach(point => point.graphic.attr({ opacity: 0 }));
-              }
-            };
+            
+            // 최초 로드 후에는 애니메이션 함수를 비워서 재호출되지 않도록 함
+            Highcharts.seriesTypes.pie.prototype.animate = function () {};
           }
         }
       },
@@ -143,7 +145,6 @@ const Chart = ({ onSliceClick, selectedMode }) => {
                 if (onSliceClick) {
                   onSliceClick(this.name);
                 }
-                // 클릭 시에는 무효화된 animate 함수로 인해 애니메이션 없이 opacity를 즉시 변경
                 this.series.points.forEach(pt => {
                   pt.graphic.attr({ opacity: pt === this ? 1 : 0.3 });
                 });
@@ -169,8 +170,8 @@ const Chart = ({ onSliceClick, selectedMode }) => {
         }
       ]
     });
-  }, [onSliceClick]);
-  
+  }, []);
+
   return (
     <div className="chart-wrapper">
       <div className="chart-inner">

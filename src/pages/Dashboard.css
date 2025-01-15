@@ -102,7 +102,7 @@
   background-color: #ffffff;
   padding: 0;
   border-radius: 1vw;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   min-width: 400px; /* 차트 최소 너비 */
   height: 40vh;
   margin: 0% 0% 0% 0%;
@@ -120,7 +120,7 @@
   align-items: center;
   background-color: #ffffff;
   border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   padding: 20px;
   width: 30vw; /* 전체 컨테이너 너비 */
   height: 40vh; /* 전체 컨테이너 높이 */

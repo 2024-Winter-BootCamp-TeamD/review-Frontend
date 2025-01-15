@@ -37,25 +37,44 @@ const Dashboard = () => {
 
   const initialData = {
     Basic: [
-      { date: "2025-01-10", grade: "A" },
+      { date: "2025-01-09", grade: "A" },
+      { date: "2025-01-10", grade: "D" },
       { date: "2025-01-11", grade: "B" },
-      { date: "2025-01-12", grade: "A" },
+      { date: "2025-01-12", grade: "F" },
+      { date: "2025-01-13", grade: "A" },
+      { date: "2025-01-14", grade: "S" },
     ],
     "Clean Code": [
-      { date: "2025-01-10", grade: "C" },
+      { date: "2025-01-09", grade: "A" },
+      { date: "2025-01-10", grade: "D" },
       { date: "2025-01-11", grade: "B" },
+      { date: "2025-01-12", grade: "A" },
+      { date: "2025-01-13", grade: "S" },
+      { date: "2025-01-14", grade: "S" },
     ],
     Optimize: [
-      { date: "2025-01-11", grade: "A" },
-      { date: "2025-01-12", grade: "S" },
+      { date: "2025-01-09", grade: "F" },
+      { date: "2025-01-10", grade: "D" },
+      { date: "2025-01-11", grade: "B" },
+      { date: "2025-01-12", grade: "A" },
+      { date: "2025-01-13", grade: "E" },
+      { date: "2025-01-14", grade: "S" },
     ],
     Newbie: [
-      { date: "2025-01-11", grade: "A" },
-      { date: "2025-01-12", grade: "F" },
+      { date: "2025-01-09", grade: "F" },
+      { date: "2025-01-10", grade: "E" },
+      { date: "2025-01-11", grade: "B" },
+      { date: "2025-01-12", grade: "A" },
+      { date: "2025-01-13", grade: "S" },
+      { date: "2025-01-14", grade: "S" },
     ],
     Study: [
-      { date: "2025-01-11", grade: "B" },
-      { date: "2025-01-12", grade: "C" },
+      { date: "2025-01-09", grade: "B" },
+      { date: "2025-01-10", grade: "D" },
+      { date: "2025-01-11", grade: "F" },
+      { date: "2025-01-12", grade: "A" },
+      { date: "2025-01-13", grade: "S" },
+      { date: "2025-01-14", grade: "B" },
     ],
   };
 
@@ -92,7 +111,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const processData = (modeData) => {
-      const allDates = ["2025-01-10", "2025-01-11", "2025-01-12"];
+      const allDates = ["2025-01-09","2025-01-10", "2025-01-11", "2025-01-12","2025-01-13","2025-01-14"];
       return allDates.map((date) => {
         const entry = modeData.find((d) => d.date === date);
         return {

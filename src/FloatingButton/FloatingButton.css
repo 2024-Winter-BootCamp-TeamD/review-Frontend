@@ -9,28 +9,20 @@
     color: inherit;
  }
  
- .floatingbutton-menu-item,
- .floatingbutton-menu-open-button {
-    background: #EEEEEE;
-    border-radius: 100%;
-    width: 80px;
-    height: 80px;
-    margin-left: -40px;
-    position: absolute;
-    color: #FFFFFF;
-    text-align: center;
-    line-height: 80px;
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-transition: -webkit-transform ease-out 200ms;
-    transition: -webkit-transform ease-out 200ms;
-    transition: transform ease-out 200ms;
-    transition: transform ease-out 200ms, -webkit-transform ease-out 200ms;
- }
- 
- .floatingbutton-menu-open {
-    display: none;
- }
+.floatingbutton-menu-item,
+.floatingbutton-menu-open-button {
+  background: #eeeeee;
+  border-radius: 100%;
+  width: 80px;
+  height: 80px;
+  margin-left: -40px;
+  position: absolute;
+  color: #ffffff;
+  text-align: center;
+  line-height: 80px;
+  transform: translate3d(0, 0, 0);
+  transition: transform ease-out 200ms;
+}
  
  .floatingbutton-lines {
     width: 25px;
@@ -42,54 +34,51 @@
     left: 50%;
     margin-left: -12.5px;
     margin-top: -1.5px;
-    -webkit-transition: -webkit-transform 200ms;
-    transition: -webkit-transform 200ms;
     transition: transform 200ms;
-    transition: transform 200ms, -webkit-transform 200ms;
- }
+  }
  
- .floatingbutton-line-1 {
-    -webkit-transform: translate3d(0, -8px, 0);
+  .floatingbutton-line-1 {
     transform: translate3d(0, -8px, 0);
- }
- 
- .floatingbutton-line-2 {
-    -webkit-transform: translate3d(0, 0, 0);
+  }
+  
+  .floatingbutton-line-2 {
     transform: translate3d(0, 0, 0);
- }
- 
- .floatingbutton-line-3 {
-    -webkit-transform: translate3d(0, 8px, 0);
+  }
+  
+  .floatingbutton-line-3 {
     transform: translate3d(0, 8px, 0);
- }
+  }
  
- .floatingbutton-menu-open:checked + .floatingbutton-menu-open-button .floatingbutton-line-1 {
-    -webkit-transform: translate3d(0, 0, 0) rotate(45deg);
+  .floatingbutton-menu-open:checked + .floatingbutton-menu-open-button .floatingbutton-line-1 {
     transform: translate3d(0, 0, 0) rotate(45deg);
- }
- 
- .floatingbutton-menu-open:checked + .floatingbutton-menu-open-button .floatingbutton-line-2 {
-    -webkit-transform: translate3d(0, 0, 0) scale(0.1, 1);
+  }
+  
+  .floatingbutton-menu-open:checked + .floatingbutton-menu-open-button .floatingbutton-line-2 {
     transform: translate3d(0, 0, 0) scale(0.1, 1);
- }
- 
- .floatingbutton-menu-open:checked + .floatingbutton-menu-open-button .floatingbutton-line-3 {
-    -webkit-transform: translate3d(0, 0, 0) rotate(-45deg);
+  }
+  
+  .floatingbutton-menu-open:checked + .floatingbutton-menu-open-button .floatingbutton-line-3 {
     transform: translate3d(0, 0, 0) rotate(-45deg);
- }
+  }
  
- .floatingbutton-menu {
-    margin: auto;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 80px;
+  .floatingbutton-menu {
+    position: fixed;
+    bottom: 30px;
+    right: 60px;
+    width: 0px;
     height: 80px;
     text-align: center;
-    box-sizing: border-box;
-    font-size: 26px;
+    z-index: 1000;
+    transition: bottom 0.3s ease, right 0.3s ease;
+  }
+
+  .floatingbutton-menu-open:checked ~ .floatingbutton-menu {
+    bottom: 150px; /* 열린 상태 */
+    right: 180px; /* 열린 상태 */
+  }
+
+.floatingbutton-menu-open {
+    display: none;
  }
  
  .floatingbutton-menu-item {
@@ -135,28 +124,23 @@
  .floatingbutton-item-text {
     display: block; 
     font-size: 2vw;
-    color: #FFFFFF;
-    display: flex;
+    color: #000000;
     text-align: center;
     justify-content: center;
  }
  
  .floatingbutton-menu-open-button {
     z-index: 2;
-    -webkit-transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    -webkit-transition-duration: 400ms;
     transition-duration: 400ms;
-    -webkit-transform: scale(1.1, 1.1) translate3d(0, 0, 0);
     transform: scale(1.1, 1.1) translate3d(0, 0, 0);
     cursor: pointer;
     box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
- }
+  }
  
- .floatingbutton-menu-open-button:hover {
-    -webkit-transform: scale(1.2, 1.2) translate3d(0, 0, 0);
+  .floatingbutton-menu-open-button:hover {
     transform: scale(1.2, 1.2) translate3d(0, 0, 0);
- }
+  }
  
  .floatingbutton-menu-open:checked + .floatingbutton-menu-open-button {
     -webkit-transition-timing-function: linear;
@@ -168,9 +152,8 @@
  }
  
  .floatingbutton-menu-open:checked ~ .floatingbutton-menu-item {
-    -webkit-transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
     transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
- }
+  }
  
  .floatingbutton-menu-open:checked ~ .floatingbutton-menu-item:nth-child(3) {
     transition-duration: 180ms;

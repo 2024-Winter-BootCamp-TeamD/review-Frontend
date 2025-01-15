@@ -31,10 +31,10 @@ function App() {
         <Sidebar isDarkMode={isDarkMode} />
         <div className="content">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/repositories" element={<Repositories />} />
-            <Route path="/report" element={<Report />} />
+            <Route path="/" element={<Dashboard isDarkMode={isDarkMode} />} />
+            <Route path="/history" element={<History isDarkMode={isDarkMode} />} />
+            <Route path="/repositories" element={<Repositories isDarkMode={isDarkMode} />} />
+            <Route path="/report" element={<Report isDarkMode={isDarkMode} />} />
           </Routes>
         </div>
         <div className="top-buttons">

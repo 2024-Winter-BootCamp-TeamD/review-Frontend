@@ -3,8 +3,8 @@ import ModeSelectButton from "../components/ModeselectButton/ModeSelectButton.js
 import "./Dashboard.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-const Dashboard = () => {
-  const username = "Lauiee"; //Default
+const Dashboard = ({ isDarkMode }) => {
+  const username = "Nekerworld"; //Default
   const [profileLoaded, setProfileLoaded] = useState(false)
   useEffect(() => {
     setProfileLoaded(true);
@@ -21,7 +21,7 @@ const Dashboard = () => {
     }, [username]);
     return (
       <h3
-        className="username"
+        className="dashboard-username"
         style={{
           fontSize: fontSize, // 동적으로 폰트 크기 설정
           textAlign: "center",
@@ -80,7 +80,7 @@ const Dashboard = () => {
 
   const gradeToValue = { S: 7, A: 6, B: 5, C: 4, D: 3, E: 2, F: 1, 0: 0 };
   // 라인차트 툴팁 컴포넌트
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip = ({ active, payload, label, isDarkMode }) => {
     if (active && payload && payload.length) {
       const gradeValue = payload[0].value; // 첫 번째 데이터의 값 가져오기
       const gradeKey = Object.keys(gradeToValue).find(
@@ -89,7 +89,7 @@ const Dashboard = () => {
       return (
         <div
           style={{
-            backgroundColor: "#FFFFFF",
+            backgroundColor: isDarkMode ? "#000000" : "#FFFFFF", // 다크 모드일 때 배경색 설정
             padding: "10px",
             border: "1px solid #CCCCCC",
             borderRadius: "5px",
@@ -166,6 +166,18 @@ const Dashboard = () => {
     return () => clearInterval(interval); // 컴포넌트 언마운트 시 클리어
   }, [pieChartData.length]);
 
+  useEffect(() => {
+    if (isDarkMode) {
+      // 다크 모드일 때 스타일 설정
+      document.body.style.backgroundColor = "#121212";
+      document.body.style.color = "#ffffff";
+    } else {
+      // 라이트 모드일 때 스타일 설정
+      document.body.style.backgroundColor = "#ffffff";
+      document.body.style.color = "#000000";
+    }
+  }, [isDarkMode]);
+
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -234,7 +246,7 @@ const Dashboard = () => {
                   fontWeight: "bold", // 라벨 볼드 효과
                   dx: -20, // 라벨을 Y축에서 왼쪽(-)으로 10px 이동
                   fontSize: 12,
-                  fill: "#000000", // 텍스트 색상
+                  fill: isDarkMode ? "#FFFFFF" : "#000000", // 다크 모드일 때 흰색, 라이트 모드일 때 검정색
                 }}
               />
               <defs>
@@ -247,24 +259,23 @@ const Dashboard = () => {
                   />
                 </filter>
               </defs>
-              <Tooltip content={<CustomTooltip/>}/>
+              <Tooltip content={<CustomTooltip isDarkMode={isDarkMode} />} />
               <Line 
                 type="monotone" 
                 dataKey="gradeValue" 
-                stroke="#000000" 
+                stroke={isDarkMode ? "#FFFFFF" : "#000000"} // 다크 모드일 때 흰색, 라이트 모드일 때 검정색
                 strokeWidth={4}
                 filter="url(#lineShadow)"
-                shad
                 dot={({ cx, cy }) => (
                   <circle
                     cx={cx}
                     cy={cy}
                     r={7} // 점의 크기
-                    fill="#FFFFFF" // 점의 색상
-                    stroke="#000000" // 점의 외곽선 제거
+                    fill={isDarkMode ? "#000000" : "#FFFFFF"} // 다크 모드일 때 검정색, 라이트 모드일 때 흰색
+                    stroke={isDarkMode ? "#FFFFFF" : "#000000"} // 다크 모드일 때 흰색, 라이트 모드일 때 검정색
                   />
                 )}
-                 />
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>

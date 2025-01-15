@@ -19,12 +19,10 @@
     background-color: #133508;
     transform: translateY(-2px);
 }
-
 .sidebar-button:active {
     background-color: #AEF060;
     transform: translateY(1px) scale(0.98);
 }
-
 .sidebar-button.active {
     background-color: #AEF060;
     font-weight: bold;

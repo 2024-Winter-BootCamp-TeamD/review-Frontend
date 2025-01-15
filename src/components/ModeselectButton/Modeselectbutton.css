@@ -5,7 +5,7 @@
   height: 12vh; /* 화면 높이의 12% */
   max-width: 500px; /* 버튼 최대 너비 */
   max-height: 300px; /* 버튼 최대 높이 */
-  background-color: #F3F3F3;
+  background-color: #f3f3f3;
   border: none;
   border-radius: 1vw; /* 둥근 모서리 크기 조정 */
   cursor: pointer;
@@ -14,7 +14,9 @@
   justify-content: center;
   align-items: flex-start;
   box-shadow: 0 0.4vh 0.1vh rgba(0, 0, 0, 1);
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
   font-size: clamp(16px, 2vw, 24px); /* 동적 폰트 크기 */
 }
 

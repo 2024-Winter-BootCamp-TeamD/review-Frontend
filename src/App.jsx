@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Dashboard from "./pages/Dashboard.jsx";
 import History from "./pages/History.jsx";
 import Repositories from "./pages/Repositories.jsx";
@@ -16,6 +17,9 @@ function App() {
         <Sidebar />
         <div className="content">
           <Routes>
+            <Route path="/history" element={<History />} />
+            <Route path="/repositories" element={<Repositories />} />
+            <Route path="/report" element={<Report />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/history" element={<History />} />
             <Route path="/repositories" element={<Repositories />} />

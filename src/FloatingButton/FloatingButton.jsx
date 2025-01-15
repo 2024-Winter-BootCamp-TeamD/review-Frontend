@@ -62,7 +62,7 @@ const FloatingButton = () => {
       <div
         onClick={handleDashboardButtonClick}
         className="floatingbutton-menu-item floatingbutton-dashboard"
-        data-tooltip="Dashboard"
+        data-tooltip="Go to Dashboard"
       >
         <span className="floatingbutton-item-text">D</span>
       </div>
@@ -71,7 +71,7 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("C", "#BC6FCD")}
         className="floatingbutton-menu-item floatingbutton-clean-code"
-        data-tooltip="Dashboard"
+        data-tooltip="Clean Code Mode"
       >
         <span className="floatingbutton-item-text">C</span>
       </div>
@@ -80,6 +80,7 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("O", "#70BF73")}
         className="floatingbutton-menu-item floatingbutton-optimize"
+        data-tooltip="Optimiawdawdawdawdze Mode"
       >
         <span className="floatingbutton-item-text">O</span>
       </div>
@@ -88,6 +89,7 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("N", "#4DABF5")}
         className="floatingbutton-menu-item floatingbutton-newbie"
+        data-tooltip="Newawdawdawdawdbie Mode"
       >
         <span className="floatingbutton-item-text">N</span>
       </div>
@@ -96,6 +98,7 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("S", "#FFCD39")}
         className="floatingbutton-menu-item floatingbutton-study"
+        data-tooltip="Stuawdawdawdawdady Mode"
       >
         <span className="floatingbutton-item-text">S</span>
       </div>
@@ -104,6 +107,7 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("B", "#FF794E")}
         className="floatingbutton-menu-item floatingbutton-basic"
+        data-tooltip="Baswdawdwadic Mode"
       >
         <span className="floatingbutton-item-text">B</span>
       </div>

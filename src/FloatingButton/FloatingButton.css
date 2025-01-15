@@ -22,6 +22,7 @@
   line-height: 80px;
   transform: translate3d(0, 0, 0);
   transition: transform ease-out 200ms;
+  z-index: 1;
 }
  
  .floatingbutton-lines {
@@ -68,7 +69,7 @@
     width: 0px;
     height: 80px;
     text-align: center;
-    z-index: 1000;
+    z-index: 200;
     transition: bottom 0.3s ease, right 0.3s ease;
   }
 
@@ -155,6 +156,7 @@
     transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
   }
  
+  /* Dashboard */
  .floatingbutton-menu-open:checked ~ .floatingbutton-menu-item:nth-child(3) {
     transition-duration: 180ms;
     -webkit-transition-duration: 180ms;
@@ -162,6 +164,7 @@
     transform: translate3d(0.08361px, -104.99997px, 0);
  }
  
+ /* Clean Code */
  .floatingbutton-menu-open:checked ~ .floatingbutton-menu-item:nth-child(4) {
     transition-duration: 280ms;
     -webkit-transition-duration: 280ms;
@@ -169,6 +172,7 @@
     transform: translate3d(90.9466px, -52.47586px, 0);
  }
  
+ /* Optimize */
  .floatingbutton-menu-open:checked ~ .floatingbutton-menu-item:nth-child(5) {
     transition-duration: 380ms;
     -webkit-transition-duration: 380ms;
@@ -176,6 +180,7 @@
     transform: translate3d(90.9466px, 52.47586px, 0);
  }
  
+ /* Newbie */
  .floatingbutton-menu-open:checked ~ .floatingbutton-menu-item:nth-child(6) {
     transition-duration: 480ms;
     -webkit-transition-duration: 480ms;
@@ -183,6 +188,7 @@
     transform: translate3d(0.08361px, 104.99997px, 0);
  }
  
+ /* Study */
  .floatingbutton-menu-open:checked ~ .floatingbutton-menu-item:nth-child(7) {
     transition-duration: 580ms;
     -webkit-transition-duration: 580ms;
@@ -190,6 +196,7 @@
     transform: translate3d(-90.86291px, 52.62064px, 0);
  }
  
+ /* Basic */
  .floatingbutton-menu-open:checked ~ .floatingbutton-menu-item:nth-child(8) {
     transition-duration: 680ms;
     -webkit-transition-duration: 680ms;
@@ -282,20 +289,32 @@
    position: absolute;
    bottom: 110%;
    left: 50%;
-   transform: translateX(-50%);
-   background-color: rgba(0, 0, 0, 0.4);
+   transform: translateX(-50%) scale(0.9);
+   background: linear-gradient(135deg, #6b8ce6, #9dc5ff);
    color: #fff;
-   padding: 10%;
-   border-radius: 10px;
-   font-size: 16px;
+   padding: 8px 12px;
+   border-radius: 20px;
+   font-size: 14px;
+   font-family: Arial, sans-serif;
+   font-weight: bold;
+   text-align: center;
+   display: flex;
+   height: 30px;
+   align-items: center;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+   max-width: 250px;
    white-space: nowrap;
    opacity: 0;
    visibility: hidden;
-   transition: opacity 0.3s ease, visibility 0.3s ease;
-   z-index: 1001;
+   transition: opacity 0.3s ease, transform 0.3s ease;
+   z-index: 10000; /* 최상위 계층 설정 */
+   pointer-events: none;
  }
-
+ 
  .floatingbutton-menu-item:hover::after {
    opacity: 1;
    visibility: visible;
+   transform: translateX(-50%) scale(1); /* 확대 */
+   z-index: 10000;
  }
+ 

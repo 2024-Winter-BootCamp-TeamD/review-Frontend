@@ -24,7 +24,7 @@ const FloatingButton = () => {
     <nav
       className="floatingbutton-menu"
       style={{
-        bottom: isOpen ? "150px" : "30px",
+        bottom: isOpen ? "180px" : "30px",
         right: isOpen ? "180px" : "70px",
       }}
     >
@@ -76,40 +76,40 @@ const FloatingButton = () => {
         <span className="floatingbutton-item-text">C</span>
       </div>
 
+      {/* Basic 버튼 */}
+      <div
+        onClick={() => handleButtonClick("B", "#FF794E")}
+        className="floatingbutton-menu-item floatingbutton-basic"
+        data-tooltip="Basic Mode"
+      >
+        <span className="floatingbutton-item-text">B</span>
+      </div>
+
       {/* Optimize 버튼 */}
       <div
         onClick={() => handleButtonClick("O", "#70BF73")}
         className="floatingbutton-menu-item floatingbutton-optimize"
-        data-tooltip="Optimiawdawdawdawdze Mode"
+        data-tooltip="Optimize Mode"
       >
         <span className="floatingbutton-item-text">O</span>
-      </div>
-
-      {/* Newbie 버튼 */}
-      <div
-        onClick={() => handleButtonClick("N", "#4DABF5")}
-        className="floatingbutton-menu-item floatingbutton-newbie"
-        data-tooltip="Newawdawdawdawdbie Mode"
-      >
-        <span className="floatingbutton-item-text">N</span>
       </div>
 
       {/* Study 버튼 */}
       <div
         onClick={() => handleButtonClick("S", "#FFCD39")}
         className="floatingbutton-menu-item floatingbutton-study"
-        data-tooltip="Stuawdawdawdawdady Mode"
+        data-tooltip="Study Mode"
       >
         <span className="floatingbutton-item-text">S</span>
       </div>
 
-      {/* Basic 버튼 */}
+      {/* Newbie 버튼 */}
       <div
-        onClick={() => handleButtonClick("B", "#FF794E")}
-        className="floatingbutton-menu-item floatingbutton-basic"
-        data-tooltip="Baswdawdwadic Mode"
+        onClick={() => handleButtonClick("N", "#4DABF5")}
+        className="floatingbutton-menu-item floatingbutton-newbie"
+        data-tooltip="Newbie Mode"
       >
-        <span className="floatingbutton-item-text">B</span>
+        <span className="floatingbutton-item-text">N</span>
       </div>
     </nav>
   );

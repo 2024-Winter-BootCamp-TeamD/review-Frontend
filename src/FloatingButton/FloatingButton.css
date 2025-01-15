@@ -275,20 +275,27 @@
     text-shadow: none;
     cursor: pointer;
  }
- 
- /* .floatingbutton-credit {
-    margin: 24px 20px 120px 0;
-    text-align: right;
-    color: #EEEEEE;
+
+ /* 툴팁 기능 css */
+ .floatingbutton-menu-item::after {
+   content: attr(data-tooltip);
+   position: absolute;
+   bottom: 110%;
+   left: 50%;
+   transform: translateX(-50%);
+   background-color: rgba(0, 0, 0, 0.4);
+   color: #fff;
+   padding: 10%;
+   border-radius: 10px;
+   font-size: 16px;
+   white-space: nowrap;
+   opacity: 0;
+   visibility: hidden;
+   transition: opacity 0.3s ease, visibility 0.3s ease;
+   z-index: 1001;
  }
- 
- .floatingbutton-credit a {
-    padding: 8px 0;
-    color: #C49CDE;
-    text-decoration: none;
-    transition: all 0.3s ease 0s;
+
+ .floatingbutton-menu-item:hover::after {
+   opacity: 1;
+   visibility: visible;
  }
- 
- .floatingbutton-credit a:hover {
-    text-decoration: underline;
- } */

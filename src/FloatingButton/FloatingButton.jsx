@@ -21,34 +21,40 @@ const FloatingButton = () => {
   };
 
   return (
-    <nav 
-    className="floatingbutton-menu"
-    style={{
+    <nav
+      className="floatingbutton-menu"
+      style={{
         bottom: isOpen ? "150px" : "30px",
-        right : isOpen ? "180px" : "70px",
-    }}
+        right: isOpen ? "180px" : "70px",
+      }}
     >
-      <input 
-      type="checkbox" 
-      className="floatingbutton-menu-open" 
-      name="menu-open" 
-      id="menu-open" 
-      checked={isOpen}
-      onChange={toggleMenu}
+      <input
+        type="checkbox"
+        className="floatingbutton-menu-open"
+        name="menu-open"
+        id="menu-open"
+        checked={isOpen}
+        onChange={toggleMenu}
       />
       <label
-        className="floatingbutton-menu-open-button"
+        className={`floatingbutton-menu-open-button ${isOpen ? "open" : ""}`}
         htmlFor="menu-open"
-        style={{ backgroundColor: selectedButton ? selectedButton.backgroundColor : "#EEEEEE" }}
+        style={{
+          backgroundColor: selectedButton ? selectedButton.backgroundColor : "#EEEEEE",
+        }}
       >
-        {selectedButton ? (
-          <span className="floatingbutton-item-text">{selectedButton.text}</span>
+        {isOpen ? (
+          <span className="floatingbutton-x">✕</span> // 메뉴 열림 시 X 표시
         ) : (
-          <>
-            <span className="floatingbutton-lines floatingbutton-line-1"></span>
-            <span className="floatingbutton-lines floatingbutton-line-2"></span>
-            <span className="floatingbutton-lines floatingbutton-line-3"></span>
-          </>
+          selectedButton ? (
+            <span className="floatingbutton-item-text">{selectedButton.text}</span>
+          ) : (
+            <>
+              <span className="floatingbutton-lines floatingbutton-line-1"></span>
+              <span className="floatingbutton-lines floatingbutton-line-2"></span>
+              <span className="floatingbutton-lines floatingbutton-line-3"></span>
+            </>
+          )
         )}
       </label>
 
@@ -56,7 +62,7 @@ const FloatingButton = () => {
       <div
         onClick={handleDashboardButtonClick}
         className="floatingbutton-menu-item floatingbutton-dashboard"
-        style={{ backgroundColor: "#E6E6E6" }}
+        data-tooltip="Dashboard"
       >
         <span className="floatingbutton-item-text">D</span>
       </div>
@@ -65,6 +71,7 @@ const FloatingButton = () => {
       <div
         onClick={() => handleButtonClick("C", "#BC6FCD")}
         className="floatingbutton-menu-item floatingbutton-clean-code"
+        data-tooltip="Dashboard"
       >
         <span className="floatingbutton-item-text">C</span>
       </div>

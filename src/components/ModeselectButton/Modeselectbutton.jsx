@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import "./ModeSelectButton.css";
 
@@ -14,5 +15,13 @@ function ModeSelectButton({ description, modeName, isSelected, onClick, modeColo
     </button>
   );
 }
+
+ModeSelectButton.propTypes = {
+  description: PropTypes.string.isRequired,
+  modeName: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+  modeColor: PropTypes.string
+};
 
 export default ModeSelectButton;

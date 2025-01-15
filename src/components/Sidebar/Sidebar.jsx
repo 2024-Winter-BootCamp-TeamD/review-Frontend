@@ -1,9 +1,10 @@
+import PropTypes from 'prop-types';
 import React, { useState } from "react";
 import "./Sidebar.css";
 import SidebarButton from "../SidebarButton/SidebarButton.jsx";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = () => {
+const Sidebar = ({isDarkMode}) => {
   const buttons = ["Dashboard", "History", "Repositories", "Report"];
   const [activeButton, setActiveButton] = useState("Dashboard");
   const navigate = useNavigate();
@@ -20,11 +21,12 @@ const Sidebar = () => {
     } else if (label === "Report") {
       navigate("/report");
     }
-    console.log(`${label} button clicked!`);
   };
 
   return (
-    <div className="sidebar">
+    <div 
+      className={`sidebar ${isDarkMode ? "sidebar-dark-mode" : "sidebar-light-mode"}`}
+    >
       <div className="sidebar-rounded-top"></div>
       <h1 className="sidebar-logo">CODIFY</h1>
       {buttons.map((buttonText) => (
@@ -38,6 +40,10 @@ const Sidebar = () => {
       {/* <div className="sidebar-rounded-bottom"></div> */}
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  isDarkMode: PropTypes.bool.isRequired
 };
 
 export default Sidebar;

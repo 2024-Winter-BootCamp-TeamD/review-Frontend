@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard.jsx";
 import History from "./pages/History.jsx";
@@ -11,10 +11,24 @@ import NotificationButton from "./components/NotificationButton/NotificationButt
 import ModeSwitchButton from "./components/ModeSwitchButton/ModeSwitchButton.jsx";
 
 function App() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedState = localStorage.getItem('toggleState') === 'true';
+    setIsDarkMode(savedState);
+    document.body.classList.toggle("dark-mode", savedState);
+  }, []);
+
+  const toggleDarkMode = (newState) => {
+    setIsDarkMode(newState);
+    localStorage.setItem('toggleState', newState);
+    document.body.classList.toggle("dark-mode", newState);
+  };
+
   return (
     <Router>
       <div className="app">
-        <Sidebar />
+        <Sidebar isDarkMode={isDarkMode} />
         <div className="content">
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -24,7 +38,7 @@ function App() {
           </Routes>
         </div>
         <div className="top-buttons">
-          <ModeSwitchButton />
+          <ModeSwitchButton onToggle={toggleDarkMode} isDarkMode={isDarkMode} />
           <NotificationButton />
         </div>
       </div>

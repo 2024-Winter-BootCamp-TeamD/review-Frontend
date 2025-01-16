@@ -9,6 +9,22 @@ const ReviewsContainer = styled.div`
   margin-top: 40px;
   margin-left: 8px;
   background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF00')};
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    border-radius: 10px;
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+  }
 `;
 
 const ReviewItem = styled.div`

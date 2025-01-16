@@ -63,8 +63,24 @@ const ReviewListBox = styled.div`
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
-  overflow: hidden;
+  overflow-y: auto;
   border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    border-radius: 10px;
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+  }
 `;
 
 const SearchBarContainer = styled.div`
@@ -200,8 +216,8 @@ const History = ({ isDarkMode }) => {
 
           <ReviewListBox isDarkMode={isDarkMode}>
             <BoxTitle isDarkMode={isDarkMode}>All reviews</BoxTitle>
-            <SearchBarContainer>
-              <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            <SearchBarContainer isDarkMode={isDarkMode}>
+              <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} isDarkMode={isDarkMode} />
             </SearchBarContainer>
             <Reviews onReviewClick={handleReviewClick} selectedMode={selectedMode} searchTerm={searchTerm} isDarkMode={isDarkMode} />
           </ReviewListBox>

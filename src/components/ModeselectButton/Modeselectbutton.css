@@ -19,7 +19,7 @@
 }
 
 .modeselect-button.selected {
-  background-color: #b9ff66; /* 선택 시 배경색 */
+  background-color: #B9FF66; /* 선택 시 배경색 */
 }
 
 .modeselect-button:hover {
@@ -29,7 +29,11 @@
 .mode-description {
   font-size: clamp(12px, 0.7vw, 24px); /* 설명 텍스트 크기 */
   margin: 0px 0px 10px 10px;
-  color: #333;
+  color: #191A23; /* 라이트 모드 기본 텍스트 색상 */
+}
+
+.modeselect-button.selected .mode-description {
+  color: #191A23; /* 라이트 모드 선택 시 텍스트 색상 */
 }
 
 .mode-name {
@@ -45,7 +49,14 @@ body.dark-mode .modeselect-button {
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
+body.dark-mode .modeselect-button.selected {
+  background-color: #B9FF66; /* 다크 모드 선택 시 배경색 */
+}
+
 body.dark-mode .mode-description {
-  color: #D5D6DC;
-  transition: color 0.3s ease;
+  color: #D5D6DC; /* 다크 모드 기본 텍스트 색상 */
+}
+
+body.dark-mode .modeselect-button.selected .mode-description {
+  color: #191A23; /* 다크 모드 선택 시 텍스트 색상 */
 }

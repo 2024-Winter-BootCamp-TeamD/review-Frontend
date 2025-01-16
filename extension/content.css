@@ -43,20 +43,56 @@
 }
 
 /* 각 모드별 호버 효과 */
+.floatingbutton-dashboard {
+  background-color: #e6e6e6 !important;
+  box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
+  color: #000000;
+}
 .floatingbutton-dashboard:hover {
-  background-color: #e0e0e0;
+  background-color: #9e9e9e !important;
+}
+.floatingbutton-clean-code {
+  background-color: #bc6fcd !important;
+  box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
+  color: #ffffff;
 }
 .floatingbutton-clean-code:hover {
-  background-color: #bc6fcd;
+  background-color: #752e84 !important;
+}
+.floatingbutton-basic {
+  background-color: #ff794e !important;
+  box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
+  color: #ffffff;
 }
 .floatingbutton-basic:hover {
   background-color: #ff794e;
 }
+.floatingbutton-optimize {
+  background-color: #70bf73 !important;
+  box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
+  color: #ffffff;
+}
 .floatingbutton-optimize:hover {
   background-color: #70bf73;
 }
+.floatingbutton-study {
+  background-color: #ffcd39 !important;
+  box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
+  color: #000000;
+}
 .floatingbutton-study:hover {
   background-color: #ffcd39;
+}
+.floatingbutton-newbie {
+  background-color: #4dabf5 !important;
+  box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
+  color: #ffffff;
 }
 .floatingbutton-newbie:hover {
   background-color: #4dabf5;
@@ -72,6 +108,29 @@
   border-radius: 4px;
   font-size: 12px;
   white-space: nowrap;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  background: linear-gradient(135deg, #6b8ce6, #9dc5ff);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  height: 30px;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 250px;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  z-index: 10000;
+  pointer-events: none;
 }
 
 .floatingbutton-menu {
@@ -183,4 +242,19 @@ a {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+.floatingbutton-menu-item:nth-child(5)::after,
+.floatingbutton-menu-item:nth-child(6)::after,
+.floatingbutton-menu-item:nth-child(7)::after {
+  bottom: -70%;
+  top: auto;
+  transform: translateX(-50%) scale(0.9);
+}
+
+.floatingbutton-menu-item:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+  z-index: 10000;
 }

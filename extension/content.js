@@ -57,13 +57,22 @@ function injectFloatingButton() {
         class="floatingbutton-menu-open"
         name="menu-open"
         id="menu-open"
+        ${isOpen ? "checked" : ""}
       />
       <label
-        class="floatingbutton-menu-open-button"
+        class="floatingbutton-menu-open-button ${isOpen ? "open" : ""}"
         for="menu-open"
-        style="background-color: ${selectedButton.backgroundColor}"
+        style="background-color: ${selectedButton ? selectedButton.backgroundColor : "#EEEEEE"}"
       >
-        <span class="floatingbutton-item-text">${selectedButton.text}</span>
+        ${
+          isOpen
+            ? '<span class="floatingbutton-x">✕</span>'
+            : selectedButton
+              ? `<span class="floatingbutton-item-text">${selectedButton.text}</span>`
+              : `<span class="floatingbutton-lines floatingbutton-line-1"></span>
+               <span class="floatingbutton-lines floatingbutton-line-2"></span>
+               <span class="floatingbutton-lines floatingbutton-line-3"></span>`
+        }
       </label>
 
       <div class="floatingbutton-menu-item floatingbutton-dashboard" data-tooltip="Go to Dashboard">

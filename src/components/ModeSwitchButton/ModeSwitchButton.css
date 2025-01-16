@@ -5,8 +5,9 @@ body {
 }
 
 .wrapper {
-  padding-top: 97vh;
-  margin-right: 75vw;
+  position: fixed;
+  top: 93%;
+  left: 0vw;
   text-align: center;
   z-index: 10000;
   pointer-events: none;

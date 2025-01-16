@@ -13,31 +13,31 @@ const LoadingIndicator = () => {
   }, []);
 
   return (
-    <div className={styles.stage}>
-      <div className={styles.cloud}>
-        <div className={styles.cloudBubble1}></div>
-        <div className={styles.cloudBubble2}></div>
-        <div className={styles.cloudBubble3}></div>
-        <div className={styles.cloudBubble4}></div>
-        <span className={styles.loadingNumber}>{loadingNumber}%</span>
+    <div className={styles.Loading_stage}>
+      <div className={styles.Loading_cloud}>
+        <div className={styles.Loading_cloudBubble1}></div>
+        <div className={styles.Loading_cloudBubble2}></div>
+        <div className={styles.Loading_cloudBubble3}></div>
+        <div className={styles.Loading_cloudBubble4}></div>
+        <span className={styles.Loading_number}>{loadingNumber}%</span>
       </div>
-      <div className={styles.smallCloud1}>
-        <div className={styles.smallCloudBubble}></div>
-        <div className={styles.smallCloudBubble}></div>
+      <div className={styles.Loading_smallCloud1}>
+        <div className={styles.Loading_smallCloudBubble}></div>
+        <div className={styles.Loading_smallCloudBubble}></div>
       </div>
-      <div className={styles.smallCloud2}>
-        <div className={styles.smallCloudBubble}></div>
-        <div className={styles.smallCloudBubble}></div>
+      <div className={styles.Loading_smallCloud2}>
+        <div className={styles.Loading_smallCloudBubble}></div>
+        <div className={styles.Loading_smallCloudBubble}></div>
       </div>
-      <ul>
+      <ul className={styles.Loading_list}>
         {Array.from({ length: 5 }).map((_, index) => (
-          <li key={index}></li>
+          <li key={index} className={styles.Loading_item}></li>
         ))}
       </ul>
-      <div className={styles.band}></div>
-      <div className={styles.factory}>
-        <div className={styles.magic}></div>
-        <div className={styles.screen}></div>
+      <div className={styles.Loading_band}></div>
+      <div className={styles.Loading_factory}>
+        <div className={styles.Loading_magic}></div>
+        <div className={styles.Loading_screen}></div>
       </div>
     </div>
   );

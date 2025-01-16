@@ -453,16 +453,16 @@ const Report = ({ isDarkMode }) => {
       <PageTitle isDarkMode={isDarkMode}>Report</PageTitle>
       <CategoryBar isDarkMode={isDarkMode}>
         <CategoryItem style={{ width: "50px", justifyContent: "center" }} isDarkMode={isDarkMode}></CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem style={{ width: "115px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Report Name
         </CategoryItem>
         <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Date
         </CategoryItem>
-        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingLeft: "2.8vw" }} isDarkMode={isDarkMode}>
+        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingLeft: "3vw" }} isDarkMode={isDarkMode}>
           Comments
         </CategoryItem>
-        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingRight: "1vw" }} isDarkMode={isDarkMode}>
+        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingRight: "2vw" }} isDarkMode={isDarkMode}>
           Used Review Modes
         </CategoryItem>
         <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
@@ -793,6 +793,7 @@ const CreatedDate = styled.span`
 const ReviewCount = styled.div`
   flex: 1;
   font-weight: 500;
+  font-size: 14px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
 `;
 
@@ -1269,17 +1270,6 @@ const GraphTitle = styled.h3`
   text-align: center;
   margin-bottom: 20px;
   font-size: 18px;
-  color: #333;
-`;
-
-const ReportSection = styled.div`
-  margin-bottom: 24px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
   color: #333;
 `;
 

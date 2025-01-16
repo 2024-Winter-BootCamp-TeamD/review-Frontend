@@ -36,7 +36,7 @@ html, body {
     #215c0f33 73%,
     #2e801500 100%
   ); */
-  background-color: #09190400;
+  background-color: #000000;
   color: white;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
@@ -57,7 +57,7 @@ html, body {
 }
 
 .sidebar-dark-mode .sidebar-rounded-top {
-  background-color: #00000000;
+  background-color: #000000;
 }
 
 .sidebar-logo {

@@ -215,6 +215,7 @@ const Dashboard = ({ isDarkMode }) => {
             modeColor={mode.modeColor}
             isSelected={selectedMode === mode.modeName}
             onClick={() => setSelectedMode(mode.modeName)}
+            isDarkMode={isDarkMode}
           />
         ))}
       </div>

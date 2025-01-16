@@ -17,7 +17,8 @@ const Button = styled.button`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  box-shadow: 0 0.4vh 0.1vh rgba(0, 0, 0, 1);
+  box-shadow: ${({ isDarkMode }) => 
+    isDarkMode ? "0 0 0 1px #FFFFFF, 0 0.4vh 0.1vh rgba(0, 0, 0, 1)" : "0 0.4vh 0.1vh rgba(0, 0, 0, 1)"};
   transition: background-color 0.3s ease, transform 0.2s ease;
   font-size: clamp(16px, 2vw, 24px);
 
@@ -36,10 +37,10 @@ const ModeName = styled.p`
   font-size: clamp(18px, 2vw, 36px);
   margin: 0px 0px 0px 8px;
   font-weight: bold;
-  color: ${({ color, isDarkMode }) => color || (isDarkMode ? "#FFFFFF" : "#333")};
+  color: ${({ modeColor }) => modeColor || "#333"};
 `;
 
-function ModeSelectButton({ description, modeName, isSelected, onClick, modeColor = "333", isDarkMode }) {
+function ModeSelectButton({ description, modeName, isSelected, onClick, modeColor, isDarkMode }) {
   return (
     <Button
       isSelected={isSelected}
@@ -47,7 +48,7 @@ function ModeSelectButton({ description, modeName, isSelected, onClick, modeColo
       onClick={onClick}
     >
       <Description isDarkMode={isDarkMode}>{description}</Description>
-      <ModeName color={modeColor} isDarkMode={isDarkMode}>{modeName}</ModeName>
+      <ModeName modeColor={modeColor}>{modeName}</ModeName>
     </Button>
   );
 }

@@ -1,5 +1,84 @@
-import React from 'react';
-import './Reviews.css';
+import React, { useState } from 'react';
+import styled from 'styled-components';
+
+const ReviewsContainer = styled.div`
+  width: 850px;
+  max-height: 79%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 40px;
+  margin-left: 8px;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF00')};
+`;
+
+const ReviewItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 830px;
+  min-height: 57px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  background-color: ${({ isDarkMode }) => 
+    isDarkMode ? '#00000050' : '#FFFFFF'};
+  font-size: 15px;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateX(5px);
+    background-color: ${({ isSelected, isDarkMode }) => 
+      isSelected ? (isDarkMode ? '#000000' : '#D9D9D9') : (isDarkMode ? '#000000' : '#D9D9D9')};
+  }
+`;
+
+const ReviewSummary = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 12px;
+`;
+
+const ReviewMode = styled.div`
+  flex: 1;
+  font-weight: bold;
+  text-align: left;
+  margin-left: 40px;
+  color: ${props => {
+    switch (props.mode) {
+      case 'CLEAN': return '#9E9E9E';
+      case 'OPTIMIZE': return '#4CAF50';
+      case 'NEWBIE': return '#2196F3';
+      case 'STUDY': return '#FFC107';
+      case 'BASIC': return '#FF5722';
+      default: return '#333';
+    }
+  }};
+`;
+
+const ReviewLink = styled.div`
+  flex: 1.5;
+  margin-left: -180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+`;
+
+const ReviewDate = styled.div`
+  margin-right: 35px;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+`;
+
+const ReviewArrow = styled.div`
+  margin-right: 20px;
+  font-size: 18px;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+`;
 
 //더미데이터
 const dummyReviews = [
@@ -118,45 +197,46 @@ const dummyReviews = [
   
 ];
 
+const Reviews = ({ onReviewClick, selectedMode, searchTerm, isDarkMode }) => {
+  const [selectedReviewId, setSelectedReviewId] = useState(null);
 
-const Reviews = ({ onReviewClick, selectedMode, searchTerm }) => {
+  const handleReviewClick = (review) => {
+    setSelectedReviewId(review.id);
+    onReviewClick(review.content);
+  };
+
   const filteredReviews = dummyReviews.filter(review => {
-    // 모드 필터링
-    const matchesMode =
-      !selectedMode || selectedMode === '' || review.mode === selectedMode;
-    // link 속성에서 검색어 필터링 (대소문자 구분 없이)
-    const matchesSearch =
-      !searchTerm || review.link.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesMode = !selectedMode || selectedMode === '' || review.mode === selectedMode;
+    const matchesSearch = !searchTerm || review.link.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesMode && matchesSearch;
   });
 
   return (
-    <div className="reviews-container">
+    <ReviewsContainer isDarkMode={isDarkMode}>
       {filteredReviews.map(review => (
-        <div 
-          key={review.id} 
-          className="review-item"
-          onClick={() => onReviewClick(review.content)}
-          style={{ cursor: 'pointer' }}
+        <ReviewItem 
+          key={review.id}
+          isSelected={selectedReviewId === review.id}
+          isDarkMode={isDarkMode}
+          onClick={() => handleReviewClick(review)}
         >
-          <div className="review-summary">
-            <div className={`review-mode ${review.mode.toLowerCase()}`}>
+          <ReviewSummary>
+            <ReviewMode mode={review.mode}>
               {review.mode}
-            </div>
-            <div className="review-link">
+            </ReviewMode>
+            <ReviewLink isDarkMode={isDarkMode}>
               {review.link}
-            </div>
-            <div className="review-date">
+            </ReviewLink>
+            <ReviewDate isDarkMode={isDarkMode}>
               {review.date}
-            </div>
-            <div className="review-arrow">
+            </ReviewDate>
+            <ReviewArrow isDarkMode={isDarkMode}>
               →
-            </div>
-          </div>
-        </div>
+            </ReviewArrow>
+          </ReviewSummary>
+        </ReviewItem>
       ))}
-    </div>
+    </ReviewsContainer>
   );
 };
 

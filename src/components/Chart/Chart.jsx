@@ -11,8 +11,6 @@ const ChartWrapper = styled.div`
   height: 100%;
   padding: 30px;
   margin-right: 10px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#33333300' : '#FFFFFF00')};
-  border-radius: 20px;
 `;
 
 const ChartInner = styled.div`
@@ -33,7 +31,7 @@ if (Accessibility && typeof Accessibility === 'function') {
   Accessibility(Highcharts);
 }
 
-const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
+const Chart = ({ onSliceClick, selectedMode }) => {
   useEffect(() => {
     const originalAnimate = Highcharts.seriesTypes.pie.prototype.animate;
 
@@ -120,7 +118,7 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
                 true
               )
               .css({
-                color: isDarkMode ? '#FFFFFF' : '#000000',
+                color: '#000',
                 fontSize: '24px',
                 fontWeight: 'bold',
                 textAlign: 'center',
@@ -140,7 +138,7 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
         pointFormat:
           '<span style="color:{point.color}">●</span> {point.name}: <b>{point.percentage:.1f}%</b>',
       },
-      accessibility: { point: { valueSuffix: '%' } },
+      accessibility: { 2: { valueSuffix: '%' } },
       plotOptions: {
         pie: {
           allowPointSelect: true,
@@ -157,6 +155,27 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
                 if (onSliceClick) {
                   onSliceClick(this.name);
                 }
+                const series = this.series;
+
+                 // 클릭된 조각의 상태 확인
+      if (this.isSelected) {
+        // 이미 선택된 상태라면 모든 조각의 불투명도를 원래대로 복원
+        series.points.forEach((point) => {
+          point.graphic.css({ opacity: 1 });
+          point.isSelected = false; // 상태 초기화
+        });
+      } else {
+        // 선택되지 않은 상태라면 클릭된 조각 강조, 나머지 조각 흐리게
+        series.points.forEach((point) => {
+          if (point === this) {
+            point.graphic.css({ opacity: 1 });
+            point.isSelected = true; // 선택 상태 설정
+          } else {
+            point.graphic.css({ opacity: 0.3 });
+                      point.isSelected = false; // 다른 조각은 선택 해제
+                    }
+                  });
+                }
               },
             },
           },
@@ -167,10 +186,10 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
       series: [
         {
           enableMouseTracking: false,
-          animation: { duration: 1300 },
+          animation: { duration: 1200 },
           colorByPoint: true,
           data: [
-            { name: 'CLEAN', y: 21.3, color: '#9E9E9E' },
+            { name: 'CLEAN', y: 21.3, color: '#BC6FCD' },
             { name: 'OPTIMIZE', y: 18.7, color: '#4CAF50' },
             { name: 'NEWBIE', y: 20.2, color: '#2196F3' },
             { name: 'STUDY', y: 14.2, color: '#FFC107' },
@@ -179,10 +198,10 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
         },
       ],
     });
-  }, [isDarkMode]);
+  }, []);
 
   return (
-    <ChartWrapper isDarkMode={isDarkMode}>
+    <ChartWrapper>
       <ChartInner id="chart-container" />
     </ChartWrapper>
   );

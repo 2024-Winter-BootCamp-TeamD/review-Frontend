@@ -145,7 +145,7 @@ const LegendItem = styled.div`
   text-align: center;
   background-color: ${({ mode }) =>
     mode === 'BASIC' ? '#FF5722' :
-    mode === 'CLEAN' ? '#9E9E9E' :
+    mode === 'CLEAN' ? '#BC6FCD' :
     mode === 'OPTIMIZE' ? '#4CAF50' :
     mode === 'NEWBIE' ? '#2196F3' :
     mode === 'STUDY' ? '#FFC107' :
@@ -203,7 +203,7 @@ const History = ({ isDarkMode }) => {
             <SearchBarContainer>
               <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </SearchBarContainer>
-            <Reviews onReviewClick={handleReviewClick} selectedMode={selectedMode} searchTerm={searchTerm} />
+            <Reviews onReviewClick={handleReviewClick} selectedMode={selectedMode} searchTerm={searchTerm} isDarkMode={isDarkMode} />
           </ReviewListBox>
         </LeftContainer>
 

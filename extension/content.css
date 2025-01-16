@@ -1,3 +1,13 @@
+@media screen and (max-width: 700px) {
+  body {
+    padding: 170px 0 0 0;
+    width: 100%;
+  }
+}
+
+a {
+  color: inherit;
+}
 /* FloatingButton 스타일 */
 .floating-button-container {
   position: fixed;
@@ -19,20 +29,6 @@
 
 .floatingbutton-menu-open {
   display: none;
-}
-
-.floatingbutton-menu-item {
-  transition: all 0.1s ease 0s;
-  text-decoration: none;
-  background: white;
-  border-radius: 100%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  margin: 8px 0;
 }
 
 .floatingbutton-item-text {
@@ -68,7 +64,7 @@
   color: #ffffff;
 }
 .floatingbutton-basic:hover {
-  background-color: #ff794e;
+  background-color: #b83c14 !important;
 }
 .floatingbutton-optimize {
   background-color: #70bf73 !important;
@@ -77,7 +73,7 @@
   color: #ffffff;
 }
 .floatingbutton-optimize:hover {
-  background-color: #70bf73;
+  background-color: #2f6a32 !important;
 }
 .floatingbutton-study {
   background-color: #ffcd39 !important;
@@ -86,7 +82,7 @@
   color: #000000;
 }
 .floatingbutton-study:hover {
-  background-color: #ffcd39;
+  background-color: #805f00 !important;
 }
 .floatingbutton-newbie {
   background-color: #4dabf5 !important;
@@ -95,24 +91,17 @@
   color: #ffffff;
 }
 .floatingbutton-newbie:hover {
-  background-color: #4dabf5;
+  background-color: #086691 !important;
 }
 /* 툴팁 스타일 */
-.floatingbutton-menu-item[data-tooltip]:hover::before {
+.floatingbutton-menu-item::after {
   content: attr(data-tooltip);
   position: absolute;
-  top: 50px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
   bottom: 110%;
   left: 50%;
   transform: translateX(-50%) scale(0.9);
   background: linear-gradient(135deg, #6b8ce6, #9dc5ff);
-  color: #fff;
+  color: white;
   padding: 8px 12px;
   border-radius: 20px;
   font-size: 14px;
@@ -125,12 +114,28 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   max-width: 250px;
   opacity: 0;
+  white-space: nowrap;
   visibility: hidden;
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
   z-index: 10000;
   pointer-events: none;
+}
+
+.floatingbutton-menu-item:nth-child(5)::after,
+.floatingbutton-menu-item:nth-child(6)::after,
+.floatingbutton-menu-item:nth-child(7)::after {
+  bottom: -90%;
+  top: auto;
+  transform: translateX(-50%) scale(0.9);
+}
+
+.floatingbutton-menu-item:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+  z-index: 10000;
 }
 
 .floatingbutton-menu {
@@ -141,17 +146,6 @@
   height: 60px;
   text-align: center;
   z-index: 99999;
-}
-
-@media screen and (max-width: 700px) {
-  body {
-    padding: 170px 0 0 0;
-    width: 100%;
-  }
-}
-
-a {
-  color: inherit;
 }
 
 .floatingbutton-menu-item,
@@ -242,19 +236,4 @@ a {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-.floatingbutton-menu-item:nth-child(5)::after,
-.floatingbutton-menu-item:nth-child(6)::after,
-.floatingbutton-menu-item:nth-child(7)::after {
-  bottom: -70%;
-  top: auto;
-  transform: translateX(-50%) scale(0.9);
-}
-
-.floatingbutton-menu-item:hover::after {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(-50%) scale(1);
-  z-index: 10000;
 }

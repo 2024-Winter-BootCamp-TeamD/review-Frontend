@@ -1,27 +1,38 @@
-let isFloatingButtonVisible = false;
-let isOpen = false;
-let selectedButton = { text: "B", backgroundColor: "#FF794E" };
+// 전역 변수들을 window 객체에 저장하여 중복 선언 방지
+if (typeof window.floatingButtonState === "undefined") {
+  window.floatingButtonState = {
+    isFloatingButtonVisible: false,
+    isOpen: false,
+    selectedButton: { text: "B", backgroundColor: "#FF794E" },
+  };
+}
 
 // 익스텐션 버튼 클릭 메시지 수신
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "ping") {
+    sendResponse(true);
+    return;
+  }
+
   if (request.action === "toggleFloatingButton") {
-    if (!isFloatingButtonVisible) {
+    if (!window.floatingButtonState.isFloatingButtonVisible) {
       injectFloatingButton();
     } else {
       removeFloatingButton();
     }
-    isFloatingButtonVisible = !isFloatingButtonVisible;
+    window.floatingButtonState.isFloatingButtonVisible =
+      !window.floatingButtonState.isFloatingButtonVisible;
   }
 });
 
 function handleButtonClick(text, backgroundColor) {
-  selectedButton = { text, backgroundColor };
-  isOpen = false;
+  window.floatingButtonState.selectedButton = { text, backgroundColor };
+  window.floatingButtonState.isOpen = false;
   updateFloatingButton();
 }
 
 function toggleMenu() {
-  isOpen = !isOpen;
+  window.floatingButtonState.isOpen = !window.floatingButtonState.isOpen;
   updateFloatingButton();
 }
 
@@ -31,19 +42,20 @@ function updateFloatingButton() {
   const checkbox = document.querySelector(".floatingbutton-menu-open");
 
   if (menu) {
-    menu.style.bottom = isOpen ? "180px" : "30px";
-    menu.style.right = isOpen ? "180px" : "70px";
+    menu.style.bottom = window.floatingButtonState.isOpen ? "180px" : "30px";
+    menu.style.right = window.floatingButtonState.isOpen ? "180px" : "70px";
   }
 
   if (label) {
-    label.style.backgroundColor = selectedButton.backgroundColor;
-    label.innerHTML = isOpen
+    label.style.backgroundColor =
+      window.floatingButtonState.selectedButton.backgroundColor;
+    label.innerHTML = window.floatingButtonState.isOpen
       ? '<span class="floatingbutton-x">✕</span>'
-      : `<span class="floatingbutton-item-text">${selectedButton.text}</span>`;
+      : `<span class="floatingbutton-item-text">${window.floatingButtonState.selectedButton.text}</span>`;
   }
 
   if (checkbox) {
-    checkbox.checked = isOpen;
+    checkbox.checked = window.floatingButtonState.isOpen;
   }
 }
 
@@ -57,18 +69,18 @@ function injectFloatingButton() {
         class="floatingbutton-menu-open"
         name="menu-open"
         id="menu-open"
-        ${isOpen ? "checked" : ""}
+        ${window.floatingButtonState.isOpen ? "checked" : ""}
       />
       <label
-        class="floatingbutton-menu-open-button ${isOpen ? "open" : ""}"
+        class="floatingbutton-menu-open-button ${window.floatingButtonState.isOpen ? "open" : ""}"
         for="menu-open"
-        style="background-color: ${selectedButton ? selectedButton.backgroundColor : "#EEEEEE"}"
+        style="background-color: ${window.floatingButtonState.selectedButton ? window.floatingButtonState.selectedButton.backgroundColor : "#EEEEEE"}"
       >
         ${
-          isOpen
+          window.floatingButtonState.isOpen
             ? '<span class="floatingbutton-x">✕</span>'
-            : selectedButton
-              ? `<span class="floatingbutton-item-text">${selectedButton.text}</span>`
+            : window.floatingButtonState.selectedButton
+              ? `<span class="floatingbutton-item-text">${window.floatingButtonState.selectedButton.text}</span>`
               : `<span class="floatingbutton-lines floatingbutton-line-1"></span>
                <span class="floatingbutton-lines floatingbutton-line-2"></span>
                <span class="floatingbutton-lines floatingbutton-line-3"></span>`

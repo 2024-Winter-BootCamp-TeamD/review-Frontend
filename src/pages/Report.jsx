@@ -797,7 +797,7 @@ const ModeList = styled.div`
 `;
 
 const ModeTag = styled.span`
-  padding: 3px 6px;
+  padding: 3px 3px;
   border-radius: 4px;
   font-size: 14px;
   background-color: ${(props) =>

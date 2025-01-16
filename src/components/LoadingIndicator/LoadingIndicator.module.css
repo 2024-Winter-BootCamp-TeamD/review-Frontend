@@ -10,16 +10,17 @@
   --duration: 3000ms;
 }
 
-.stage {
+.Loading_stage {
   position: absolute;
   top: 50%;
   left: 50%;
   margin: -175px 0 0 -250px;
   width: 500px;
   height: 350px;
+  z-index: -1;
 }
 
-.factory {
+.Loading_factory {
   position: absolute;
   width: 100px;
   height: 200px;
@@ -28,7 +29,7 @@
   top: 0px;
 }
 
-.factory::before {
+.Loading_factory::before {
   content: '';
   position: absolute;
   background: #4b5d6f;
@@ -39,8 +40,7 @@
   left: -5px;
 }
 
-
-.screen {
+.Loading_screen {
   width: 60px;
   height: 50px;
   background-color: #404c5a;
@@ -51,8 +51,8 @@
   overflow: hidden;
 }
 
-.screen::before,
-.screen::after {
+.Loading_screen::before,
+.Loading_screen::after {
   content: '';
   position: absolute;
   top: 0;
@@ -65,7 +65,7 @@
   animation: moveRightPseudo 650ms linear infinite normal;
 }
 
-.band {
+.Loading_band {
   position: absolute;
   width: 350px;
   height: 15px;
@@ -74,7 +74,7 @@
   transform: translate(50px, 210px);
 }
 
-.band::before {
+.Loading_band::before {
   content: '';
   position: absolute;
   background-image: radial-gradient(#4b5d6f 40%, transparent 41%);
@@ -88,7 +88,7 @@
   animation: band 2150ms linear infinite normal;
 }
 
-.band::after {
+.Loading_band::after {
   content: '';
   position: absolute;
   background: var(--grayish);
@@ -99,7 +99,7 @@
   transform: skew(-15deg);
 }
 
-ul {
+.Loading_list {
   position: absolute;
   margin: 0;
   padding: 0;
@@ -110,7 +110,7 @@ ul {
   list-style: none;
 }
 
-ul::after {
+.Loading_list::after {
   content: '';
   position: absolute;
   background: #404c5a;
@@ -122,19 +122,18 @@ ul::after {
   z-index: 0;
 }
 
-li {
+.Loading_item {
   overflow: hidden;
   z-index: 1;
   position: absolute;
   width: 40px;
   height: 40px;
-  background-color: #d87f7f;
   transform: translate(0px, 10px);
   transform-origin: center bottom;
   animation: moveRight var(--duration) linear infinite normal;
 }
 
-li::after {
+.Loading_item::after {
   content: '';
   position: absolute;
   width: 25px;
@@ -144,43 +143,43 @@ li::after {
   left: 5px;
 }
 
-li:nth-child(1) {
+.Loading_item:nth-child(1) {
   background-color: var(--red);
   animation-delay: 0ms;
 }
-li:nth-child(1)::after {
+.Loading_item:nth-child(1)::after {
   background-color: #c15757;
 }
 
-li:nth-child(2) {
+.Loading_item:nth-child(2) {
   background-color: var(--yellow);
   animation-delay: 600ms;
 }
-li:nth-child(2)::after {
+.Loading_item:nth-child(2)::after {
   background-color: #d0af3b;
 }
 
-li:nth-child(3) {
+.Loading_item:nth-child(3) {
   background-color: var(--green);
   animation-delay: 1200ms;
 }
-li:nth-child(3)::after {
+.Loading_item:nth-child(3)::after {
   background-color: #388E3C;
 }
 
-li:nth-child(4) {
+.Loading_item:nth-child(4) {
   background-color: var(--blue);
   animation-delay: 1800ms;
 }
-li:nth-child(4)::after {
+.Loading_item:nth-child(4)::after {
   background-color: #1976D2;
 }
 
-li:nth-child(5) {
+.Loading_item:nth-child(5) {
   background-color: var(--purple);
   animation-delay: 2400ms;
 }
-li:nth-child(5)::after {
+.Loading_item:nth-child(5)::after {
   background-color: #7B1FA2;
 }
 
@@ -207,7 +206,7 @@ li:nth-child(5)::after {
   100% { background-position: 100% 0px; }
 }
 
-.cloud {
+.Loading_cloud {
   position: absolute;
   width: 120px;
   height: 80px;
@@ -219,7 +218,7 @@ li:nth-child(5)::after {
   animation: pulsate 2s ease-in-out infinite;
 }
 
-.smallCloud1, .smallCloud2 {
+.Loading_smallCloud1, .Loading_smallCloud2 {
   position: absolute;
   background: rgba(75, 93, 111, 0.9);
   border-radius: 25px;
@@ -227,7 +226,7 @@ li:nth-child(5)::after {
   animation: pulsate 2s ease-in-out infinite;
 }
 
-.smallCloud1 {
+.Loading_smallCloud1 {
   width: 60px;
   height: 40px;
   top: 0px;
@@ -235,7 +234,7 @@ li:nth-child(5)::after {
   animation-delay: 0.3s;
 }
 
-.smallCloud2 {
+.Loading_smallCloud2 {
   width: 45px;
   height: 30px;
   top: 55px;
@@ -243,49 +242,49 @@ li:nth-child(5)::after {
   animation-delay: 0.6s;
 }
 
-.smallCloudBubble {
+.Loading_smallCloudBubble {
   position: absolute;
   background: rgba(75, 93, 111, 0.85);
   border-radius: 50%;
   animation: swirl 4s ease-in-out infinite;
 }
 
-.smallCloud1 .smallCloudBubble:nth-child(1) {
+.Loading_smallCloud1 .Loading_smallCloudBubble:nth-child(1) {
   width: 40px;
   height: 40px;
   left: -10px;
   top: -10px;
 }
 
-.smallCloud1 .smallCloudBubble:nth-child(2) {
+.Loading_smallCloud1 .Loading_smallCloudBubble:nth-child(2) {
   width: 45px;
   height: 45px;
   left: 15px;
   top: -12px;
 }
 
-.smallCloud2 .smallCloudBubble:nth-child(1) {
+.Loading_smallCloud2 .Loading_smallCloudBubble:nth-child(1) {
   width: 30px;
   height: 30px;
   left: -8px;
   top: -8px;
 }
 
-.smallCloud2 .smallCloudBubble:nth-child(2) {
+.Loading_smallCloud2 .Loading_smallCloudBubble:nth-child(2) {
   width: 35px;
   height: 35px;
   left: 10px;
   top: -10px;
 }
 
-.cloudBubble1, .cloudBubble2, .cloudBubble3, .cloudBubble4 {
+.Loading_cloudBubble1, .Loading_cloudBubble2, .Loading_cloudBubble3, .Loading_cloudBubble4 {
   position: absolute;
   background: rgba(75, 93, 111, 0.85);
   border-radius: 50%;
   animation: swirl 4s ease-in-out infinite;
 }
 
-.cloudBubble1 {
+.Loading_cloudBubble1 {
   width: 80px;
   height: 80px;
   left: -20px;
@@ -293,7 +292,7 @@ li:nth-child(5)::after {
   animation-delay: 0s;
 }
 
-.cloudBubble2 {
+.Loading_cloudBubble2 {
   width: 90px;
   height: 90px;
   left: 30px;
@@ -301,7 +300,7 @@ li:nth-child(5)::after {
   animation-delay: 0.5s;
 }
 
-.cloudBubble3 {
+.Loading_cloudBubble3 {
   width: 70px;
   height: 70px;
   left: 50px;
@@ -309,7 +308,7 @@ li:nth-child(5)::after {
   animation-delay: 1s;
 }
 
-.cloudBubble4 {
+.Loading_cloudBubble4 {
   width: 85px;
   height: 85px;
   left: 10px;
@@ -317,7 +316,7 @@ li:nth-child(5)::after {
   animation-delay: 1.5s;
 }
 
-.loadingNumber {
+.Loading_number {
   position: absolute;
   width: 100%;
   text-align: center;

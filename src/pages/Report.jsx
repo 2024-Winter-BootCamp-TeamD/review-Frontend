@@ -529,7 +529,7 @@ const Report = ({ isDarkMode }) => {
                 </PlayfulButton>
               </ButtonCheckboxContainer>
               <SearchBarWrapper>
-                <SearchBarSC
+                <SearchBar
                   width="800px"
                   placeholder="search pull request..."
                   backgroundColor={isDarkMode ? "#00000050" : "#f5f5f5"}

@@ -1,84 +1,166 @@
 import React from 'react';
-import './ReportList.css';
-import reportImg from '../../assets/bitmap.png'; // Report 이미지 
+import styled from 'styled-components';
+import reportImg from '../../assets/bitmap.png';
 import downloadIcon from '../../assets/download.png';
 import deleteIcon from '../../assets/delete.png';
 
+const ListContainer = styled.div`
+  width: 1495px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const Item = styled.div`
+  display: flex;
+  align-items: center;
+  width: 1495px;
+  height: 100px;
+  border: 1px solid #ddd;
+  padding: 0 10px;
+  box-sizing: border-box;
+  border-radius: 15px;
+  box-shadow: 0 2px 5px rgba(0, 5, 0, 1);
+`;
+
+const ImageContainer = styled.div`
+  img {
+    width: 95px;
+    height: 95px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+`;
+
+const Name = styled.div`
+  flex: 1;
+  margin-left: 20px;
+  font-size: 25px;
+  font-weight: 600;
+  color: #3353CA;
+`;
+
+const Date = styled.div`
+  width: 120px;
+  text-align: center;
+  font-size: 20px;
+  color: #04103B;
+`;
+
+const Comments = styled.div`
+  flex: 2;
+  margin-left: 10px;
+  font-size: 20px;
+  color: #797D8C;
+`;
+
+const Modes = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  margin-right: 100px;
+`;
+
+const ModesRow = styled.div`
+  display: flex;
+  justify-content: left;
+  gap: ${props => props.isFirst ? '38px' : '50px'};
+  margin-bottom: 2px;
+`;
+
+const ModeLabel = styled.label`
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: ${props => {
+    switch (props.mode.toLowerCase()) {
+      case 'original': return '#4CAF50';
+      case 'clean-code': return '#9E9E9E';
+      case 'study': return '#FFC107';
+      case 'newbie': return '#2196F3';
+      case 'basic': return '#FF5722';
+      default: return '#333';
+    }
+  }};
+
+  input[type="checkbox"] {
+    margin-right: 4px;
+  }
+`;
+
+const Actions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+`;
+
+const Icon = styled.img`
+  margin-right: 25px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  object-fit: contain;
+`;
 
 function ReportItem({ report }) {
-  // 리포트에 사용 가능한 모든 모드 목록
   const allModes = ['Original', 'Clean Code', 'Study', 'Newbie', 'Basic'];
-
-  // 모드 이름을 CSS 클래스 이름으로 변환. 예: "Clean Code" → "clean-code"
-  const getModeClassName = (mode) =>
-    mode.toLowerCase().replace(/\s+/g, '-');
+  const getModeClassName = (mode) => mode.toLowerCase().replace(/\s+/g, '-');
 
   return (
-    <div className="report-item">
-      {/* 리포트 이미지 */}
-      <div className="report-image">
+    <Item>
+      <ImageContainer>
         <img src={reportImg} alt="report" />
-      </div>
-
-      {/* 리포트 이름 */}
-      <div className="report-name">{report.reportName}</div>
-
-      {/* 날짜 */}
-      <div className="report-date">{report.date}</div>
-
-      {/* 코멘트 */}
-      <div className="report-comments">{report.comments}</div>
-
-      {/* 사용된 모드*/}
-      <div className="report-modes">
-        <div className="modes-row">
+      </ImageContainer>
+      
+      <Name>{report.reportName}</Name>
+      <Date>{report.date}</Date>
+      <Comments>{report.comments}</Comments>
+      
+      <Modes>
+        <ModesRow isFirst>
           {allModes.slice(0, 2).map((mode) => (
-            <label
-              key={mode}
-              className={`mode-label ${getModeClassName(mode)}`}
-            >
+            <ModeLabel key={mode} mode={getModeClassName(mode)}>
               <input
                 type="checkbox"
                 checked={report.usedModes.includes(mode)}
                 readOnly
               />
               <span>{mode}</span>
-            </label>
+            </ModeLabel>
           ))}
-        </div>
-        <div className="modes-row">
+        </ModesRow>
+        <ModesRow>
           {allModes.slice(2).map((mode) => (
-            <label
-              key={mode}
-              className={`mode-label ${getModeClassName(mode)}`}
-            >
+            <ModeLabel key={mode} mode={getModeClassName(mode)}>
               <input
                 type="checkbox"
                 checked={report.usedModes.includes(mode)}
                 readOnly
               />
               <span>{mode}</span>
-            </label>
+            </ModeLabel>
           ))}
-        </div>
-      </div>
+        </ModesRow>
+      </Modes>
 
-      {/* 다운로드, 삭제 아이콘 */}
-      <div className="report-actions">
-        <img src={downloadIcon} alt="download" className="icon" />
-        <img src={deleteIcon} alt="delete" className="icon" />
-      </div>
-    </div>
+      <Actions>
+        <Icon src={downloadIcon} alt="download" />
+        <Icon src={deleteIcon} alt="delete" />
+      </Actions>
+    </Item>
   );
 }
 
 function ReportList({ reports }) {
   return (
-    <div className="report-list-container">
+    <ListContainer>
       {reports.map((report) => (
         <ReportItem key={report.id} report={report} />
       ))}
-    </div>
+    </ListContainer>
   );
 }
+
 export default ReportList;

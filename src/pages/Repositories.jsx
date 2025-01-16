@@ -300,6 +300,7 @@ const Repositories = () => {
           <SearchBar
             value={searchTermUnselected}
             onChange={(e) => setSearchTermUnselected(e.target.value)}
+            width="540px"
           />
         </SearchBarWrapper>
         <RepositoryWrapper>
@@ -343,6 +344,7 @@ const Repositories = () => {
           <SearchBar
             value={searchTermSelected}
             onChange={(e) => setSearchTermSelected(e.target.value)}
+            width="540px"
           />
         </SearchBarWrapper>
         <RepositoryWrapper>

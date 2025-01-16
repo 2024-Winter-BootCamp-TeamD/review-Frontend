@@ -1,10 +1,26 @@
 import React, { useEffect } from 'react';
+import styled from 'styled-components';
 import Highcharts from 'highcharts';
 import Exporting from 'highcharts/modules/exporting';
 import ExportData from 'highcharts/modules/export-data';
 import Accessibility from 'highcharts/modules/accessibility';
-import './Chart.css';
 
+// styled-components로 변환
+const ChartWrapper = styled.div`
+  width: 90%;
+  height: 100%;
+  padding: 30px;
+  margin-right: 10px;
+`;
+
+const ChartInner = styled.div`
+  width: 97%;
+  height: 97%;
+  margin-left: -120px;
+  margin-top: 2px;
+`;
+
+// Highcharts modules
 if (Exporting && typeof Exporting === 'function') {
   Exporting(Highcharts);
 }
@@ -149,7 +165,7 @@ const Chart = ({ onSliceClick, selectedMode }) => {
       series: [
         {
           enableMouseTracking: false,
-          animation: { duration: 1500 },
+          animation: { duration: 1300 },
           colorByPoint: true,
           data: [
             { name: 'CLEAN', y: 21.3, color: '#9E9E9E' },
@@ -164,11 +180,9 @@ const Chart = ({ onSliceClick, selectedMode }) => {
   }, []);
 
   return (
-    <div className="chart-wrapper">
-      <div className="chart-inner">
-        <div id="chart-container"></div>
-      </div>
-    </div>
+    <ChartWrapper>
+      <ChartInner id="chart-container" />
+    </ChartWrapper>
   );
 };
 

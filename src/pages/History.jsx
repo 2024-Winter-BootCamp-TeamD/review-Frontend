@@ -48,13 +48,6 @@ const ChartBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-
-  .chart-inner {
-    width: 97%;
-    height: 97%;
-    margin-left: -120px;
-    margin-top: 2px;
-  }
 `;
 
 const ReviewListBox = styled.div`
@@ -69,19 +62,20 @@ const ReviewListBox = styled.div`
 `;
 
 const SearchBarContainer = styled.div`
-  margin-top: 5px;
-  margin-left: 335px;
-  margin-bottom: -5px;
+  margin-top: 7px;
+  margin-left: 385px;
+  margin-bottom: -7px;
 `;
 
 const RightContainer = styled.div`
   width: 40%;
-  height: 100%;
+  height: 98%;
   padding: 10px;
   box-sizing: border-box;
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  margin-top: 10px;
 `;
 
 const ReviewDetailsBox = styled.div`

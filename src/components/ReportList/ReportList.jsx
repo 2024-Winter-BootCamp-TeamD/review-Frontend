@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import reportImg from '../../assets/bitmap.png';
+import styled from 'styled-components';
+import reportImg from '../../assets/bitmap.png';
 import downloadIcon from '../../assets/download.png';
 import deleteIcon from '../../assets/delete.png';
 
@@ -10,6 +12,7 @@ const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#333333' : '#FFFFFF')};
 `;
 
 const Item = styled.div`
@@ -22,6 +25,8 @@ const Item = styled.div`
   box-sizing: border-box;
   border-radius: 15px;
   box-shadow: 0 2px 5px rgba(0, 5, 0, 1);
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#444444' : '#FFFFFF')};
+  transition: background-color 0.3s ease;
 `;
 
 const ImageContainer = styled.div`
@@ -104,12 +109,13 @@ const Icon = styled.img`
   object-fit: contain;
 `;
 
-function ReportItem({ report }) {
+function ReportItem({ report, isDarkMode }) {
   const allModes = ['Original', 'Clean Code', 'Study', 'Newbie', 'Basic'];
+  const getModeClassName = (mode) => mode.toLowerCase().replace(/\s+/g, '-');
   const getModeClassName = (mode) => mode.toLowerCase().replace(/\s+/g, '-');
 
   return (
-    <Item>
+    <Item isDarkMode={isDarkMode}>
       <ImageContainer>
         <img src={reportImg} alt="report" />
       </ImageContainer>
@@ -120,7 +126,16 @@ function ReportItem({ report }) {
       
       <Modes>
         <ModesRow isFirst>
+      </ImageContainer>
+      
+      <Name>{report.reportName}</Name>
+      <Date>{report.date}</Date>
+      <Comments>{report.comments}</Comments>
+      
+      <Modes>
+        <ModesRow isFirst>
           {allModes.slice(0, 2).map((mode) => (
+            <ModeLabel key={mode} mode={getModeClassName(mode)}>
             <ModeLabel key={mode} mode={getModeClassName(mode)}>
               <input
                 type="checkbox"
@@ -128,11 +143,15 @@ function ReportItem({ report }) {
                 readOnly
               />
               <span>{mode}</span>
+            </ModeLabel>
             </ModeLabel>
           ))}
         </ModesRow>
         <ModesRow>
+        </ModesRow>
+        <ModesRow>
           {allModes.slice(2).map((mode) => (
+            <ModeLabel key={mode} mode={getModeClassName(mode)}>
             <ModeLabel key={mode} mode={getModeClassName(mode)}>
               <input
                 type="checkbox"
@@ -141,7 +160,10 @@ function ReportItem({ report }) {
               />
               <span>{mode}</span>
             </ModeLabel>
+            </ModeLabel>
           ))}
+        </ModesRow>
+      </Modes>
         </ModesRow>
       </Modes>
 
@@ -150,17 +172,24 @@ function ReportItem({ report }) {
         <Icon src={deleteIcon} alt="delete" />
       </Actions>
     </Item>
+      <Actions>
+        <Icon src={downloadIcon} alt="download" />
+        <Icon src={deleteIcon} alt="delete" />
+      </Actions>
+    </Item>
   );
 }
 
-function ReportList({ reports }) {
+function ReportList({ reports, isDarkMode }) {
   return (
-    <ListContainer>
+    <ListContainer isDarkMode={isDarkMode}>
       {reports.map((report) => (
-        <ReportItem key={report.id} report={report} />
+        <ReportItem key={report.id} report={report} isDarkMode={isDarkMode} />
       ))}
+    </ListContainer>
     </ListContainer>
   );
 }
+
 
 export default ReportList;

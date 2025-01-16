@@ -10,6 +10,7 @@ const HistoryContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF00')};
 `;
 
 const PageName = styled.div`
@@ -18,6 +19,7 @@ const PageName = styled.div`
   left: 50px;
   font-size: 40px;
   margin: 0;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 const ContentWrapper = styled.div`
@@ -48,6 +50,8 @@ const ChartBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
+  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
 `;
 
 const ReviewListBox = styled.div`
@@ -58,7 +62,25 @@ const ReviewListBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  overflow: hidden;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
+  overflow-y: auto;
+  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    border-radius: 10px;
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+  }
 `;
 
 const SearchBarContainer = styled.div`
@@ -86,13 +108,15 @@ const ReviewDetailsBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  background-color: #F3F3F3;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
+  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
   overflow: hidden;
 
   pre {
-    margin-top: 70px;  // Review 제목과의 간격 조정
-    padding: 20px;     // 내용의 여백 추가
+    margin-top: 70px;
+    padding: 20px;
     text-align: left;
+    color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
   }
 `;
 
@@ -104,6 +128,7 @@ const BoxTitle = styled.p`
   font-size: 25px;
   font-weight: bold;
   z-index: 1000;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 const ChartLegend = styled.div`
@@ -136,7 +161,7 @@ const LegendItem = styled.div`
   text-align: center;
   background-color: ${({ mode }) =>
     mode === 'BASIC' ? '#FF5722' :
-    mode === 'CLEAN' ? '#9E9E9E' :
+    mode === 'CLEAN' ? '#BC6FCD' :
     mode === 'OPTIMIZE' ? '#4CAF50' :
     mode === 'NEWBIE' ? '#2196F3' :
     mode === 'STUDY' ? '#FFC107' :
@@ -146,10 +171,10 @@ const LegendItem = styled.div`
 const LegendCount = styled.div`
   font-size: 15px;
   font-weight: bold;
-  color: #000;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
-const History = () => {
+const History = ({ isDarkMode }) => {
   const [selectedReview, setSelectedReview] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -160,6 +185,7 @@ const History = () => {
 
   const handleSliceClick = (mode) => {
     setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
+    setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
   };
 
   useEffect(() => {
@@ -167,40 +193,40 @@ const History = () => {
   }, []);
 
   return (
-    <HistoryContainer>
-      <PageName>
+    <HistoryContainer isDarkMode={isDarkMode}>
+      <PageName isDarkMode={isDarkMode}>
         <p>History</p>
       </PageName>
 
       <ContentWrapper>
         <LeftContainer>
-          <ChartBox>
-            <BoxTitle>Mode Statistics</BoxTitle>
+          <ChartBox isDarkMode={isDarkMode}>
+            <BoxTitle isDarkMode={isDarkMode}>Mode Statistics</BoxTitle>
             <Chart onSliceClick={handleSliceClick} selectedMode={selectedMode} />
             <ChartLegend>
-              {['BASIC', 'CLEAN', 'OPTIMIZE', 'NEWBIE', 'STUDY'].map((mode) => (
+              {['BASIC', 'STUDY', 'NEWBIE', 'CLEAN', 'OPTIMIZE'].map((mode) => (
                 <LegendContainer key={mode} selectedMode={selectedMode} mode={mode}>
                   <LegendItem mode={mode}>
                     <span>{mode}</span>
                   </LegendItem>
-                  <LegendCount>……………… 12</LegendCount>
+                  <LegendCount isDarkMode={isDarkMode}>……………… 12</LegendCount>
                 </LegendContainer>
               ))}
             </ChartLegend>
           </ChartBox>
 
-          <ReviewListBox>
-            <BoxTitle>All reviews</BoxTitle>
-            <SearchBarContainer>
-              <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <ReviewListBox isDarkMode={isDarkMode}>
+            <BoxTitle isDarkMode={isDarkMode}>All reviews</BoxTitle>
+            <SearchBarContainer isDarkMode={isDarkMode}>
+              <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} isDarkMode={isDarkMode} />
             </SearchBarContainer>
-            <Reviews onReviewClick={handleReviewClick} selectedMode={selectedMode} searchTerm={searchTerm} />
+            <Reviews onReviewClick={handleReviewClick} selectedMode={selectedMode} searchTerm={searchTerm} isDarkMode={isDarkMode} />
           </ReviewListBox>
         </LeftContainer>
 
         <RightContainer>
-          <ReviewDetailsBox>
-            <BoxTitle>Review</BoxTitle>
+          <ReviewDetailsBox isDarkMode={isDarkMode}>
+            <BoxTitle isDarkMode={isDarkMode}>Review</BoxTitle>
             <pre>{selectedReview}</pre>
           </ReviewDetailsBox>
         </RightContainer>

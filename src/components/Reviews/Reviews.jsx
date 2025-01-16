@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const ReviewsContainer = styled.div`
@@ -20,10 +20,16 @@ const ReviewItem = styled.div`
   padding: 5px 10px;
   margin-bottom: 10px;
   box-sizing: border-box;
-  background-color: #F3F3F3;
+  background-color: ${props => props.isSelected ? '#F3F3F3' : '#FFFFFF'};
   font-size: 15px;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateX(5px);
+    background-color: ${props => props.isSelected ? '#F3F3F3' : '#f8f9fa'};
+  }
 `;
 
 const ReviewSummary = styled.div`
@@ -186,6 +192,13 @@ const dummyReviews = [
 ];
 
 const Reviews = ({ onReviewClick, selectedMode, searchTerm }) => {
+  const [selectedReviewId, setSelectedReviewId] = useState(null);
+
+  const handleReviewClick = (review) => {
+    setSelectedReviewId(review.id);
+    onReviewClick(review.content);
+  };
+
   const filteredReviews = dummyReviews.filter(review => {
     const matchesMode = !selectedMode || selectedMode === '' || review.mode === selectedMode;
     const matchesSearch = !searchTerm || review.link.toLowerCase().includes(searchTerm.toLowerCase());
@@ -196,8 +209,9 @@ const Reviews = ({ onReviewClick, selectedMode, searchTerm }) => {
     <ReviewsContainer>
       {filteredReviews.map(review => (
         <ReviewItem 
-          key={review.id} 
-          onClick={() => onReviewClick(review.content)}
+          key={review.id}
+          isSelected={selectedReviewId === review.id}
+          onClick={() => handleReviewClick(review)}
         >
           <ReviewSummary>
             <ReviewMode mode={review.mode}>

@@ -138,7 +138,7 @@ const Chart = ({ onSliceClick, selectedMode }) => {
         pointFormat:
           '<span style="color:{point.color}">●</span> {point.name}: <b>{point.percentage:.1f}%</b>',
       },
-      accessibility: { point: { valueSuffix: '%' } },
+      accessibility: { 2: { valueSuffix: '%' } },
       plotOptions: {
         pie: {
           allowPointSelect: true,
@@ -155,6 +155,27 @@ const Chart = ({ onSliceClick, selectedMode }) => {
                 if (onSliceClick) {
                   onSliceClick(this.name);
                 }
+                const series = this.series;
+
+                 // 클릭된 조각의 상태 확인
+      if (this.isSelected) {
+        // 이미 선택된 상태라면 모든 조각의 불투명도를 원래대로 복원
+        series.points.forEach((point) => {
+          point.graphic.css({ opacity: 1 });
+          point.isSelected = false; // 상태 초기화
+        });
+      } else {
+        // 선택되지 않은 상태라면 클릭된 조각 강조, 나머지 조각 흐리게
+        series.points.forEach((point) => {
+          if (point === this) {
+            point.graphic.css({ opacity: 1 });
+            point.isSelected = true; // 선택 상태 설정
+          } else {
+            point.graphic.css({ opacity: 0.3 });
+                      point.isSelected = false; // 다른 조각은 선택 해제
+                    }
+                  });
+                }
               },
             },
           },
@@ -165,7 +186,7 @@ const Chart = ({ onSliceClick, selectedMode }) => {
       series: [
         {
           enableMouseTracking: false,
-          animation: { duration: 1300 },
+          animation: { duration: 1200 },
           colorByPoint: true,
           data: [
             { name: 'CLEAN', y: 21.3, color: '#9E9E9E' },

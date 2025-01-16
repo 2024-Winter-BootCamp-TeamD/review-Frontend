@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import styled from 'styled-components';
 import Chart from '../components/Chart/Chart';
 import SearchBar from '../components/SearchBar/SearchBar';
 import Reviews from '../components/Reviews/Reviews';
@@ -185,6 +186,7 @@ const History = ({ isDarkMode }) => {
 
   const handleSliceClick = (mode) => {
     setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
+    setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
   };
 
   useEffect(() => {
@@ -195,6 +197,7 @@ const History = ({ isDarkMode }) => {
     <HistoryContainer isDarkMode={isDarkMode}>
       <PageName isDarkMode={isDarkMode}>
         <p>History</p>
+      </PageName>
       </PageName>
 
       <ContentWrapper>
@@ -211,6 +214,8 @@ const History = ({ isDarkMode }) => {
                   <LegendCount isDarkMode={isDarkMode}>……………… 12</LegendCount>
                 </LegendContainer>
               ))}
+            </ChartLegend>
+          </ChartBox>
             </ChartLegend>
           </ChartBox>
 

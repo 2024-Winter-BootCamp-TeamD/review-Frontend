@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import reportImg from '../../assets/bitmap.png';
+import styled from 'styled-components';
+import reportImg from '../../assets/bitmap.png';
 import downloadIcon from '../../assets/download.png';
 import deleteIcon from '../../assets/delete.png';
 
@@ -110,6 +112,7 @@ const Icon = styled.img`
 function ReportItem({ report, isDarkMode }) {
   const allModes = ['Original', 'Clean Code', 'Study', 'Newbie', 'Basic'];
   const getModeClassName = (mode) => mode.toLowerCase().replace(/\s+/g, '-');
+  const getModeClassName = (mode) => mode.toLowerCase().replace(/\s+/g, '-');
 
   return (
     <Item isDarkMode={isDarkMode}>
@@ -123,7 +126,16 @@ function ReportItem({ report, isDarkMode }) {
       
       <Modes>
         <ModesRow isFirst>
+      </ImageContainer>
+      
+      <Name>{report.reportName}</Name>
+      <Date>{report.date}</Date>
+      <Comments>{report.comments}</Comments>
+      
+      <Modes>
+        <ModesRow isFirst>
           {allModes.slice(0, 2).map((mode) => (
+            <ModeLabel key={mode} mode={getModeClassName(mode)}>
             <ModeLabel key={mode} mode={getModeClassName(mode)}>
               <input
                 type="checkbox"
@@ -131,11 +143,15 @@ function ReportItem({ report, isDarkMode }) {
                 readOnly
               />
               <span>{mode}</span>
+            </ModeLabel>
             </ModeLabel>
           ))}
         </ModesRow>
         <ModesRow>
+        </ModesRow>
+        <ModesRow>
           {allModes.slice(2).map((mode) => (
+            <ModeLabel key={mode} mode={getModeClassName(mode)}>
             <ModeLabel key={mode} mode={getModeClassName(mode)}>
               <input
                 type="checkbox"
@@ -144,10 +160,18 @@ function ReportItem({ report, isDarkMode }) {
               />
               <span>{mode}</span>
             </ModeLabel>
+            </ModeLabel>
           ))}
         </ModesRow>
       </Modes>
+        </ModesRow>
+      </Modes>
 
+      <Actions>
+        <Icon src={downloadIcon} alt="download" />
+        <Icon src={deleteIcon} alt="delete" />
+      </Actions>
+    </Item>
       <Actions>
         <Icon src={downloadIcon} alt="download" />
         <Icon src={deleteIcon} alt="delete" />
@@ -163,7 +187,9 @@ function ReportList({ reports, isDarkMode }) {
         <ReportItem key={report.id} report={report} isDarkMode={isDarkMode} />
       ))}
     </ListContainer>
+    </ListContainer>
   );
 }
+
 
 export default ReportList;

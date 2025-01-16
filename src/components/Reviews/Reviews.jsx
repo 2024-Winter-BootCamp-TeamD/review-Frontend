@@ -225,6 +225,8 @@ const Reviews = ({ onReviewClick, selectedMode, searchTerm, isDarkMode }) => {
   const filteredReviews = dummyReviews.filter(review => {
     const matchesMode = !selectedMode || selectedMode === '' || review.mode === selectedMode;
     const matchesSearch = !searchTerm || review.link.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesMode = !selectedMode || selectedMode === '' || review.mode === selectedMode;
+    const matchesSearch = !searchTerm || review.link.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesMode && matchesSearch;
   });
 
@@ -237,6 +239,8 @@ const Reviews = ({ onReviewClick, selectedMode, searchTerm, isDarkMode }) => {
           isDarkMode={isDarkMode}
           onClick={() => handleReviewClick(review)}
         >
+          <ReviewSummary>
+            <ReviewMode mode={review.mode}>
           <ReviewSummary>
             <ReviewMode mode={review.mode}>
               {review.mode}
@@ -252,7 +256,11 @@ const Reviews = ({ onReviewClick, selectedMode, searchTerm, isDarkMode }) => {
             </ReviewArrow>
           </ReviewSummary>
         </ReviewItem>
+            </ReviewArrow>
+          </ReviewSummary>
+        </ReviewItem>
       ))}
+    </ReviewsContainer>
     </ReviewsContainer>
   );
 };

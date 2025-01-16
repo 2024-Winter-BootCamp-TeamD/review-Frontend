@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import PlayfulButton from "../components/PlayfulButton";
 import CloseIcon from "@mui/icons-material/Close";
-import SearchBarSC from "../components/SearchBarSC";
+import SearchBar from "../components/SearchBar/SearchBar";
 import { ResponsiveRadar } from "@nivo/radar";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";

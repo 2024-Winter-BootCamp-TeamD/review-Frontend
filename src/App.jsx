@@ -6,7 +6,7 @@ import History from "./pages/History.jsx";
 import Repositories from "./pages/Repositories.jsx";
 import Report from "./pages/Report.jsx";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
-
+import Home from "./pages/Home.jsx";
 import "./App.css";
 import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
 
@@ -21,6 +21,7 @@ function App() {
             <Route path="/repositories" element={<Repositories />} />
             <Route path="/report" element={<Report />} />
             <Route path="/" element={<Dashboard />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/history" element={<History />} />
             <Route path="/repositories" element={<Repositories />} />
             <Route path="/report" element={<Report />} />

@@ -203,7 +203,7 @@ const History = ({ isDarkMode }) => {
             <BoxTitle isDarkMode={isDarkMode}>Mode Statistics</BoxTitle>
             <Chart onSliceClick={handleSliceClick} selectedMode={selectedMode} />
             <ChartLegend>
-              {['BASIC', 'CLEAN', 'OPTIMIZE', 'NEWBIE', 'STUDY'].map((mode) => (
+              {['BASIC', 'STUDY', 'NEWBIE', 'CLEAN', 'OPTIMIZE'].map((mode) => (
                 <LegendContainer key={mode} selectedMode={selectedMode} mode={mode}>
                   <LegendItem mode={mode}>
                     <span>{mode}</span>

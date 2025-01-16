@@ -11,28 +11,28 @@ import { ResponsiveLine } from "@nivo/line";
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
-const ALL_MODES = ["Basic", "Clean Code", "Optimize", "Newbie", "Study"];
+const ALL_MODES = ["Basic", "Study", "Newbie", "Clean Code", "Optimize"];
 
 const MODE_COLORS = {
   Basic: {
     bg: "#FFF1EC",
     text: "#FF794E",
   },
-  "Clean Code": {
-    bg: "#F9F0F7",
-    text: "#AE5FA3",
-  },
-  Optimize: {
-    bg: "#F0F9F0",
-    text: "#70BF73",
-  },
-  Newbie: {
-    bg: "#EDF6FD",
-    text: "#4DABF5",
-  },
   Study: {
     bg: "#FFF9E6",
     text: "#FFCD39",
+  },
+  "Clean Code": {
+    bg: "#F9F0F7",
+    text: "#4DABF5",
+  },
+  Optimize: {
+    bg: "#F0F9F0",
+    text: "#BC6FCD",
+  },
+  Newbie: {
+    bg: "#EDF6FD",
+    text: "#70BF73",
   },
 };
 
@@ -808,8 +808,7 @@ const ModeTag = styled.span`
   padding: 3px 6px;
   border-radius: 4px;
   font-size: 14px;
-  background-color: ${(props) =>
-    props.isActive ? MODE_COLORS[props.mode].bg : "#f5f5f5"};
+  background-color: "00000000";
   color: ${(props) => (props.isActive ? MODE_COLORS[props.mode].text : "#666")};
   transition: all 0.2s ease-in-out;
 `;

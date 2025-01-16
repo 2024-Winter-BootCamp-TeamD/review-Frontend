@@ -66,9 +66,9 @@ const ReviewMode = styled.div`
   margin-left: 40px;
   color: ${props => {
     switch (props.mode) {
-      case 'CLEAN': return '#9E9E9E';
-      case 'OPTIMIZE': return '#4CAF50';
-      case 'NEWBIE': return '#2196F3';
+      case 'CLEAN': return '#4DABF5';
+      case 'OPTIMIZE': return '#BC6FCD';
+      case 'NEWBIE': return '#70BF73';
       case 'STUDY': return '#FFC107';
       case 'BASIC': return '#FF5722';
       default: return '#333';

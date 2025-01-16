@@ -126,10 +126,10 @@ const Dashboard = ({ isDarkMode }) => {
 
   const modes = [
     { modeName: "Basic", description: "Default Mode.", modeColor: "#FF794E" },
-    { modeName: "Clean Code", description: "Follow Coding Conventions.", modeColor: "#9B9B9B" },
-    { modeName: "Optimize", description: "Performance First.", modeColor: "#70BF73" },
-    { modeName: "Newbie", description: "Study Together.", modeColor: "#4DABF5" },
     { modeName: "Study", description: "Hint Only.", modeColor: "#FFCD39" },
+    { modeName: "Newbie", description: "Study Together.", modeColor: "#70BF73" },
+    { modeName: "Clean Code", description: "Follow Coding Conventions.", modeColor: "#4DABF5" },
+    { modeName: "Optimize", description: "Performance First.", modeColor: "#BC6FCD" },
   ];
 
   const issueCategories = ["Clean Code", "Memory", "Execution Time"];

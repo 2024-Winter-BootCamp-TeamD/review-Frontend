@@ -56,7 +56,7 @@ const Date = styled.div`
 const Comments = styled.div`
   flex: 2;
   margin-left: 10px;
-  font-size: 20px;
+  font-size: 40px;
   color: #797D8C;
 `;
 
@@ -112,7 +112,6 @@ const Icon = styled.img`
 function ReportItem({ report, isDarkMode }) {
   const allModes = ['Original', 'Clean Code', 'Study', 'Newbie', 'Basic'];
   const getModeClassName = (mode) => mode.toLowerCase().replace(/\s+/g, '-');
-  const getModeClassName = (mode) => mode.toLowerCase().replace(/\s+/g, '-');
 
   return (
     <Item isDarkMode={isDarkMode}>
@@ -126,16 +125,7 @@ function ReportItem({ report, isDarkMode }) {
       
       <Modes>
         <ModesRow isFirst>
-      </ImageContainer>
-      
-      <Name>{report.reportName}</Name>
-      <Date>{report.date}</Date>
-      <Comments>{report.comments}</Comments>
-      
-      <Modes>
-        <ModesRow isFirst>
           {allModes.slice(0, 2).map((mode) => (
-            <ModeLabel key={mode} mode={getModeClassName(mode)}>
             <ModeLabel key={mode} mode={getModeClassName(mode)}>
               <input
                 type="checkbox"
@@ -144,15 +134,11 @@ function ReportItem({ report, isDarkMode }) {
               />
               <span>{mode}</span>
             </ModeLabel>
-            </ModeLabel>
           ))}
-        </ModesRow>
-        <ModesRow>
         </ModesRow>
         <ModesRow>
           {allModes.slice(2).map((mode) => (
             <ModeLabel key={mode} mode={getModeClassName(mode)}>
-            <ModeLabel key={mode} mode={getModeClassName(mode)}>
               <input
                 type="checkbox"
                 checked={report.usedModes.includes(mode)}
@@ -160,18 +146,10 @@ function ReportItem({ report, isDarkMode }) {
               />
               <span>{mode}</span>
             </ModeLabel>
-            </ModeLabel>
           ))}
         </ModesRow>
       </Modes>
-        </ModesRow>
-      </Modes>
 
-      <Actions>
-        <Icon src={downloadIcon} alt="download" />
-        <Icon src={deleteIcon} alt="delete" />
-      </Actions>
-    </Item>
       <Actions>
         <Icon src={downloadIcon} alt="download" />
         <Icon src={deleteIcon} alt="delete" />
@@ -186,7 +164,6 @@ function ReportList({ reports, isDarkMode }) {
       {reports.map((report) => (
         <ReportItem key={report.id} report={report} isDarkMode={isDarkMode} />
       ))}
-    </ListContainer>
     </ListContainer>
   );
 }

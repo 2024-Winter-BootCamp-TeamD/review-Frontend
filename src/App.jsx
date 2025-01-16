@@ -6,7 +6,7 @@ import History from "./pages/History.jsx";
 import Repositories from "./pages/Repositories.jsx";
 import Report from "./pages/Report.jsx";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
-
+import Home from "./pages/Home.jsx";
 import "./App.css";
 import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
 import ModeSwitchButton from "./components/ModeSwitchButton/ModeSwitchButton.jsx";
@@ -36,6 +36,7 @@ function App() {
             <Route path="/history" element={<History isDarkMode={isDarkMode} />} />
             <Route path="/repositories" element={<Repositories isDarkMode={isDarkMode} />} />
             <Route path="/report" element={<Report isDarkMode={isDarkMode} />} />
+            <Route path="/home" element={<Home />} />
           </Routes>
         </div>
         <div className="top-buttons">

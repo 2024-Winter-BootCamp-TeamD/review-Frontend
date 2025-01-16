@@ -20,7 +20,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 10%;
+  padding-top: 5%;
   z-index: 1000;          /* 다른 콘텐츠보다 위에 보이도록 */
 }
 
@@ -38,7 +38,7 @@ html, body {
 }
 
 .sidebar-logo {
-  padding-top: 15vh;
+  padding-top: 10vh;
   font-size: calc(min(8vw * 0.3, 60px));
   margin-bottom: 3vh;
 }

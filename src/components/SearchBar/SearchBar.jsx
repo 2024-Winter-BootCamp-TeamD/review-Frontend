@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import styled from "styled-components";
 import { CiSearch } from "react-icons/ci";
 
 const SearchBarContainer = styled.div`
@@ -55,7 +54,6 @@ const SearchBar = ({ value, onChange, width = "460px ", isDarkMode }) => {
         placeholder="Search"
         isDarkMode={isDarkMode}
       />
-    </SearchBarContainer>
     </SearchBarContainer>
   );
 };

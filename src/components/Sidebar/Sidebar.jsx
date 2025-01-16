@@ -3,25 +3,11 @@ import React, { useState, useEffect } from "react";
 import "./Sidebar.css";
 import SidebarButton from "../SidebarButton/SidebarButton.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useNavigate, useLocation } from "react-router-dom";
 
 const Sidebar = ({isDarkMode}) => {
   const buttons = ["Dashboard", "History", "Repositories", "Report"];
   const [activeButton, setActiveButton] = useState("");
-  const [activeButton, setActiveButton] = useState("");
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    const path = location.pathname;
-    if (path === "/") {
-      setActiveButton("Dashboard");
-    } else {
-      const currentPage = path.substring(1);
-      const formattedPage = currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
-      setActiveButton(formattedPage);
-    }
-  }, [location]);
   const location = useLocation();
 
   useEffect(() => {

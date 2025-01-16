@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import styled from 'styled-components';
 import Chart from '../components/Chart/Chart';
 import SearchBar from '../components/SearchBar/SearchBar';
 import Reviews from '../components/Reviews/Reviews';
@@ -198,7 +197,6 @@ const History = ({ isDarkMode }) => {
       <PageName isDarkMode={isDarkMode}>
         <p>History</p>
       </PageName>
-      </PageName>
 
       <ContentWrapper>
         <LeftContainer>
@@ -214,8 +212,6 @@ const History = ({ isDarkMode }) => {
                   <LegendCount isDarkMode={isDarkMode}>……………… 12</LegendCount>
                 </LegendContainer>
               ))}
-            </ChartLegend>
-          </ChartBox>
             </ChartLegend>
           </ChartBox>
 

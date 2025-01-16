@@ -19,11 +19,15 @@ const LoadingIndicator = () => {
         <div className={styles.cloudBubble2}></div>
         <div className={styles.cloudBubble3}></div>
         <div className={styles.cloudBubble4}></div>
-        <div className={styles.cloudDot1}></div>
-        <div className={styles.cloudDot2}></div>
-        <div className={styles.cloudDot3}></div>
-        <div className={styles.cloudDot4}></div>
         <span className={styles.loadingNumber}>{loadingNumber}%</span>
+      </div>
+      <div className={styles.smallCloud1}>
+        <div className={styles.smallCloudBubble}></div>
+        <div className={styles.smallCloudBubble}></div>
+      </div>
+      <div className={styles.smallCloud2}>
+        <div className={styles.smallCloudBubble}></div>
+        <div className={styles.smallCloudBubble}></div>
       </div>
       <ul>
         {Array.from({ length: 5 }).map((_, index) => (

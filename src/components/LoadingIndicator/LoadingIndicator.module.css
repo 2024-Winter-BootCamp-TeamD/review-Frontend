@@ -209,120 +209,112 @@ li:nth-child(5)::after {
 
 .cloud {
   position: absolute;
-  width: 130px;
-  height: 60px;
-  background: var(--black);
-  border-radius: 100px;
-  top: -40px;
-  left: 100px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 120px;
+  height: 80px;
+  background: rgba(75, 93, 111, 0.9);
+  border-radius: 50px;
+  top: -80px;
+  left: 180px;
   z-index: 2;
-  animation: float 3s ease-in-out infinite;
+  animation: pulsate 2s ease-in-out infinite;
+}
+
+.smallCloud1, .smallCloud2 {
+  position: absolute;
+  background: rgba(75, 93, 111, 0.9);
+  border-radius: 25px;
+  z-index: 2;
+  animation: pulsate 2s ease-in-out infinite;
+}
+
+.smallCloud1 {
+  width: 60px;
+  height: 40px;
+  top: 0px;
+  left: 120px;
+  animation-delay: 0.3s;
+}
+
+.smallCloud2 {
+  width: 45px;
+  height: 30px;
+  top: 55px;
+  left: 80px;
+  animation-delay: 0.6s;
+}
+
+.smallCloudBubble {
+  position: absolute;
+  background: rgba(75, 93, 111, 0.85);
+  border-radius: 50%;
+  animation: swirl 4s ease-in-out infinite;
+}
+
+.smallCloud1 .smallCloudBubble:nth-child(1) {
+  width: 40px;
+  height: 40px;
+  left: -10px;
+  top: -10px;
+}
+
+.smallCloud1 .smallCloudBubble:nth-child(2) {
+  width: 45px;
+  height: 45px;
+  left: 15px;
+  top: -12px;
+}
+
+.smallCloud2 .smallCloudBubble:nth-child(1) {
+  width: 30px;
+  height: 30px;
+  left: -8px;
+  top: -8px;
+}
+
+.smallCloud2 .smallCloudBubble:nth-child(2) {
+  width: 35px;
+  height: 35px;
+  left: 10px;
+  top: -10px;
+}
+
+.cloudBubble1, .cloudBubble2, .cloudBubble3, .cloudBubble4 {
+  position: absolute;
+  background: rgba(75, 93, 111, 0.85);
+  border-radius: 50%;
+  animation: swirl 4s ease-in-out infinite;
 }
 
 .cloudBubble1 {
-  content: '';
-  position: absolute;
-  background: var(--black);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  top: -35px;
-  left: 25px;
-  animation: float 3s ease-in-out infinite;
-}
-
-.cloudBubble1::before {
-  content: '';
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  background: var(--black);
-  border-radius: 60% 40% 70% 30% / 50% 60% 40% 50%;
-  left: -5px;
+  width: 80px;
+  height: 80px;
+  left: -20px;
+  top: -20px;
+  animation-delay: 0s;
 }
 
 .cloudBubble2 {
-  content: '';
-  position: absolute;
-  background: var(--black);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  top: -35px;
-  left: 79px;
-  animation: float 3.5s ease-in-out infinite;
-}
-
-.cloudBubble2::before {
-  content: '';
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  background: var(--black);
-  border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%;
-  top: -5px;
-  left: -5px;
+  width: 90px;
+  height: 90px;
+  left: 30px;
+  top: -25px;
+  animation-delay: 0.5s;
 }
 
 .cloudBubble3 {
-  content: '';
-  position: absolute;
-  background: var(--black);
-  width: 48px;
-  height: 48px;
-  border-radius: 60% 40% 50% 50% / 40% 50% 50% 60%;
-  top: -15px;
-  left: 110px;
-  animation: float 3.2s ease-in-out infinite;
+  width: 70px;
+  height: 70px;
+  left: 50px;
+  top: -10px;
+  animation-delay: 1s;
 }
 
 .cloudBubble4 {
-  content: '';
-  position: absolute;
-  background: var(--black);
-  width: 48px;
-  height: 48px;
-  border-radius: 60% 40% 50% 50% / 40% 50% 50% 60%;
-  top: -15px;
-  left: -20px;
-  animation: float 3.2s ease-in-out infinite;
-}
-
-.cloudDot1 {
-  content: '';
-  position: absolute;
-  background: var(--black);
-  width: 48px;
-  height: 48px;
-  border-radius: 60% 40% 50% 50% / 40% 50% 50% 60%;
-  bottom: -45px;
-  left: 20px;
-  animation: float 3.2s ease-in-out infinite;
-}
-
-.cloudDot2 {
-  content: '';
-  position: absolute;
-  background: var(--black);
-  width: 24px;
-  height: 24px;
-  border-radius: 40% 60% 50% 50% / 60% 40% 50% 50%;
-  bottom: -70px;
+  width: 85px;
+  height: 85px;
   left: 10px;
-  animation: float 3.4s ease-in-out infinite;
-}
-
-.cloudDot3 {
-  content: '';
-  position: absolute;
-  background: var(--black);
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  bottom: -0px;
-  left: 10px;
-  animation: float 3.4s ease-in-out infinite;
+  top: -30px;
+  animation-delay: 1.5s;
 }
 
 .loadingNumber {
@@ -332,32 +324,36 @@ li:nth-child(5)::after {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  color: #fff;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
   z-index: 3;
 }
 
-/* 연기 애니메이션 */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(1) rotate(0deg);
-    opacity: 1;
+@keyframes pulsate {
+  0% {
+    transform: scale(1);
   }
   50% {
-    transform: translateY(-8px) scale(1.03) rotate(1.5deg);
-    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
-/* 구름 본체도 울퉁불퉁하게 만들기 */
-.cloud::before {
-  content: '';
-  position: absolute;
-  width: 140px;
-  height: 70px;
-  background: var(--black);
-  border-radius: 70% 30% 60% 40% / 50% 40% 60% 50%;
-  top: -5px;
-  left: -5px;
+@keyframes swirl {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  33% {
+    transform: rotate(10deg) scale(1.1);
+  }
+  66% {
+    transform: rotate(-10deg) scale(0.9);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
 }

@@ -8,6 +8,23 @@ const ReviewsContainer = styled.div`
   overflow-x: hidden;
   margin-top: 40px;
   margin-left: 8px;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF00')};
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    border-radius: 10px;
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+  }
 `;
 
 const ReviewItem = styled.div`
@@ -20,15 +37,18 @@ const ReviewItem = styled.div`
   padding: 5px 10px;
   margin-bottom: 10px;
   box-sizing: border-box;
-  background-color: ${props => props.isSelected ? '#F3F3F3' : '#FFFFFF'};
+  background-color: ${({ isSelected, isDarkMode }) => 
+    isSelected ? (isDarkMode ? '#000000' : '#D9D9D9') : (isDarkMode ? '#00000050' : '#FFFFFF')};
   font-size: 15px;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  transform: ${({ isSelected }) => isSelected ? 'translateX(5px)' : 'none'};
 
   &:hover {
     transform: translateX(5px);
-    background-color: ${props => props.isSelected ? '#F3F3F3' : '#f8f9fa'};
+    background-color: ${({ isSelected, isDarkMode }) => 
+      isSelected ? (isDarkMode ? '#000000' : '#D9D9D9') : (isDarkMode ? '#000000' : '#D9D9D9')};
   }
 `;
 
@@ -46,9 +66,9 @@ const ReviewMode = styled.div`
   margin-left: 40px;
   color: ${props => {
     switch (props.mode) {
-      case 'CLEAN': return '#9E9E9E';
-      case 'OPTIMIZE': return '#4CAF50';
-      case 'NEWBIE': return '#2196F3';
+      case 'CLEAN': return '#4DABF5';
+      case 'OPTIMIZE': return '#BC6FCD';
+      case 'NEWBIE': return '#70BF73';
       case 'STUDY': return '#FFC107';
       case 'BASIC': return '#FF5722';
       default: return '#333';
@@ -63,15 +83,18 @@ const ReviewLink = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 const ReviewDate = styled.div`
   margin-right: 35px;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 const ReviewArrow = styled.div`
   margin-right: 20px;
   font-size: 18px;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 //더미데이터
@@ -191,7 +214,7 @@ const dummyReviews = [
   
 ];
 
-const Reviews = ({ onReviewClick, selectedMode, searchTerm }) => {
+const Reviews = ({ onReviewClick, selectedMode, searchTerm, isDarkMode }) => {
   const [selectedReviewId, setSelectedReviewId] = useState(null);
 
   const handleReviewClick = (review) => {
@@ -206,24 +229,25 @@ const Reviews = ({ onReviewClick, selectedMode, searchTerm }) => {
   });
 
   return (
-    <ReviewsContainer>
+    <ReviewsContainer isDarkMode={isDarkMode}>
       {filteredReviews.map(review => (
         <ReviewItem 
           key={review.id}
           isSelected={selectedReviewId === review.id}
+          isDarkMode={isDarkMode}
           onClick={() => handleReviewClick(review)}
         >
           <ReviewSummary>
             <ReviewMode mode={review.mode}>
               {review.mode}
             </ReviewMode>
-            <ReviewLink>
+            <ReviewLink isDarkMode={isDarkMode}>
               {review.link}
             </ReviewLink>
-            <ReviewDate>
+            <ReviewDate isDarkMode={isDarkMode}>
               {review.date}
             </ReviewDate>
-            <ReviewArrow>
+            <ReviewArrow isDarkMode={isDarkMode}>
               →
             </ReviewArrow>
           </ReviewSummary>

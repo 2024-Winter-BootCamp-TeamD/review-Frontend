@@ -7,8 +7,8 @@ const SearchBarContainer = styled.div`
   align-items: center;
   width: ${props => props.width || '450px'};
   height: 40px;
-  background-color: #ffffff;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  background-color: ${props => props.isDarkMode ? '#00000050' : '#ffffff'};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
   border-radius: 23px;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   padding: 0px 15px;
@@ -23,7 +23,7 @@ const IconContainer = styled.div`
 
 const StyledSearchIcon = styled(CiSearch)`
   font-size: 24px;
-  color: #333333;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
   transition: transform 0.5s ease, opacity 0.5s ease;
 `;
 
@@ -33,7 +33,7 @@ const SearchInput = styled.input`
   outline: none;
   font-size: 16px;
   font-weight: 800;
-  color: #333333;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#333333")};
   background-color: transparent;
 
   &::placeholder {
@@ -41,17 +41,18 @@ const SearchInput = styled.input`
   }
 `;
 
-const SearchBar = ({ value, onChange, width = "460px " }) => {
+const SearchBar = ({ value, onChange, width = "460px ", isDarkMode }) => {
   return (
-    <SearchBarContainer width={width}>
+    <SearchBarContainer width={width} isDarkMode={isDarkMode}>
       <IconContainer>
-        <StyledSearchIcon />
+        <StyledSearchIcon isDarkMode={isDarkMode} />
       </IconContainer>
       <SearchInput
         type="text"
         value={value}
         onChange={onChange}
         placeholder="Search"
+        isDarkMode={isDarkMode}
       />
     </SearchBarContainer>
   );

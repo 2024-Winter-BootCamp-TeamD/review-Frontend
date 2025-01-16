@@ -188,12 +188,12 @@ const Chart = ({ onSliceClick, selectedMode }) => {
           enableMouseTracking: false,
           animation: { duration: 1200 },
           colorByPoint: true,
-          data: [
-            { name: 'CLEAN', y: 21.3, color: '#9E9E9E' },
-            { name: 'OPTIMIZE', y: 18.7, color: '#4CAF50' },
-            { name: 'NEWBIE', y: 20.2, color: '#2196F3' },
-            { name: 'STUDY', y: 14.2, color: '#FFC107' },
+          data: [            
             { name: 'BASIC', y: 25.6, color: '#FF5722' },
+            { name: 'STUDY', y: 14.2, color: '#FFC107' },
+            { name: 'NEWBIE', y: 20.2, color: '#70BF73' },
+            { name: 'CLEAN', y: 21.3, color: '#4DABF5' },
+            { name: 'OPTIMIZE', y: 18.7, color: '#BC6FCD' },
           ],
         },
       ],

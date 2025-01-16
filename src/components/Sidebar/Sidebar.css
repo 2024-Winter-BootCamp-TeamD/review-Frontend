@@ -9,19 +9,36 @@ html, body {
 }
 
 .sidebar {
-  position: fixed;        /* 고정 */
-  top: 0;                 /* 상단에 */
-  left: 0;                /* 왼쪽 끝에 */
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 15%;
   min-width: 300px;
   height: 100vh;
-  background-color: #091904;
-  color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 5%;
-  z-index: 1000;          /* 다른 콘텐츠보다 위에 보이도록 */
+  z-index: 1000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar.sidebar-light-mode {
+  background-color: #091904;
+  color: white;
+}
+
+.sidebar.sidebar-dark-mode {
+  /* background: linear-gradient(
+    to right,
+    #091904 0%,
+    #11300849 38%,
+    #215c0f33 73%,
+    #2e801500 100%
+  ); */
+  background-color: #000000;
+  color: white;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .sidebar-rounded-top {
@@ -35,9 +52,16 @@ html, body {
   mask: radial-gradient(circle at bottom right, transparent 50%, black 51%);
   -webkit-mask-composite: exclude;
   mask-composite: exclude;
+  transition: background-color 0.3s ease;
+  clip-path: inset(0 0 0 28%);
+}
+
+.sidebar-dark-mode .sidebar-rounded-top {
+  background-color: #000000;
 }
 
 .sidebar-logo {
+  padding-top: 10vh;
   padding-top: 10vh;
   font-size: calc(min(8vw * 0.3, 60px));
   margin-bottom: 3vh;

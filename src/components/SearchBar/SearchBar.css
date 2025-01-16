@@ -9,6 +9,12 @@
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   padding: 0px 10px;
 }
+
+body.dark-mode .search-bar {
+  background-color: #00000050; /* 다크 모드 배경색 */
+  border: 1px solid #FFFFFF; /* 다크 모드 테두리 */
+}
+
 .search-text {
   flex: 0 0 80px;
   border: none;
@@ -17,6 +23,10 @@
   font-weight: 800;
   color: #333333;
   background-color: transparent;
+}
+
+body.dark-mode .search-text {
+  color: #FFFFFF; /* 다크 모드 텍스트 색상 */
 }
 
 .search-input {
@@ -29,8 +39,16 @@
   background-color: transparent;
 }
 
+body.dark-mode .search-input {
+  color: #FFFFFF; /* 다크 모드 입력 텍스트 색상 */
+}
+
 .search-input::placeholder {
   color: #cccccc;
+}
+
+body.dark-mode .search-input::placeholder {
+  color: #FFFFFF; /* 다크 모드 플레이스홀더 색상 */
 }
 
 .icon-container {
@@ -46,4 +64,8 @@
   transition:
     transform 0.5s ease,
     opacity 0.5s ease;
+}
+
+body.dark-mode .search-icon {
+  color: #FFFFFF; /* 다크 모드 아이콘 색상 */
 }

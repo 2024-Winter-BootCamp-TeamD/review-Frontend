@@ -4,7 +4,7 @@ import Chart from '../components/Chart/Chart';
 import SearchBar from '../components/SearchBar/SearchBar';
 import Reviews from '../components/Reviews/Reviews';
 
-const History = () => {
+const History = ({ isDarkMode }) => {
   const [selectedReview, setSelectedReview] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,7 +32,7 @@ const History = () => {
 
           <div className="chart-box">
             <p className="box-title">Mode Statistics</p>
-            <Chart onSliceClick={handleSliceClick} selectedMode={selectedMode} />
+            <Chart onSliceClick={handleSliceClick} selectedMode={selectedMode} isDarkMode={isDarkMode} />
             <div className="chart-legend">
               {['BASIC', 'CLEAN', 'OPTIMIZE', 'NEWBIE', 'STUDY'].map((mode) => (
                 <div className="legend-container" key={mode} 
@@ -49,7 +49,12 @@ const History = () => {
                     }}>
                     <span className="legend-label">{mode}</span>
                   </div>
-                  <div className="legend-count"> ……………… 12</div>
+                  <div 
+                    className="legend-count" 
+                    style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}
+                  >
+                    ……………… 12
+                  </div>
                 </div>
               ))}
             </div>

@@ -15,7 +15,7 @@ if (Accessibility && typeof Accessibility === 'function') {
   Accessibility(Highcharts);
 }
 
-const Chart = ({ onSliceClick, selectedMode }) => {
+const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
   useEffect(() => {
     const originalAnimate = Highcharts.seriesTypes.pie.prototype.animate;
 
@@ -102,14 +102,13 @@ const Chart = ({ onSliceClick, selectedMode }) => {
                 true
               )
               .css({
-                color: '#000',
+                color: isDarkMode ? '#FFFFFF' : '#000000',
                 fontSize: '24px',
                 fontWeight: 'bold',
                 textAlign: 'center',
               })
               .attr({ align: 'center' })
               .add()
-              .toFront();
 
             Highcharts.seriesTypes.pie.prototype.animate = function () {};
           },
@@ -161,7 +160,7 @@ const Chart = ({ onSliceClick, selectedMode }) => {
         },
       ],
     });
-  }, []);
+  }, [isDarkMode]);
 
   return (
     <div className="chart-wrapper">

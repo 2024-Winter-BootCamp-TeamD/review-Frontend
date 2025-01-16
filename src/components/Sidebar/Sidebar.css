@@ -53,6 +53,7 @@ html, body {
   -webkit-mask-composite: exclude;
   mask-composite: exclude;
   transition: background-color 0.3s ease;
+  clip-path: inset(0 0 0 28%);
 }
 
 .sidebar-dark-mode .sidebar-rounded-top {

@@ -24,9 +24,10 @@ body {
 /* 콘텐츠 영역은 사이드바와 함께 화면에 꽉 차게 */
 .content {
   flex-grow: 1;
-  padding: 10px;
+  padding: 20px;
+  margin-left: 15%; /* Sidebar의 폭과 동일하게 여백 추가 */
+  margin-left: 300px;
 }
-
 /* NotificationButton을 화면 오른쪽 상단에 고정 */
 .notification-button {
   position: absolute;

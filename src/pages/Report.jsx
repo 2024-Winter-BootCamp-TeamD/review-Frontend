@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import PlayfulButton from "../components/PlayfulButton";
 import CloseIcon from "@mui/icons-material/Close";
-import SearchBarSC from "../components/SearchBarSC";
+import SearchBar from "../components/SearchBar/SearchBar";
 import { ResponsiveRadar } from "@nivo/radar";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
@@ -525,12 +525,10 @@ const Report = () => {
                 </PlayfulButton>
               </ButtonCheckboxContainer>
               <SearchBarWrapper>
-                <SearchBarSC
-                  width="800px"
-                  placeholder="search pull request..."
-                  backgroundColor="#f5f5f5"
+                <SearchBar
                   value={searchQuery}
-                  onChange={handleSearchChange}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  width="1000px"
                 />
               </SearchBarWrapper>
               <CloseButton onClick={handleCloseModal}>
@@ -1089,8 +1087,8 @@ const CloseButton = styled.button`
 const SearchBarWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center; // 수직(상하) 중앙 정렬
-  margin-right: 15rem;
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;
 
 // 새로운 styled components 추가

@@ -1,5 +1,72 @@
 import React from 'react';
-import './Reviews.css';
+import styled from 'styled-components';
+
+const ReviewsContainer = styled.div`
+  width: 850px;
+  max-height: 79%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 40px;
+  margin-left: 8px;
+`;
+
+const ReviewItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 830px;
+  min-height: 57px;
+  border: 1px solid #ccc;
+  border-radius: 15px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  background-color: #F3F3F3;
+  font-size: 15px;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+`;
+
+const ReviewSummary = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 12px;
+`;
+
+const ReviewMode = styled.div`
+  flex: 1;
+  font-weight: bold;
+  text-align: left;
+  margin-left: 40px;
+  color: ${props => {
+    switch (props.mode) {
+      case 'CLEAN': return '#9E9E9E';
+      case 'OPTIMIZE': return '#4CAF50';
+      case 'NEWBIE': return '#2196F3';
+      case 'STUDY': return '#FFC107';
+      case 'BASIC': return '#FF5722';
+      default: return '#333';
+    }
+  }};
+`;
+
+const ReviewLink = styled.div`
+  flex: 1.5;
+  margin-left: -180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+`;
+
+const ReviewDate = styled.div`
+  margin-right: 35px;
+`;
+
+const ReviewArrow = styled.div`
+  margin-right: 20px;
+  font-size: 18px;
+`;
 
 //더미데이터
 const dummyReviews = [
@@ -118,45 +185,37 @@ const dummyReviews = [
   
 ];
 
-
 const Reviews = ({ onReviewClick, selectedMode, searchTerm }) => {
   const filteredReviews = dummyReviews.filter(review => {
-    // 모드 필터링
-    const matchesMode =
-      !selectedMode || selectedMode === '' || review.mode === selectedMode;
-    // link 속성에서 검색어 필터링 (대소문자 구분 없이)
-    const matchesSearch =
-      !searchTerm || review.link.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesMode = !selectedMode || selectedMode === '' || review.mode === selectedMode;
+    const matchesSearch = !searchTerm || review.link.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesMode && matchesSearch;
   });
 
   return (
-    <div className="reviews-container">
+    <ReviewsContainer>
       {filteredReviews.map(review => (
-        <div 
+        <ReviewItem 
           key={review.id} 
-          className="review-item"
           onClick={() => onReviewClick(review.content)}
-          style={{ cursor: 'pointer' }}
         >
-          <div className="review-summary">
-            <div className={`review-mode ${review.mode.toLowerCase()}`}>
+          <ReviewSummary>
+            <ReviewMode mode={review.mode}>
               {review.mode}
-            </div>
-            <div className="review-link">
+            </ReviewMode>
+            <ReviewLink>
               {review.link}
-            </div>
-            <div className="review-date">
+            </ReviewLink>
+            <ReviewDate>
               {review.date}
-            </div>
-            <div className="review-arrow">
+            </ReviewDate>
+            <ReviewArrow>
               →
-            </div>
-          </div>
-        </div>
+            </ReviewArrow>
+          </ReviewSummary>
+        </ReviewItem>
       ))}
-    </div>
+    </ReviewsContainer>
   );
 };
 

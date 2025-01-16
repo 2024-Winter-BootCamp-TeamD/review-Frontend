@@ -1,36 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { IoMdNotifications } from "react-icons/io";
+import styled from 'styled-components';
+
+const ButtonContainer = styled.div`
+  position: fixed;
+  top: 15px;
+  right: 21px;
+`;
+
+const NotificationIcon = styled(IoMdNotifications)`
+  font-size: 40px;
+  color: #191A23;
+`;
+
+const NotificationDot = styled.div`
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 15px;
+  height: 15px;
+  background-color: #FF715B;
+  border-radius: 50%;
+`;
 
 const NotificationButton = ({ hasNotification }) => {
-  const styles = {
-    button: {
-      position: 'fixed',
-      top: '15px',
-      right: '21px',
-    },
-    icon: {
-      fontSize: '40px',
-      color: '#191A23',
-    },
-    dot: {
-      position: 'absolute',
-      top: '6px',
-      right: '8px',
-      width: '15px',
-      height: '15px',
-      backgroundColor: '#FF715B',
-      borderRadius: '50%',
-    },
-  };
-
   return (
-    <div style={styles.button}>
-      <IoMdNotifications style={styles.icon} />
-      {hasNotification && <div style={styles.dot}></div>}
-    </div>
+    <ButtonContainer>
+      <NotificationIcon />
+      {hasNotification && <NotificationDot />}
+    </ButtonContainer>
   );
 };
+
 NotificationButton.propTypes = {
   hasNotification: PropTypes.bool.isRequired,
 };

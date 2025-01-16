@@ -1016,7 +1016,7 @@ const ModalItem = styled.div`
   ${(props) =>
     props.selected &&
     `
-    background-color: #10204C;
+    background-color: ${props.isDarkMode ? '#10204C' : '#C0CDF2'};
   `}
 `;
 

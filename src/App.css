@@ -38,7 +38,7 @@ body {
 /* 두 버튼을 나란히 배치 */
 .top-buttons {
   display: flex;
-  align-items: center;
+  align-items: end;
   justify-content: flex-end;
   position: absolute;
   top: -25px;

@@ -17,15 +17,16 @@ const SearchBarSC = ({
       backgroundColor={isDarkMode ? "#00000050" : backgroundColor}
       isDarkMode={isDarkMode}
     >
-      <SearchText>Search</SearchText>
+      <SearchText isDarkMode={isDarkMode}>Search</SearchText>
       <SearchInput
         type="text"
         value={value || ""}
         onChange={onChange}
         placeholder={placeholder}
+        isDarkMode={isDarkMode}
       />
       <IconContainer>
-        <SearchIcon />
+        <StyledSearchIcon isDarkMode={isDarkMode} />
       </IconContainer>
     </SearchBarContainer>
   );
@@ -68,7 +69,7 @@ const SearchText = styled.p`
   outline: none;
   font-size: 18px;
   font-weight: 800;
-  color: #333333;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
   background-color: transparent;
   margin: 0;
 `;
@@ -79,7 +80,7 @@ const SearchInput = styled.input`
   outline: none;
   font-size: 16px;
   font-weight: 800;
-  color: #333333;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
   background-color: transparent;
 
   &::placeholder {
@@ -94,12 +95,10 @@ const IconContainer = styled.div`
   margin-right: 10px;
 `;
 
-const SearchIcon = styled(CiSearch)`
+const StyledSearchIcon = styled(CiSearch)`
   font-size: 24px;
-  color: #333333;
-  transition:
-    transform 0.5s ease,
-    opacity 0.5s ease;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
+  transition: transform 0.5s ease, opacity 0.5s ease;
 `;
 
 export default SearchBarSC;

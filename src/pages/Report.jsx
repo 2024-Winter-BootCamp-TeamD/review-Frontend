@@ -23,15 +23,15 @@ const MODE_COLORS = {
     text: "#FFCD39",
   },
   "Clean Code": {
-    bg: "#F9F0F7",
+    bg: "#4DABF5",
     text: "#4DABF5",
   },
   Optimize: {
-    bg: "#F0F9F0",
+    bg: "#BC6FCD",
     text: "#BC6FCD",
   },
   Newbie: {
-    bg: "#EDF6FD",
+    bg: "#70BF73",
     text: "#70BF73",
   },
 };
@@ -101,7 +101,7 @@ const GRAPHS = [
     component: (data) => (
       <ResponsiveRadar
         data={data}
-        keys={["Basic", "Clean Code", "Optimize", "Newbie", "Study"]}
+        keys={["Basic", "Study", "Newbie", "Clean Code", "Optimize"]}
         indexBy="metric"
         maxValue={100}
         margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
@@ -549,15 +549,16 @@ const Report = ({ isDarkMode }) => {
                   key={item.id}
                   selected={selectedItems.has(item.id)}
                   onClick={() => toggleItemSelection(item.id)}
+                  isDarkMode={isDarkMode}
                 >
                   <CheckCircle checked={selectedItems.has(item.id)}>
                     {selectedItems.has(item.id) && "✓"}
                   </CheckCircle>
                   <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
-                  <PRTitle>{item.title}</PRTitle>
-                  <PRDate>{item.date}</PRDate>
-                  <Grade grade={item.grade}>{item.grade}</Grade>
-                  <IssueType>{item.issueType}</IssueType>
+                  <PRTitle isDarkMode={isDarkMode}>{item.title}</PRTitle>
+                  <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
+                  <Grade grade={item.grade} isDarkMode={isDarkMode}>{item.grade}</Grade>
+                  <IssueType isDarkMode={isDarkMode}>{item.issueType}</IssueType>
                 </ModalItem>
               ))}
             </ModalItemList>
@@ -999,22 +1000,23 @@ const ModalItem = styled.div`
   display: flex;
   align-items: center;
   padding: 20px 30px;
-  background: white;
+  background: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : 'white')};
   border-radius: 15px;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
   gap: 30px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
 
   &:hover {
     transform: translateX(5px);
-    background-color: #f8f9fa;
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#000000' : '#f8f9fa')};
   }
 
   ${(props) =>
     props.selected &&
     `
-    background-color: #d5def6;
+    background-color: #10204C;
   `}
 `;
 
@@ -1046,14 +1048,14 @@ const ReviewMode = styled.div`
 const PRTitle = styled.div`
   flex: 1;
   font-size: 16px;
-  color: #333;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
 `;
 
 const PRDate = styled.div`
   width: 100px;
   color: #666;
   font-size: 14px;
-  flex-shrink: 0;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
 `;
 
 const Grade = styled.div`
@@ -1066,7 +1068,7 @@ const Grade = styled.div`
 
 const IssueType = styled.div`
   width: 120px;
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
   text-align: right;
   flex-shrink: 0;
 `;
@@ -1200,6 +1202,22 @@ const ReportContent = styled.div`
   background-color: white;
   padding: 20px;
   overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+  width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    border-radius: 10px;
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+  }
 `;
 
 const ReportGraph = styled.div`

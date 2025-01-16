@@ -133,7 +133,7 @@ const RepoName = styled.span`
 `;
 
 const PublicLabel = styled.span`
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -141,7 +141,7 @@ const PublicLabel = styled.span`
 `;
 
 const RepoDescription = styled.p`
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
   font-size: 14px;
   margin: 0;
   max-width: 19rem;
@@ -154,7 +154,7 @@ const RepoStats = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
   font-size: 12px;
 `;
 
@@ -162,6 +162,7 @@ const StatItem = styled.span`
   display: flex;
   align-items: center;
   gap: 4px;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
 `;
 
 const getLanguageColor = (language) => {
@@ -305,6 +306,7 @@ const Repositories = ({ isDarkMode }) => {
           <SearchBar
             value={searchTermUnselected}
             onChange={(e) => setSearchTermUnselected(e.target.value)}
+            isDarkMode={isDarkMode}
           />
         </SearchBarWrapper>
         <RepositoryWrapper isDarkMode={isDarkMode}>
@@ -314,24 +316,24 @@ const Repositories = ({ isDarkMode }) => {
               <RepoContent>
                 <RepoHeader>
                   <RepoName>{repo.name}</RepoName>
-                  <PublicLabel>
-                    <PublicIcon sx={{ fontSize: 16 }} />
+                  <PublicLabel isDarkMode={isDarkMode}>
+                    <PublicIcon sx={{ fontSize: 16, color: isDarkMode ? '#E6E6E6' : '#666666' }} />
                     Public
                   </PublicLabel>
                 </RepoHeader>
-                <RepoDescription>{repo.description}</RepoDescription>
-                <RepoStats>
+                <RepoDescription isDarkMode={isDarkMode}>{repo.description}</RepoDescription>
+                <RepoStats isDarkMode={isDarkMode}>
                   <Language language={repo.language}>{repo.language}</Language>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <AccountTreeIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <StarBorderIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <BugReportIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>7h</StatItem>
+                  <StatItem isDarkMode={isDarkMode}>7h</StatItem>
                 </RepoStats>
               </RepoContent>
               <IconWrapper onClick={() => handleSelect(repo)}>
@@ -348,6 +350,7 @@ const Repositories = ({ isDarkMode }) => {
           <SearchBar
             value={searchTermSelected}
             onChange={(e) => setSearchTermSelected(e.target.value)}
+            isDarkMode={isDarkMode}
           />
         </SearchBarWrapper>
         <RepositoryWrapper isDarkMode={isDarkMode}>
@@ -357,24 +360,24 @@ const Repositories = ({ isDarkMode }) => {
               <RepoContent>
                 <RepoHeader>
                   <RepoName>{repo.name}</RepoName>
-                  <PublicLabel>
-                    <PublicIcon sx={{ fontSize: 16 }} />
+                  <PublicLabel isDarkMode={isDarkMode}>
+                    <PublicIcon sx={{ fontSize: 16, color: isDarkMode ? '#E6E6E6' : '#666666' }} />
                     Public
                   </PublicLabel>
                 </RepoHeader>
-                <RepoDescription>{repo.description}</RepoDescription>
-                <RepoStats>
+                <RepoDescription isDarkMode={isDarkMode}>{repo.description}</RepoDescription>
+                <RepoStats isDarkMode={isDarkMode}>
                   <Language language={repo.language}>{repo.language}</Language>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <AccountTreeIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <StarBorderIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <BugReportIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>7h</StatItem>
+                  <StatItem isDarkMode={isDarkMode}>7h</StatItem>
                 </RepoStats>
               </RepoContent>
               <IconWrapper onClick={() => handleUnselect(repo)}>

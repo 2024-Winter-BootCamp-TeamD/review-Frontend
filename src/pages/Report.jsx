@@ -459,10 +459,10 @@ const Report = ({ isDarkMode }) => {
         <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Date
         </CategoryItem>
-        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingLeft: "3vw" }} isDarkMode={isDarkMode}>
+        <CategoryItem style={{ width: "10vw", justifyContent: "flex-end"}} isDarkMode={isDarkMode}>
           Comments
         </CategoryItem>
-        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingRight: "2vw" }} isDarkMode={isDarkMode}>
+        <CategoryItem style={{ width: "22vw", justifyContent: "center"}} isDarkMode={isDarkMode}>
           Used Review Modes
         </CategoryItem>
         <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
@@ -749,11 +749,10 @@ const Report = ({ isDarkMode }) => {
 
 const ReportWrapper = styled.div`
   height: 100%;
-  margin-top: 10px;
+  width: 70vw;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-left: 10px;
 `;
 
 const PageTitle = styled.h1`
@@ -846,8 +845,8 @@ const DeleteButton = styled(IconButton)`
 const ReportItem = styled.div`
   display: flex;
   align-items: center;
-  width: 87rem;
-  gap: 45px;
+  width: 65vw;
+  gap: 2vw;
   margin-top: 10px;
   margin-left: 20px;
   margin-bottom: 10px;
@@ -864,13 +863,12 @@ const CategoryBar = styled.div`
   top: 0;
   display: flex;
   align-items: center;
-  width: 87rem;
+  width: 65vw;
   height: auto;
-  padding: 0 20px;
   margin-top: 24px;
   margin-left: 60px;
   margin-bottom: 0px;
-  gap: 40px;
+  gap: 2vw;
   border-radius: 15px;
   background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ECECEC")};
   border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030")};
@@ -879,7 +877,7 @@ const CategoryBar = styled.div`
 
 const CategoryItem = styled.div`
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
-  font-size: 18px;
+  font-size: clamp(15px, 0.8vw, 18px);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -901,7 +899,7 @@ const ReportList = styled.div`
   flex-direction: column;
   margin-left: 20px;
   overflow-y: auto;
-  width: 90rem;
+  width: 67vw;
 
   &::-webkit-scrollbar {
     width: 8px;

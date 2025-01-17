@@ -2,9 +2,9 @@ import React from "react";
 import styled from "styled-components";
 
 const Button = styled.button`
-  min-width: 170px;
-  min-height: 80px;
-  width: 14vw;
+  min-width: 260px;
+  min-height: 140px;
+  width: 12vw;
   height: 12vh;
   max-width: 500px;
   max-height: 300px;

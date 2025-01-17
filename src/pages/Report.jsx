@@ -4,35 +4,35 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import PlayfulButton from "../components/PlayfulButton";
 import CloseIcon from "@mui/icons-material/Close";
-import SearchBarSC from "../components/SearchBarSC";
+import SearchBar from "../components/SearchBar/SearchBar";
 import { ResponsiveRadar } from "@nivo/radar";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
-const ALL_MODES = ["Basic", "Clean Code", "Optimize", "Newbie", "Study"];
+const ALL_MODES = ["Basic", "Study", "Newbie", "Clean Code", "Optimize"];
 
 const MODE_COLORS = {
   Basic: {
     bg: "#FFF1EC",
     text: "#FF794E",
   },
-  "Clean Code": {
-    bg: "#F9F0F7",
-    text: "#AE5FA3",
-  },
-  Optimize: {
-    bg: "#F0F9F0",
-    text: "#70BF73",
-  },
-  Newbie: {
-    bg: "#EDF6FD",
-    text: "#4DABF5",
-  },
   Study: {
     bg: "#FFF9E6",
     text: "#FFCD39",
+  },
+  "Clean Code": {
+    bg: "#4DABF5",
+    text: "#4DABF5",
+  },
+  Optimize: {
+    bg: "#BC6FCD",
+    text: "#BC6FCD",
+  },
+  Newbie: {
+    bg: "#70BF73",
+    text: "#70BF73",
   },
 };
 
@@ -101,7 +101,7 @@ const GRAPHS = [
     component: (data) => (
       <ResponsiveRadar
         data={data}
-        keys={["Basic", "Clean Code", "Optimize", "Newbie", "Study"]}
+        keys={["Basic", "Study", "Newbie", "Clean Code", "Optimize"]}
         indexBy="metric"
         maxValue={100}
         margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
@@ -224,7 +224,7 @@ const GRAPHS = [
   },
 ];
 
-const Report = () => {
+const Report = ({ isDarkMode }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
@@ -445,27 +445,30 @@ const Report = () => {
 
   return (
     <ReportWrapper>
-      <PageTitle>Report</PageTitle>
-      <CategoryBar>
-        <CategoryItem
-          style={{ width: "50px", justifyContent: "center" }}
-        ></CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }}>
+      {/* <SearchBarSC
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        isDarkMode={isDarkMode}
+      /> */}
+      <PageTitle isDarkMode={isDarkMode}>Report</PageTitle>
+      <CategoryBar isDarkMode={isDarkMode}>
+        <CategoryItem style={{ width: "50px", justifyContent: "center" }} isDarkMode={isDarkMode}></CategoryItem>
+        <CategoryItem style={{ width: "115px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Report Name
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }}>
+        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Date
         </CategoryItem>
-        <CategoryItem style={{ flex: 1, justifyContent: "center" }}>
+        <CategoryItem style={{ width: "10vw", justifyContent: "flex-end"}} isDarkMode={isDarkMode}>
           Comments
         </CategoryItem>
-        <CategoryItem style={{ flex: 1, justifyContent: "center" }}>
+        <CategoryItem style={{ width: "22vw", justifyContent: "center"}} isDarkMode={isDarkMode}>
           Used Review Modes
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }}>
+        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Download
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }}>
+        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Delete
         </CategoryItem>
       </CategoryBar>
@@ -475,13 +478,14 @@ const Report = () => {
             <ReportItem
               key={report.id}
               onClick={() => handleReportClick(report)}
+              isDarkMode={isDarkMode}
             >
               <ReportImage>
                 <img src={report.image} alt="report thumbnail" />
               </ReportImage>
-              <ReportTitle>{report.title}</ReportTitle>
-              <CreatedDate>{report.createdAt}</CreatedDate>
-              <ReviewCount>
+              <ReportTitle isDarkMode={isDarkMode}>{report.title}</ReportTitle>
+              <CreatedDate isDarkMode={isDarkMode}>{report.createdAt}</CreatedDate>
+              <ReviewCount isDarkMode={isDarkMode}>
                 Total of {report.reviewCount} AI review comments
               </ReviewCount>
               <ModeList>
@@ -495,10 +499,10 @@ const Report = () => {
                   </ModeTag>
                 ))}
               </ModeList>
-              <DownloadButton>
+              <DownloadButton isDarkMode={isDarkMode}>
                 <DownloadIcon />
               </DownloadButton>
-              <DeleteButton>
+              <DeleteButton isDarkMode={isDarkMode}>
                 <DeleteIcon />
               </DeleteButton>
             </ReportItem>
@@ -513,7 +517,7 @@ const Report = () => {
 
       {isModalOpen && (
         <ModalOverlay onClick={handleCloseModal}>
-          <ModalContent onClick={(e) => e.stopPropagation()}>
+          <ModalContent onClick={(e) => e.stopPropagation()} isDarkMode={isDarkMode}>
             <ModalHeader>
               <ButtonCheckboxContainer>
                 <CheckboxRound
@@ -525,12 +529,13 @@ const Report = () => {
                 </PlayfulButton>
               </ButtonCheckboxContainer>
               <SearchBarWrapper>
-                <SearchBarSC
+                <SearchBar
                   width="800px"
                   placeholder="search pull request..."
-                  backgroundColor="#f5f5f5"
+                  backgroundColor={isDarkMode ? "#00000050" : "#f5f5f5"}
                   value={searchQuery}
                   onChange={handleSearchChange}
+                  isDarkMode={isDarkMode}
                 />
               </SearchBarWrapper>
               <CloseButton onClick={handleCloseModal}>
@@ -544,15 +549,16 @@ const Report = () => {
                   key={item.id}
                   selected={selectedItems.has(item.id)}
                   onClick={() => toggleItemSelection(item.id)}
+                  isDarkMode={isDarkMode}
                 >
                   <CheckCircle checked={selectedItems.has(item.id)}>
                     {selectedItems.has(item.id) && "✓"}
                   </CheckCircle>
                   <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
-                  <PRTitle>{item.title}</PRTitle>
-                  <PRDate>{item.date}</PRDate>
-                  <Grade grade={item.grade}>{item.grade}</Grade>
-                  <IssueType>{item.issueType}</IssueType>
+                  <PRTitle isDarkMode={isDarkMode}>{item.title}</PRTitle>
+                  <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
+                  <Grade grade={item.grade} isDarkMode={isDarkMode}>{item.grade}</Grade>
+                  <IssueType isDarkMode={isDarkMode}>{item.issueType}</IssueType>
                 </ModalItem>
               ))}
             </ModalItemList>
@@ -743,11 +749,10 @@ const Report = () => {
 
 const ReportWrapper = styled.div`
   height: 100%;
-  margin-top: 10px;
+  width: 70vw;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  margin-left: 10px;
 `;
 
 const PageTitle = styled.h1`
@@ -756,6 +761,7 @@ const PageTitle = styled.h1`
   margin-bottom: 20px;
   text-align: left;
   margin-left: 60px;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
 `;
 
 const ReportContainer = styled.div`
@@ -779,29 +785,31 @@ const ReportImage = styled.div`
 
 const CreatedDate = styled.span`
   width: 100px;
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
   font-size: 18px;
 `;
 
 const ReviewCount = styled.div`
   flex: 1;
   font-weight: 500;
+  font-size: 14px;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
 `;
 
 const ModeList = styled.div`
-  flex: 1;
+  flex: 2;
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
   justify-content: center;
+  background: #00000000;
 `;
 
 const ModeTag = styled.span`
   padding: 3px 3px;
   border-radius: 4px;
   font-size: 14px;
-  background-color: ${(props) =>
-    props.isActive ? MODE_COLORS[props.mode].bg : "#f5f5f5"};
+  background-color: "00000000";
   color: ${(props) => (props.isActive ? MODE_COLORS[props.mode].text : "#666")};
   transition: all 0.2s ease-in-out;
 `;
@@ -814,6 +822,7 @@ const IconButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
 
   &:hover {
     opacity: 0.8;
@@ -822,7 +831,6 @@ const IconButton = styled.button`
   svg {
     width: 36px;
     height: 36px;
-    color: #666;
   }
 `;
 
@@ -837,13 +845,14 @@ const DeleteButton = styled(IconButton)`
 const ReportItem = styled.div`
   display: flex;
   align-items: center;
-  width: 87rem;
-  gap: 45px;
+  width: 65vw;
+  gap: 2vw;
   margin-top: 10px;
   margin-left: 20px;
   margin-bottom: 10px;
   padding: 20px;
-  background: #ffffff;
+  background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ffffff")};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
   border-radius: 20px;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
   cursor: pointer;
@@ -854,30 +863,33 @@ const CategoryBar = styled.div`
   top: 0;
   display: flex;
   align-items: center;
-  width: 87rem;
-  height: 47px;
-  padding: 0 20px;
+  width: 65vw;
+  height: auto;
   margin-top: 24px;
   margin-left: 60px;
   margin-bottom: 0px;
-  gap: 45px;
+  gap: 2vw;
   border-radius: 15px;
-  background: #efefef;
+  background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ECECEC")};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030")};
   z-index: 1;
 `;
 
 const CategoryItem = styled.div`
-  color: #666;
-  font-size: 18px;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
+  font-size: clamp(15px, 0.8vw, 18px);
   font-weight: 500;
   display: flex;
   align-items: center;
-  height: 100%;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 0px;
+  margin: 0px;
 `;
 
 const ReportTitle = styled.h1`
   width: 100px;
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
   font-size: 20px;
 `;
 
@@ -887,7 +899,7 @@ const ReportList = styled.div`
   flex-direction: column;
   margin-left: 20px;
   overflow-y: auto;
-  width: 90rem;
+  width: 67vw;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -933,14 +945,15 @@ const ModalOverlay = styled.div`
   display: flex;
   align-items: flex-end;
   z-index: 1000;
-  padding-bottom: 40px; // 추가: 바닥과의 간격
+  backdrop-filter: blur(10px);
 `;
 
 const ModalContent = styled.div`
-  background: #e8e8e8;
-  width: 96rem;
-  height: 83vh;
-  margin-left: 328px;
+  background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#e8e8e8")};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
+  width: 90rem;
+  height: 90vh;
+  margin: auto;
   border-radius: 20px;
   padding: 30px;
   animation: slideUp 0.5s ease-out forwards;
@@ -986,22 +999,23 @@ const ModalItem = styled.div`
   display: flex;
   align-items: center;
   padding: 20px 30px;
-  background: white;
+  background: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : 'white')};
   border-radius: 15px;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
   gap: 30px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
 
   &:hover {
     transform: translateX(5px);
-    background-color: #f8f9fa;
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#000000' : '#f8f9fa')};
   }
 
   ${(props) =>
     props.selected &&
     `
-    background-color: #d5def6;
+    background-color: ${props.isDarkMode ? '#10204C' : '#C0CDF2'};
   `}
 `;
 
@@ -1033,14 +1047,14 @@ const ReviewMode = styled.div`
 const PRTitle = styled.div`
   flex: 1;
   font-size: 16px;
-  color: #333;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
 `;
 
 const PRDate = styled.div`
   width: 100px;
   color: #666;
   font-size: 14px;
-  flex-shrink: 0;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
 `;
 
 const Grade = styled.div`
@@ -1053,15 +1067,17 @@ const Grade = styled.div`
 
 const IssueType = styled.div`
   width: 120px;
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
   text-align: right;
   flex-shrink: 0;
 `;
 
 const ModalHeader = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 0;
 `;
 
 const CloseButton = styled.button`
@@ -1089,8 +1105,8 @@ const CloseButton = styled.button`
 const SearchBarWrapper = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center; // 수직(상하) 중앙 정렬
-  margin-right: 15rem;
+  align-items: center;
+  margin-left: 0vw;
 `;
 
 // 새로운 styled components 추가
@@ -1118,6 +1134,7 @@ const CheckboxRound = styled.div`
 const ButtonCheckboxContainer = styled.div`
   display: flex;
   align-items: center;
+  margin-right: 3vw;
 `;
 
 // 새로운 스타일 컴포넌트 추가
@@ -1184,6 +1201,22 @@ const ReportContent = styled.div`
   background-color: white;
   padding: 20px;
   overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+  width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    border-radius: 10px;
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+  }
 `;
 
 const ReportGraph = styled.div`
@@ -1235,17 +1268,6 @@ const GraphTitle = styled.h3`
   text-align: center;
   margin-bottom: 20px;
   font-size: 18px;
-  color: #333;
-`;
-
-const ReportSection = styled.div`
-  margin-bottom: 24px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
   color: #333;
 `;
 

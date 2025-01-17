@@ -12,18 +12,16 @@ import BugReportIcon from "@mui/icons-material/BugReport";
 const RepositoryContainer = styled.div`
   width: 46%;
   height: 57rem;
-  background-color: #f0f0f0;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#f0f0f0')};
   border-radius: 20px;
-  background: #fff;
-  box-shadow:
-    0px 4px 8px 3px rgba(0, 0, 0, 0.15),
-    0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
   padding: 20px;
   overflow: hidden;
+  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
 `;
 
 const RepositoryTitle = styled.h1`
-  color: #000;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
   text-align: center;
   font-family: Poppins;
   font-size: 30px;
@@ -57,16 +55,21 @@ const RepositoryWrapper = styled.div`
   margin-top: 20px;
   overflow-y: auto;
 
-  /* 스크롤바 스타일링 (선택사항) */
+  /* 스크롤바 스타일링 */
   &::-webkit-scrollbar {
-    width: 8px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: #d9d9d9;
-    border-radius: 4px;
+    width: 12px; /* 스크롤바 너비 */
   }
   &::-webkit-scrollbar-track {
-    background-color: #f0f0f0;
+    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')}; /* 트랙 배경색 */
+    border-radius: 10px; /* 둥근 모서리 */
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')}; /* 스크롤바 색상 */
+    border-radius: 10px; /* 둥근 모서리 */
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')}; /* 스크롤바와 트랙 사이의 간격 */
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')}; /* 호버 시 스크롤바 색상 */
   }
 `;
 
@@ -75,13 +78,15 @@ const RepositoryItem = styled.div`
   min-height: 85px;
   margin: 20px auto;
   padding: 15px;
-  background: #ffffff;
+  background: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#ffffff')};
+  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
   border-radius: 20px;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   gap: 15px;
   position: relative;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 const RepoImage = styled.img`
@@ -128,7 +133,7 @@ const RepoName = styled.span`
 `;
 
 const PublicLabel = styled.span`
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -136,7 +141,7 @@ const PublicLabel = styled.span`
 `;
 
 const RepoDescription = styled.p`
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
   font-size: 14px;
   margin: 0;
   max-width: 19rem;
@@ -149,7 +154,7 @@ const RepoStats = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
-  color: #666;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
   font-size: 12px;
 `;
 
@@ -157,6 +162,7 @@ const StatItem = styled.span`
   display: flex;
   align-items: center;
   gap: 4px;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
 `;
 
 const getLanguageColor = (language) => {
@@ -195,7 +201,7 @@ const Language = styled.span`
   }
 `;
 
-const Repositories = () => {
+const Repositories = ({ isDarkMode }) => {
   const [unselectedRepos, setUnselectedRepos] = useState([
     {
       id: 1,
@@ -294,39 +300,40 @@ const Repositories = () => {
 
   return (
     <RepositoriesWrapper>
-      <RepositoryContainer>
-        <RepositoryTitle>Unselected</RepositoryTitle>
+      <RepositoryContainer isDarkMode={isDarkMode}>
+        <RepositoryTitle isDarkMode={isDarkMode}>Unselected</RepositoryTitle>
         <SearchBarWrapper>
           <SearchBar
             value={searchTermUnselected}
             onChange={(e) => setSearchTermUnselected(e.target.value)}
+            isDarkMode={isDarkMode}
           />
         </SearchBarWrapper>
-        <RepositoryWrapper>
+        <RepositoryWrapper isDarkMode={isDarkMode}>
           {filteredUnselectedRepos.map((repo) => (
-            <RepositoryItem key={repo.id}>
+            <RepositoryItem key={repo.id} isDarkMode={isDarkMode}>
               <RepoImage src={repo.image} alt="Repository thumbnail" />
               <RepoContent>
                 <RepoHeader>
                   <RepoName>{repo.name}</RepoName>
-                  <PublicLabel>
-                    <PublicIcon sx={{ fontSize: 16 }} />
+                  <PublicLabel isDarkMode={isDarkMode}>
+                    <PublicIcon sx={{ fontSize: 16, color: isDarkMode ? '#E6E6E6' : '#666666' }} />
                     Public
                   </PublicLabel>
                 </RepoHeader>
-                <RepoDescription>{repo.description}</RepoDescription>
-                <RepoStats>
+                <RepoDescription isDarkMode={isDarkMode}>{repo.description}</RepoDescription>
+                <RepoStats isDarkMode={isDarkMode}>
                   <Language language={repo.language}>{repo.language}</Language>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <AccountTreeIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <StarBorderIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <BugReportIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>7h</StatItem>
+                  <StatItem isDarkMode={isDarkMode}>7h</StatItem>
                 </RepoStats>
               </RepoContent>
               <IconWrapper onClick={() => handleSelect(repo)}>
@@ -337,39 +344,40 @@ const Repositories = () => {
         </RepositoryWrapper>
       </RepositoryContainer>
 
-      <RepositoryContainer>
-        <RepositoryTitle>Selected</RepositoryTitle>
+      <RepositoryContainer isDarkMode={isDarkMode}>
+        <RepositoryTitle isDarkMode={isDarkMode}>Selected</RepositoryTitle>
         <SearchBarWrapper>
           <SearchBar
             value={searchTermSelected}
             onChange={(e) => setSearchTermSelected(e.target.value)}
+            isDarkMode={isDarkMode}
           />
         </SearchBarWrapper>
-        <RepositoryWrapper>
+        <RepositoryWrapper isDarkMode={isDarkMode}>
           {filteredSelectedRepos.map((repo) => (
-            <RepositoryItem key={repo.id}>
+            <RepositoryItem key={repo.id} isDarkMode={isDarkMode}>
               <RepoImage src={repo.image} alt="Repository thumbnail" />
               <RepoContent>
                 <RepoHeader>
                   <RepoName>{repo.name}</RepoName>
-                  <PublicLabel>
-                    <PublicIcon sx={{ fontSize: 16 }} />
+                  <PublicLabel isDarkMode={isDarkMode}>
+                    <PublicIcon sx={{ fontSize: 16, color: isDarkMode ? '#E6E6E6' : '#666666' }} />
                     Public
                   </PublicLabel>
                 </RepoHeader>
-                <RepoDescription>{repo.description}</RepoDescription>
-                <RepoStats>
+                <RepoDescription isDarkMode={isDarkMode}>{repo.description}</RepoDescription>
+                <RepoStats isDarkMode={isDarkMode}>
                   <Language language={repo.language}>{repo.language}</Language>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <AccountTreeIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <StarBorderIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>
+                  <StatItem isDarkMode={isDarkMode}>
                     <BugReportIcon sx={{ fontSize: 16 }} />0
                   </StatItem>
-                  <StatItem>7h</StatItem>
+                  <StatItem isDarkMode={isDarkMode}>7h</StatItem>
                 </RepoStats>
               </RepoContent>
               <IconWrapper onClick={() => handleUnselect(repo)}>

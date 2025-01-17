@@ -161,11 +161,14 @@ const LegendItem = styled.div`
   text-align: center;
   background-color: ${({ mode }) =>
     mode === 'BASIC' ? '#FF5722' :
-    mode === 'CLEAN' ? '#BC6FCD' :
-    mode === 'OPTIMIZE' ? '#4CAF50' :
-    mode === 'NEWBIE' ? '#2196F3' :
     mode === 'STUDY' ? '#FFC107' :
+    mode === 'NEWBIE' ? '#70BF73' :
+    mode === 'CLEAN' ? '#4DABF5' :
+    mode === 'OPTIMIZE' ? '#BC6FCD' :
     '#ccc'};
+  cursor: pointer;
+  opacity: ${({ selectedMode, mode }) => 
+    selectedMode && selectedMode !== mode ? 0.3 : 1};
 `;
 
 const LegendCount = styled.div`
@@ -185,12 +188,7 @@ const History = ({ isDarkMode }) => {
 
   const handleSliceClick = (mode) => {
     setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
-    setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
   };
-
-  useEffect(() => {
-    window.dispatchEvent(new Event('resize'));
-  }, []);
 
   return (
     <HistoryContainer isDarkMode={isDarkMode}>
@@ -202,7 +200,11 @@ const History = ({ isDarkMode }) => {
         <LeftContainer>
           <ChartBox isDarkMode={isDarkMode}>
             <BoxTitle isDarkMode={isDarkMode}>Mode Statistics</BoxTitle>
-            <Chart onSliceClick={handleSliceClick} selectedMode={selectedMode} />
+            <Chart 
+              onSliceClick={handleSliceClick} 
+              selectedMode={selectedMode}
+              isDarkMode={isDarkMode}
+            />
             <ChartLegend>
               {['BASIC', 'STUDY', 'NEWBIE', 'CLEAN', 'OPTIMIZE'].map((mode) => (
                 <LegendContainer key={mode} selectedMode={selectedMode} mode={mode}>
@@ -218,9 +220,18 @@ const History = ({ isDarkMode }) => {
           <ReviewListBox isDarkMode={isDarkMode}>
             <BoxTitle isDarkMode={isDarkMode}>All reviews</BoxTitle>
             <SearchBarContainer isDarkMode={isDarkMode}>
-              <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} isDarkMode={isDarkMode} />
+              <SearchBar 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)} 
+                isDarkMode={isDarkMode} 
+              />
             </SearchBarContainer>
-            <Reviews onReviewClick={handleReviewClick} selectedMode={selectedMode} searchTerm={searchTerm} isDarkMode={isDarkMode} />
+            <Reviews 
+              onReviewClick={handleReviewClick} 
+              selectedMode={selectedMode} 
+              searchTerm={searchTerm} 
+              isDarkMode={isDarkMode} 
+            />
           </ReviewListBox>
         </LeftContainer>
 

@@ -38,7 +38,7 @@ const ReviewItem = styled.div`
   margin-bottom: 10px;
   box-sizing: border-box;
   background-color: ${({ isSelected, isDarkMode }) => 
-    isSelected ? (isDarkMode ? '#000000' : '#D9D9D9') : (isDarkMode ? '#00000050' : '#FFFFFF')};
+    isSelected ? (isDarkMode ? '#333333' : '#D9D9D9') : (isDarkMode ? '#00000050' : '#FFFFFF')};
   font-size: 15px;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   cursor: pointer;
@@ -48,7 +48,7 @@ const ReviewItem = styled.div`
   &:hover {
     transform: translateX(5px);
     background-color: ${({ isSelected, isDarkMode }) => 
-      isSelected ? (isDarkMode ? '#000000' : '#D9D9D9') : (isDarkMode ? '#000000' : '#D9D9D9')};
+      isSelected ? (isDarkMode ? '#333333' : '#D9D9D9') : (isDarkMode ? '#333333' : '#D9D9D9')};
   }
 `;
 
@@ -71,7 +71,7 @@ const ReviewMode = styled.div`
       case 'NEWBIE': return '#70BF73';
       case 'STUDY': return '#FFC107';
       case 'BASIC': return '#FF5722';
-      default: return '#333';
+      default: return isDarkMode ? '#FFFFFF' : '#333';
     }
   }};
 `;

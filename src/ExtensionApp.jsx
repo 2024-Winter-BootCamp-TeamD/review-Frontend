@@ -10,7 +10,7 @@ import Sidebar from "./components/Sidebar/Sidebar.jsx";
 import "./App.css";
 import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
 
-function App() {
+function ExtensionApp() {
   return (
     <BrowserRouter>
       <div className="app">
@@ -30,4 +30,4 @@ function App() {
   );
 }
 
-export default App;
+export default ExtensionApp;

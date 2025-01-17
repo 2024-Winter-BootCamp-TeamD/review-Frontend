@@ -15,6 +15,9 @@ body {
   position: fixed; /* 고정 */
   top: 0; /* 상단에 */
   left: 0; /* 왼쪽 끝에 */
+  position: fixed; /* 고정 */
+  top: 0; /* 상단에 */
+  left: 0; /* 왼쪽 끝에 */
   width: 15%;
   min-width: 250px;
   height: 100vh;
@@ -46,6 +49,7 @@ body {
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+  z-index: 1000; /* 다른 콘텐츠보다 위에 보이도록 */
 }
 
 .sidebar-rounded-top {
@@ -55,6 +59,11 @@ body {
   width: 40px;
   height: 40px;
   background-color: #091904;
+  -webkit-mask: radial-gradient(
+    circle at bottom right,
+    transparent 50%,
+    black 100%
+  );
   -webkit-mask: radial-gradient(
     circle at bottom right,
     transparent 50%,
@@ -73,7 +82,6 @@ body {
 
 .sidebar-logo {
   padding-top: 10vh;
-  padding-top: 10vh;
   font-size: calc(min(8vw * 0.3, 60px));
   margin-bottom: 3vh;
   font-family: "Passion One", serif;
@@ -89,6 +97,24 @@ body {
   padding: 20px;
   margin-left: 15%; /* Sidebar의 폭과 동일하게 여백 추가 */
   margin-left: 300px;
+}
+
+.passion-one-regular {
+  font-family: "Passion One", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.passion-one-bold {
+  font-family: "Passion One", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.passion-one-black {
+  font-family: "Passion One", serif;
+  font-weight: 900;
+  font-style: normal;
 }
 
 .passion-one-regular {

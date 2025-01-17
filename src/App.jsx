@@ -6,8 +6,10 @@ import History from "./pages/History.jsx";
 import Repositories from "./pages/Repositories.jsx";
 import Report from "./pages/Report.jsx";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
+import Home from "./pages/Home.jsx";
 import "./App.css";
 import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
+import ModeSwitchButton from "./components/ModeSwitchButton/ModeSwitchButton.jsx";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -25,11 +27,10 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
+    <Router>
       <div className="app">
         <Sidebar isDarkMode={isDarkMode} />
         <div className="content">
-          <NotificationButton />
           <Routes>
             <Route path="/" element={<Dashboard isDarkMode={isDarkMode} />} />
             <Route
@@ -52,7 +53,7 @@ function App() {
           <NotificationButton />
         </div>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
 

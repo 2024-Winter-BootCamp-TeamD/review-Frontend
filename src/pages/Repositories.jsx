@@ -12,7 +12,7 @@ import BugReportIcon from "@mui/icons-material/BugReport";
 const RepositoryContainer = styled.div`
   width: 46%;
   height: 57rem;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#f0f0f0')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#FFFFFFFF')};
   border-radius: 20px;
   box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
   padding: 20px;

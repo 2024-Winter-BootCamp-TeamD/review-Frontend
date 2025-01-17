@@ -37,7 +37,9 @@ a {
   color: #000000;
   font-weight: bold;
 }
-
+.floatingbutton-item-text svg {
+  margin-top: 15px;
+}
 /* 각 모드별 호버 효과 */
 .floatingbutton-dashboard {
   background-color: #e6e6e6 !important;

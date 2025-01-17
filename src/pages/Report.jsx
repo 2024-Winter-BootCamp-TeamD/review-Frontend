@@ -8,7 +8,6 @@ import SearchBar from "../components/SearchBar/SearchBar";
 import { ResponsiveRadar } from "@nivo/radar";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
-import LoadingIndicator from "../components/LoadingIndicator/LoadingIndicator";
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
@@ -232,9 +231,74 @@ const Report = ({ isDarkMode }) => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [currentGraphIndex, setCurrentGraphIndex] = useState(0);
   const graphTypes = Object.keys(GRAPHS);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedItems, setSelectedItems] = useState(new Set());
 
+  const reportData = [
+    {
+      id: 1,
+      image: image,
+      title: "PR 보고서1",
+      createdAt: "2024-03-15",
+      reviewCount: 25,
+      modes: ALL_MODES,
+    },
+    {
+      id: 2,
+      image: image,
+      title: "PR 보고서2",
+      createdAt: "2024-03-15",
+      reviewCount: 15,
+      modes: ["Optimize", "Basic"],
+    },
+    {
+      id: 3,
+      image: image,
+      title: "PR 보고서3",
+      createdAt: "2024-03-15",
+      reviewCount: 25,
+      modes: ["Basic"],
+    },
+    {
+      id: 4,
+      image: image,
+      title: "PR 보고서4",
+      createdAt: "2024-03-15",
+      reviewCount: 20,
+      modes: ["Optimize", "Newbie"],
+    },
+    {
+      id: 7,
+      image: image,
+      title: "PR 보고서5",
+      createdAt: "2024-03-15",
+      reviewCount: 20,
+      modes: ["Clean Code", "Study"],
+    },
+    {
+      id: 5,
+      image: image,
+      title: "PR 보고서6",
+      createdAt: "2024-03-15",
+      reviewCount: 20,
+      modes: ["Optimize", "Clean Code", "Study"],
+    },
+    {
+      id: 6,
+      image: image,
+      title: "PR 보고서7",
+      createdAt: "2024-03-15",
+      reviewCount: 20,
+      modes: ["Optimize", "Clean Code", "Study"],
+    },
+  ];
+
+  const [isChecked, setIsChecked] = useState(false);
+  const handleCreateReport = () => {
+    // 나중에 API 연동을 위한 임시 함수
+    console.log("Report creation requested:", { isChecked });
+    // 모달 닫기 등의 UI 처리가 필요하다면 여기에 추가
+  };
+
+  // 예시 데이터
   const modalItems = [
     {
       id: 1,
@@ -308,66 +372,11 @@ const Report = ({ isDarkMode }) => {
       grade: "C",
       issueType: "Design Pattern",
     },
+
+    // ... 더 많은 아이템
   ];
 
-  const reportData = [
-    {
-      id: 1,
-      image: image,
-      title: "PR 보고서1",
-      createdAt: "2024-03-15",
-      reviewCount: 25,
-      modes: ALL_MODES,
-    },
-    {
-      id: 2,
-      image: image,
-      title: "PR 보고서2",
-      createdAt: "2024-03-15",
-      reviewCount: 15,
-      modes: ["Optimize", "Basic"],
-    },
-    {
-      id: 3,
-      image: image,
-      title: "PR 보고서3",
-      createdAt: "2024-03-15",
-      reviewCount: 25,
-      modes: ["Basic"],
-    },
-    {
-      id: 4,
-      image: image,
-      title: "PR 보고서4",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Newbie"],
-    },
-    {
-      id: 7,
-      image: image,
-      title: "PR 보고서5",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Clean Code", "Study"],
-    },
-    {
-      id: 5,
-      image: image,
-      title: "PR 보고서6",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Clean Code", "Study"],
-    },
-    {
-      id: 6,
-      image: image,
-      title: "PR 보고서7",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Clean Code", "Study"],
-    },
-  ];
+  const [selectedItems, setSelectedItems] = useState(new Set());
 
   const toggleItemSelection = (itemId) => {
     setSelectedItems((prev) => {
@@ -434,28 +443,6 @@ const Report = ({ isDarkMode }) => {
     }
   };
 
-  const handleCreateReport = () => {
-    setIsLoading(true);
-    // 로딩이 100%가 되면 모달을 닫고 상세 보고서를 보여주기 위해 5초 후에 실행
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsModalOpen(false);
-      setSelectedItems(new Set());
-      // 새로운 보고서 데이터 생성 (예시)
-      const newReport = {
-        id: reportData.length + 1,
-        image: image,
-        title: "새로운 PR 보고서",
-        createdAt: new Date().toISOString().split('T')[0],
-        reviewCount: selectedItems.size,
-        modes: ALL_MODES,
-      };
-      // 새로 생성된 보고서로 상세 모달 열기
-      setSelectedReport(newReport);
-      setIsDetailModalOpen(true);
-    }, 5000);
-  };
-
   return (
     <ReportWrapper>
       {/* <SearchBarSC
@@ -466,16 +453,16 @@ const Report = ({ isDarkMode }) => {
       <PageTitle isDarkMode={isDarkMode}>Report</PageTitle>
       <CategoryBar isDarkMode={isDarkMode}>
         <CategoryItem style={{ width: "50px", justifyContent: "center" }} isDarkMode={isDarkMode}></CategoryItem>
-        <CategoryItem style={{ width: "115px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Report Name
         </CategoryItem>
         <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
           Date
         </CategoryItem>
-        <CategoryItem style={{ width: "10vw", justifyContent: "flex-end"}} isDarkMode={isDarkMode}>
+        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingLeft: "2.8vw" }} isDarkMode={isDarkMode}>
           Comments
         </CategoryItem>
-        <CategoryItem style={{ width: "22vw", justifyContent: "center"}} isDarkMode={isDarkMode}>
+        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingRight: "1vw" }} isDarkMode={isDarkMode}>
           Used Review Modes
         </CategoryItem>
         <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
@@ -531,58 +518,50 @@ const Report = ({ isDarkMode }) => {
       {isModalOpen && (
         <ModalOverlay onClick={handleCloseModal}>
           <ModalContent onClick={(e) => e.stopPropagation()} isDarkMode={isDarkMode}>
-            {!isLoading ? (
-              <>
-                <ModalHeader>
-                  <ButtonCheckboxContainer>
-                    <CheckboxRound
-                      checked={selectedItems.size === modalItems.length}
-                      onClick={toggleSelectAll}
-                    />
-                    <PlayfulButton onClick={handleCreateReport}>
-                      {`Create New Report${selectedItems.size > 0 ? ` (${selectedItems.size})` : ""}`}
-                    </PlayfulButton>
-                  </ButtonCheckboxContainer>
-                  <SearchBarWrapper>
-                    <SearchBar
-                      width="800px"
-                      placeholder="search pull request..."
-                      backgroundColor={isDarkMode ? "#00000050" : "#f5f5f5"}
-                      value={searchQuery}
-                      onChange={handleSearchChange}
-                      isDarkMode={isDarkMode}
-                    />
-                  </SearchBarWrapper>
-                  <CloseButton onClick={handleCloseModal}>
-                    <CloseIcon />
-                  </CloseButton>
-                </ModalHeader>
+            <ModalHeader>
+              <ButtonCheckboxContainer>
+                <CheckboxRound
+                  checked={selectedItems.size === modalItems.length}
+                  onClick={toggleSelectAll}
+                />
+                <PlayfulButton onClick={handleCreateReport}>
+                  {`Create New Report${selectedItems.size > 0 ? ` (${selectedItems.size})` : ""}`}
+                </PlayfulButton>
+              </ButtonCheckboxContainer>
+              <SearchBarWrapper>
+                <SearchBar
+                  width="800px"
+                  placeholder="search pull request..."
+                  backgroundColor={isDarkMode ? "#00000050" : "#f5f5f5"}
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  isDarkMode={isDarkMode}
+                />
+              </SearchBarWrapper>
+              <CloseButton onClick={handleCloseModal}>
+                <CloseIcon />
+              </CloseButton>
+            </ModalHeader>
 
-                <ModalItemList>
-                  {filteredModalItems.map((item) => (
-                    <ModalItem
-                      key={item.id}
-                      selected={selectedItems.has(item.id)}
-                      onClick={() => toggleItemSelection(item.id)}
-                      isDarkMode={isDarkMode}
-                    >
-                      <CheckCircle checked={selectedItems.has(item.id)}>
-                        {selectedItems.has(item.id) && "✓"}
-                      </CheckCircle>
-                      <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
-                      <PRTitle isDarkMode={isDarkMode}>{item.title}</PRTitle>
-                      <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
-                      <Grade grade={item.grade} isDarkMode={isDarkMode}>{item.grade}</Grade>
-                      <IssueType isDarkMode={isDarkMode}>{item.issueType}</IssueType>
-                    </ModalItem>
-                  ))}
-                </ModalItemList>
-              </>
-            ) : (
-              <LoadingWrapper>
-                <LoadingIndicator />
-              </LoadingWrapper>
-            )}
+            <ModalItemList>
+              {filteredModalItems.map((item) => (
+                <ModalItem
+                  key={item.id}
+                  selected={selectedItems.has(item.id)}
+                  onClick={() => toggleItemSelection(item.id)}
+                  isDarkMode={isDarkMode}
+                >
+                  <CheckCircle checked={selectedItems.has(item.id)}>
+                    {selectedItems.has(item.id) && "✓"}
+                  </CheckCircle>
+                  <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
+                  <PRTitle isDarkMode={isDarkMode}>{item.title}</PRTitle>
+                  <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
+                  <Grade grade={item.grade} isDarkMode={isDarkMode}>{item.grade}</Grade>
+                  <IssueType isDarkMode={isDarkMode}>{item.issueType}</IssueType>
+                </ModalItem>
+              ))}
+            </ModalItemList>
           </ModalContent>
         </ModalOverlay>
       )}
@@ -770,10 +749,11 @@ const Report = ({ isDarkMode }) => {
 
 const ReportWrapper = styled.div`
   height: 100%;
-  width: 70vw;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-left: 10px;
 `;
 
 const PageTitle = styled.h1`
@@ -813,7 +793,6 @@ const CreatedDate = styled.span`
 const ReviewCount = styled.div`
   flex: 1;
   font-weight: 500;
-  font-size: 14px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
 `;
 
@@ -866,8 +845,8 @@ const DeleteButton = styled(IconButton)`
 const ReportItem = styled.div`
   display: flex;
   align-items: center;
-  width: 65vw;
-  gap: 2vw;
+  width: 87rem;
+  gap: 45px;
   margin-top: 10px;
   margin-left: 20px;
   margin-bottom: 10px;
@@ -884,12 +863,13 @@ const CategoryBar = styled.div`
   top: 0;
   display: flex;
   align-items: center;
-  width: 65vw;
+  width: 87rem;
   height: auto;
+  padding: 0 20px;
   margin-top: 24px;
   margin-left: 60px;
   margin-bottom: 0px;
-  gap: 2vw;
+  gap: 40px;
   border-radius: 15px;
   background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ECECEC")};
   border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030")};
@@ -898,7 +878,7 @@ const CategoryBar = styled.div`
 
 const CategoryItem = styled.div`
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
-  font-size: clamp(15px, 0.8vw, 18px);
+  font-size: 18px;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -920,7 +900,7 @@ const ReportList = styled.div`
   flex-direction: column;
   margin-left: 20px;
   overflow-y: auto;
-  width: 67vw;
+  width: 90rem;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -1292,6 +1272,17 @@ const GraphTitle = styled.h3`
   color: #333;
 `;
 
+const ReportSection = styled.div`
+  margin-bottom: 24px;
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+`;
+
 const ContentText = styled.p`
   font-size: 14px;
   line-height: 1.6;
@@ -1312,14 +1303,6 @@ const ContentTitle = styled.h3`
   font-weight: 600;
   margin-bottom: 16px;
   color: #333;
-`;
-
-const LoadingWrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 export default Report;

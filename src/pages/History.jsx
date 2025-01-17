@@ -10,7 +10,7 @@ const HistoryContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF00')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFFFF')};
 `;
 
 const PageName = styled.div`
@@ -50,7 +50,7 @@ const ChartBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#FFFFFFFF')};
   border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
 `;
 
@@ -62,7 +62,7 @@ const ReviewListBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#FFFFFFFF')};
   overflow-y: auto;
   border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
 

@@ -10,7 +10,7 @@ const HistoryContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF00')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFFFF')};
 `;
 
 const PageName = styled.div`
@@ -50,7 +50,7 @@ const ChartBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#FFFFFFFF')};
   border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
 `;
 
@@ -62,7 +62,7 @@ const ReviewListBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#FFFFFFFF')};
   overflow-y: auto;
   border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
 
@@ -161,11 +161,14 @@ const LegendItem = styled.div`
   text-align: center;
   background-color: ${({ mode }) =>
     mode === 'BASIC' ? '#FF5722' :
-    mode === 'CLEAN' ? '#BC6FCD' :
-    mode === 'OPTIMIZE' ? '#4CAF50' :
-    mode === 'NEWBIE' ? '#2196F3' :
     mode === 'STUDY' ? '#FFC107' :
+    mode === 'NEWBIE' ? '#70BF73' :
+    mode === 'CLEAN' ? '#4DABF5' :
+    mode === 'OPTIMIZE' ? '#BC6FCD' :
     '#ccc'};
+  cursor: pointer;
+  opacity: ${({ selectedMode, mode }) => 
+    selectedMode && selectedMode !== mode ? 0.3 : 1};
 `;
 
 const LegendCount = styled.div`
@@ -185,12 +188,7 @@ const History = ({ isDarkMode }) => {
 
   const handleSliceClick = (mode) => {
     setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
-    setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
   };
-
-  useEffect(() => {
-    window.dispatchEvent(new Event('resize'));
-  }, []);
 
   return (
     <HistoryContainer isDarkMode={isDarkMode}>
@@ -202,7 +200,11 @@ const History = ({ isDarkMode }) => {
         <LeftContainer>
           <ChartBox isDarkMode={isDarkMode}>
             <BoxTitle isDarkMode={isDarkMode}>Mode Statistics</BoxTitle>
-            <Chart onSliceClick={handleSliceClick} selectedMode={selectedMode} />
+            <Chart 
+              onSliceClick={handleSliceClick} 
+              selectedMode={selectedMode}
+              isDarkMode={isDarkMode}
+            />
             <ChartLegend>
               {['BASIC', 'STUDY', 'NEWBIE', 'CLEAN', 'OPTIMIZE'].map((mode) => (
                 <LegendContainer key={mode} selectedMode={selectedMode} mode={mode}>
@@ -218,9 +220,18 @@ const History = ({ isDarkMode }) => {
           <ReviewListBox isDarkMode={isDarkMode}>
             <BoxTitle isDarkMode={isDarkMode}>All reviews</BoxTitle>
             <SearchBarContainer isDarkMode={isDarkMode}>
-              <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} isDarkMode={isDarkMode} />
+              <SearchBar 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)} 
+                isDarkMode={isDarkMode} 
+              />
             </SearchBarContainer>
-            <Reviews onReviewClick={handleReviewClick} selectedMode={selectedMode} searchTerm={searchTerm} isDarkMode={isDarkMode} />
+            <Reviews 
+              onReviewClick={handleReviewClick} 
+              selectedMode={selectedMode} 
+              searchTerm={searchTerm} 
+              isDarkMode={isDarkMode} 
+            />
           </ReviewListBox>
         </LeftContainer>
 

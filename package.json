@@ -18,6 +18,7 @@
     "@nivo/line": "^0.88.0",
     "@nivo/pie": "^0.88.0",
     "@nivo/radar": "^0.88.0",
+    "axios": "^1.7.9",
     "highcharts": "^12.1.2",
     "prettier": "^3.4.2",
     "react": "^18.3.1",

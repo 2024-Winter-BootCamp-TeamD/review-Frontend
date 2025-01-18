@@ -41,7 +41,7 @@ function App() {
         </div>
         <div className="top-buttons">
           <ModeSwitchButton onToggle={toggleDarkMode} isDarkMode={isDarkMode} />
-          <NotificationButton hasNotification={true} notificationCount={4} />
+          <NotificationButton hasNotification={true} notificationCount={0} isDarkMode={isDarkMode}/>
         </div>
       </div>
     </Router>

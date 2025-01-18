@@ -73,6 +73,11 @@ body.dark-mode .dashboard-profile-container {
   border-radius: 8px;
 }
 
+body.dark-mode .dashboard-github-graph {
+  background-color: #00000075; /* 다크 모드 배경색 */
+  border: 1px solid #FFFFFF; /* 테두리 색상과 두께 */
+}
+
 .dashboard-contributions-graph {
   display: flex;
   flex-direction: column;

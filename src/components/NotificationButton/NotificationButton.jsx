@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { IoMdNotifications } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import styled, { keyframes } from 'styled-components';
+import Cat from "../../assets/SleepingCat.svg";
 
 const ButtonContainer = styled.div`
   position: fixed;
@@ -43,8 +44,8 @@ const NotificationDot = styled.div`
   box-sizing: border-box;
   color: #fff;
   font-weight: bold;
-  font-size: 0.6rem;
-  line-height: 1.7;
+  font-size: ${({ notificationCount }) => (notificationCount < 10 ? '1rem' : '0.6rem')};
+  line-height: ${({ notificationCount }) => (notificationCount < 10 ? '1.2' : '1.7')};
   text-align: center;
   animation: ${pulseAnimation} 1.5s 1;
 
@@ -217,24 +218,31 @@ const NotificationButton = ({ hasNotification, notificationCount = 1, isDarkMode
   return (
     <ButtonContainer>
       <NotificationIcon isDarkMode={isDarkMode} onClick={handleNotificationClick} />
-      {hasNotification && (
-        <NotificationDot>
+      {hasNotification && notificationCount > 0 && (
+        <NotificationDot notificationCount={notificationCount}>
           {notificationCount >= 100 ? "99+" : notificationCount}
         </NotificationDot>
       )}
       {isOpen && (
         <NotificationDropdown isDarkMode={isDarkMode}>
-          {notifications.map((notification) => (
-            <NotificationItem key={notification.id}>
-              <ProfileImage src={notification.avatar} alt={`${notification.name}'s avatar`} />
-              <MessageContent>
-                <strong>{notification.name}</strong> {notification.message}
-              </MessageContent>
-              <CloseButton onClick={() => removeNotification(notification.id)}>
-                <IoClose size={20} />
-              </CloseButton>
-            </NotificationItem>
-          ))}
+          {notificationCount === 0 ? (
+            <div style={{ padding: '20px', textAlign: 'center', color: isDarkMode ? '#FFFFFF' : '#000000' }}>
+              <img src={Cat} alt="Sleeping Cat" style={{ width: '200px', height: '200px' }}/>
+              <div style={{ fontSize: '20px', fontWeight: 'bold' }}>알림이 없습니다</div>
+            </div>
+          ) : (
+            notifications.map((notification) => (
+              <NotificationItem key={notification.id}>
+                <ProfileImage src={notification.avatar} alt={`${notification.name}'s avatar`} />
+                <MessageContent>
+                  <strong>{notification.name}</strong> {notification.message}
+                </MessageContent>
+                <CloseButton onClick={() => removeNotification(notification.id)}>
+                  <IoClose size={20} />
+                </CloseButton>
+              </NotificationItem>
+            ))
+          )}
         </NotificationDropdown>
       )}
     </ButtonContainer>

@@ -12,7 +12,9 @@ const ButtonContainer = styled.div`
 
 const NotificationIcon = styled(IoMdNotifications)`
   font-size: 40px;
-  color: #191A23;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#191A23')};
+  transition: color 0.3s ease;
+  cursor: pointer;
 `;
 
 const sonarAnimation = keyframes`
@@ -41,8 +43,8 @@ const NotificationDot = styled.div`
   box-sizing: border-box;
   color: #fff;
   font-weight: bold;
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: 0.6rem;
+  line-height: 1.7;
   text-align: center;
   animation: ${pulseAnimation} 1.5s 1;
 
@@ -56,7 +58,7 @@ const NotificationDot = styled.div`
     border-radius: 50%;
     width: 100%;
     height: 100%;
-    animation: ${sonarAnimation} 1.5s 1;
+    animation: ${sonarAnimation} 1.5s infinite;
   }
 `;
 
@@ -66,26 +68,30 @@ const NotificationDropdown = styled.div`
   right: 0;
   width: 370px;
   max-height: 300px;
-  background-color: white;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#191A23' : '#FFFFFF')};
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#191A23')};
+  border: 1px solid ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#191A23')};
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   overflow-y: auto;
   z-index: 2000;
   padding: 10px;
   
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-  }
+&::-webkit-scrollbar {
+  width: 12px;
+}
+&::-webkit-scrollbar-track {
+  background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+  border-radius: 10px;
+}
+&::-webkit-scrollbar-thumb {
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+  border-radius: 10px;
+  border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+}
+&::-webkit-scrollbar-thumb:hover {
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+}
 `;
 
 const NotificationItem = styled.div`
@@ -122,12 +128,14 @@ const CloseButton = styled.button`
   cursor: pointer;
   padding: 5px;
   margin-right: -8px;
+  transition: color 0.3s ease, transform 0.3s ease;
   &:hover {
     color: #ff0000;
+    transform: scale(1.1);
   }
 `;
 
-const NotificationButton = ({ hasNotification, notificationCount = 1 }) => {
+const NotificationButton = ({ hasNotification, notificationCount = 1, isDarkMode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([
     {
@@ -154,6 +162,48 @@ const NotificationButton = ({ hasNotification, notificationCount = 1 }) => {
       name: "Sarah Wilson",
       message: "requested your review on pull request",
     },
+    {
+      id: 5,
+      avatar: "https://avatars.githubusercontent.com/u/4",
+      name: "Sarah Wilson",
+      message: "requested your review on pull request",
+    },
+    {
+      id: 6,
+      avatar: "https://avatars.githubusercontent.com/u/4",
+      name: "Sarah Wilson",
+      message: "requested your review on pull request",
+    },
+    {
+      id: 7,
+      avatar: "https://avatars.githubusercontent.com/u/4",
+      name: "Sarah Wilson",
+      message: "requested your review on pull request",
+    },
+    {
+      id: 8,
+      avatar: "https://avatars.githubusercontent.com/u/4",
+      name: "Sarah Wilson",
+      message: "requested your review on pull request",
+    },
+    {
+      id: 9,
+      avatar: "https://avatars.githubusercontent.com/u/4",
+      name: "Sarah Wilson",
+      message: "requested your review on pull request",
+    },
+    {
+      id: 10,
+      avatar: "https://avatars.githubusercontent.com/u/4",
+      name: "Sarah Wilson",
+      message: "requested your review on pull request",
+    },
+    {
+      id: 11,
+      avatar: "https://avatars.githubusercontent.com/u/4",
+      name: "Sarah Wilson",
+      message: "requested your review on pull request",
+    },
   ]);
 
   const handleNotificationClick = () => {
@@ -166,10 +216,14 @@ const NotificationButton = ({ hasNotification, notificationCount = 1 }) => {
 
   return (
     <ButtonContainer>
-      <NotificationIcon onClick={handleNotificationClick} />
-      {hasNotification && <NotificationDot>{notificationCount}</NotificationDot>}
+      <NotificationIcon isDarkMode={isDarkMode} onClick={handleNotificationClick} />
+      {hasNotification && (
+        <NotificationDot>
+          {notificationCount >= 100 ? "99+" : notificationCount}
+        </NotificationDot>
+      )}
       {isOpen && (
-        <NotificationDropdown>
+        <NotificationDropdown isDarkMode={isDarkMode}>
           {notifications.map((notification) => (
             <NotificationItem key={notification.id}>
               <ProfileImage src={notification.avatar} alt={`${notification.name}'s avatar`} />
@@ -190,6 +244,7 @@ const NotificationButton = ({ hasNotification, notificationCount = 1 }) => {
 NotificationButton.propTypes = {
   hasNotification: PropTypes.bool.isRequired,
   notificationCount: PropTypes.number,
+  isDarkMode: PropTypes.bool.isRequired,
 };
 
 export default NotificationButton;

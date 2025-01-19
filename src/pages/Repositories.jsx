@@ -273,7 +273,9 @@ const Repositories = ({ isDarkMode }) => {
     }
   };
 
-  const DateFormatter = ({ isoDate }) => {
+  const DateFormatter = ({ isoDate, name }) => {
+    console.log("name:", name);
+    console.log("isoDate:", isoDate);
     const date = new Date(isoDate);
     const formattedDate = new Intl.DateTimeFormat("en-US", {
       month: "short",
@@ -362,7 +364,10 @@ const Repositories = ({ isDarkMode }) => {
                 <RepoStats isDarkMode={isDarkMode}>
                   <Language language={repo.language}>{repo.language}</Language>
                   <StatItem isDarkMode={isDarkMode}>
-                    <DateFormatter isoDate={repo.repo_updated_at} />
+                    <DateFormatter
+                      isoDate={repo.repo_updated_at}
+                      name={repo.name}
+                    />
                   </StatItem>
                 </RepoStats>
               </RepoContent>

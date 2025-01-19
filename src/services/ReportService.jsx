@@ -41,7 +41,7 @@ export const createReport = async (user_id, report_title, pr_ids) => {
 // 특정 보고서 조회
 export const getReportById = async (report_id) => {
   try {
-    const response = await api.get(`/reports/detail/${report_id}`);
+    const response = await api.get(`/reports/${report_id}/detail`);
     return response.data;
   } catch (error) {
     if (error.response) {

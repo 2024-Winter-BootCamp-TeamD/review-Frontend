@@ -92,3 +92,25 @@ export const getReportModes = async (report_id) => {
     throw error;
   }
 };
+
+// PR 리뷰 목록 조회
+export const getPrReviews = async (user_id, page, size = 10) => {
+  try {
+    const response = await api.get("/pr-reviews", {
+      params: {
+        user_id,
+        page,
+        size,
+      },
+    });
+
+    if (!response.data || Object.keys(response.data).length === 0) {
+      return { data: {} };
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("PR 리뷰 목록 조회 중 오류 발생:", error);
+    throw error;
+  }
+};

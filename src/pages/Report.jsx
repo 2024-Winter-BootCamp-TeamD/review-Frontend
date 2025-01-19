@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -15,6 +15,7 @@ import {
   downloadReport,
   getReportModes,
   createReport,
+  getPrReviews,
 } from "../services/ReportService";
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
@@ -312,84 +313,18 @@ const Report = ({ isDarkMode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [reportData, setReportData] = useState([]);
+  const [modalItems, setModalItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [isLoadingPRs, setIsLoadingPRs] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const observerTarget = useRef(null);
+  const MAX_SELECTIONS = 10; // 최대 선택 개수 상수 추가
+  const MIN_SELECTIONS = 5; // 최소 선택 개수 상수 추가
 
   // userId 임시 하드코딩
   const userId = 1;
-
-  const modalItems = [
-    {
-      id: 1,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "A",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 2,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "C",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 3,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "D",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 4,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "S",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 5,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "D",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 6,
-      mode: "Basic",
-      title: "Feat/#67 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "A",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 7,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "S",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 8,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "B",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 9,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "C",
-      issueType: "Design Pattern",
-    },
-  ];
 
   useEffect(() => {
     loadReports();
@@ -433,6 +368,11 @@ const Report = ({ isDarkMode }) => {
   };
 
   const handleCreateReport = async () => {
+    if (selectedItems.size < MIN_SELECTIONS) {
+      alert("최소 5개의 PR을 선택해주세요.");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const selectedPrIds = Array.from(selectedItems);
@@ -468,17 +408,51 @@ const Report = ({ isDarkMode }) => {
       if (newSet.has(itemId)) {
         newSet.delete(itemId);
       } else {
+        if (newSet.size >= MAX_SELECTIONS) {
+          alert("최대 10개까지만 선택할 수 있습니다.");
+          return prev;
+        }
         newSet.add(itemId);
       }
       return newSet;
     });
   };
 
+  // 전체 선택 토글 함수 수정
   const toggleSelectAll = () => {
-    if (selectedItems.size === modalItems.length) {
-      setSelectedItems(new Set());
+    if (
+      filteredModalItems.length > 0 &&
+      filteredModalItems.every((item) => selectedItems.has(item.id))
+    ) {
+      // 필터링된 아이템들의 ID만 선택 해제
+      const newSelectedItems = new Set(selectedItems);
+      filteredModalItems.forEach((item) => {
+        newSelectedItems.delete(item.id);
+      });
+      setSelectedItems(newSelectedItems);
     } else {
-      setSelectedItems(new Set(modalItems.map((item) => item.id)));
+      // 필터링된 아이템들의 ID를 기존 선택에 추가 (최대 10개까지)
+      const newSelectedItems = new Set(selectedItems);
+      let remainingSlots = MAX_SELECTIONS - newSelectedItems.size;
+
+      if (remainingSlots <= 0) {
+        alert("최대 10개까지만 선택할 수 있습니다.");
+        return;
+      }
+
+      filteredModalItems.some((item) => {
+        if (!newSelectedItems.has(item.id)) {
+          if (remainingSlots > 0) {
+            newSelectedItems.add(item.id);
+            remainingSlots--;
+            return false; // continue
+          }
+          return true; // break
+        }
+        return false;
+      });
+
+      setSelectedItems(newSelectedItems);
     }
   };
 
@@ -492,7 +466,8 @@ const Report = ({ isDarkMode }) => {
     (item) =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.mode.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.issueType.toLowerCase().includes(searchQuery.toLowerCase())
+      item.issueType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.grade.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // 모달 닫기 함수
@@ -526,6 +501,82 @@ const Report = ({ isDarkMode }) => {
       );
     }
   };
+
+  // PR 리뷰 목록 로드 함수 수정
+  const loadPrReviews = async (pageToLoad = currentPage) => {
+    if (pageToLoad === 1) {
+      setIsLoadingPRs(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+
+    try {
+      const response = await getPrReviews(userId, pageToLoad);
+      const formattedItems = response.data.map((item) => ({
+        id: item.id,
+        mode: item.review_mode,
+        title: item.title,
+        date: new Date(item.created_at).toLocaleDateString(),
+        grade: item.aver_grade,
+        issueType: item.problem_type,
+      }));
+
+      if (pageToLoad === 1) {
+        setModalItems(formattedItems);
+      } else {
+        setModalItems((prev) => [...prev, ...formattedItems]);
+      }
+
+      setHasNextPage(response.hasNextPage);
+      setTotalPages(response.totalPages);
+    } catch (error) {
+      console.error("PR 리뷰 목록 로드 실패:", error);
+    } finally {
+      if (pageToLoad === 1) {
+        setIsLoadingPRs(false);
+      } else {
+        setIsLoadingMore(false);
+      }
+    }
+  };
+
+  // 무한 스크롤 observer 설정
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries[0].isIntersecting &&
+          hasNextPage &&
+          !isLoadingMore &&
+          isModalOpen
+        ) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isLoadingMore, isModalOpen]);
+
+  // 모달이 열릴 때 초기 데이터 로드
+  useEffect(() => {
+    if (isModalOpen) {
+      setCurrentPage(1);
+      loadPrReviews(1);
+    }
+  }, [isModalOpen]);
+
+  // 페이지 변경시 추가 데이터 로드
+  useEffect(() => {
+    if (currentPage > 1 && isModalOpen) {
+      loadPrReviews(currentPage);
+    }
+  }, [currentPage]);
 
   return (
     <ReportWrapper>
@@ -632,11 +683,19 @@ const Report = ({ isDarkMode }) => {
                 <ModalHeader>
                   <ButtonCheckboxContainer>
                     <CheckboxRound
-                      checked={selectedItems.size === modalItems.length}
+                      checked={
+                        filteredModalItems.length > 0 &&
+                        filteredModalItems.every((item) =>
+                          selectedItems.has(item.id)
+                        )
+                      }
                       onClick={toggleSelectAll}
                     />
-                    <PlayfulButton onClick={handleCreateReport}>
-                      {`Create New Report${selectedItems.size > 0 ? ` (${selectedItems.size})` : ""}`}
+                    <PlayfulButton
+                      onClick={handleCreateReport}
+                      disabled={selectedItems.size < MIN_SELECTIONS}
+                    >
+                      {`Create New Report${selectedItems.size > 0 ? ` (${selectedItems.size}/${MAX_SELECTIONS})` : ""}`}
                     </PlayfulButton>
                   </ButtonCheckboxContainer>
                   <SearchBarWrapper>
@@ -655,27 +714,46 @@ const Report = ({ isDarkMode }) => {
                 </ModalHeader>
 
                 <ModalItemList>
-                  {filteredModalItems.map((item) => (
-                    <ModalItem
-                      key={item.id}
-                      selected={selectedItems.has(item.id)}
-                      onClick={() => toggleItemSelection(item.id)}
-                      isDarkMode={isDarkMode}
-                    >
-                      <CheckCircle checked={selectedItems.has(item.id)}>
-                        {selectedItems.has(item.id) && "✓"}
-                      </CheckCircle>
-                      <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
-                      <PRTitle isDarkMode={isDarkMode}>{item.title}</PRTitle>
-                      <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
-                      <Grade grade={item.grade} isDarkMode={isDarkMode}>
-                        {item.grade}
-                      </Grade>
-                      <IssueType isDarkMode={isDarkMode}>
-                        {item.issueType}
-                      </IssueType>
-                    </ModalItem>
-                  ))}
+                  {modalItems.length > 0 ? (
+                    <>
+                      {filteredModalItems.map((item) => (
+                        <ModalItem
+                          key={item.id}
+                          selected={selectedItems.has(item.id)}
+                          onClick={() => toggleItemSelection(item.id)}
+                          isDarkMode={isDarkMode}
+                        >
+                          <CheckCircle checked={selectedItems.has(item.id)}>
+                            {selectedItems.has(item.id) && "✓"}
+                          </CheckCircle>
+                          <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
+                          <PRTitle isDarkMode={isDarkMode}>
+                            {item.title}
+                          </PRTitle>
+                          <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
+                          <Grade grade={item.grade} isDarkMode={isDarkMode}>
+                            {item.grade}
+                          </Grade>
+                          <IssueType isDarkMode={isDarkMode}>
+                            {item.issueType}
+                          </IssueType>
+                        </ModalItem>
+                      ))}
+                      {hasNextPage && (
+                        <LoaderWrapper ref={observerTarget}>
+                          {isLoadingMore && <LoadingIndicator size="small" />}
+                        </LoaderWrapper>
+                      )}
+                    </>
+                  ) : (
+                    <div style={{ textAlign: "center", padding: "20px" }}>
+                      {isLoadingPRs ? (
+                        <LoadingIndicator />
+                      ) : (
+                        "PR 리뷰가 없습니다."
+                      )}
+                    </div>
+                  )}
                 </ModalItemList>
               </>
             ) : (
@@ -791,93 +869,36 @@ const Report = ({ isDarkMode }) => {
                     가져옵니다. 로직 단순화 복잡한 루프와 조건문을 최소화하고,
                     알고리즘을 최적화하세요. 예: 리스트 컴프리헨션을 사용해
                     코드를 간결하게 만듭니다. 2.2 코드 스타일 문제 전체적인
-                    문제점 주석 부족 주요 로직에 대한 설명이 없어 코드를
-                    이해하기 어려운 경우가 많았습니다. 네이밍 컨벤션 불일치
-                    변수와 함수 이름이 직관적이지 않아 코드 가독성이
-                    떨어졌습니다. 개선 방안 주석 추가 주요 로직과 복잡한
-                    알고리즘에는 설명을 추가하세요. 예: 함수의 목적, 입력값,
-                    출력값을 명시합니다. 네이밍 컨벤션 통일 변수와 함수 이름은
-                    직관적이고 일관되게 작성하세요. 예: get_user_by_id()와 같이
-                    명확한 이름을 사용합니다. 2.3 보안 문제 전체적인 문제점 API
-                    키 하드코딩 민감한 정보가 코드에 직접 작성되어 보안 위험이
-                    있었습니다. 입력값 검증 부족 사용자 입력값을 충분히 검증하지
-                    않아 SQL Injection 등의 위험이 있었습니다. 개선 방안 환경
-                    변수 사용 API 키와 같은 민감한 정보는 환경 변수로
-                    관리하세요. 예: os.environ을 사용해 환경 변수를 로드합니다.
-                    입력값 검증 강화 모든 사용자 입력값은 철저히 검증하세요. 예:
-                    pydantic 라이브러리를 사용해 입력값을 검증합니다. 3. 종합
-                    평가 3.1 강점 데이터베이스 모델 설계 데이터베이스 모델
-                    설계가 매우 우수합니다. 유틸리티 코드 재사용성 재사용성이
-                    높은 유틸리티 코드가 많아 팀 전체에 도움이 됩니다. 3.2
-                    개선점 성능 최적화 불필요한 쿼리와 복잡한 로직으로 인해
-                    성능이 저하되는 경우가 많습니다. 코드 스타일 주석 부족과
-                    네이밍 컨벤션 불일치로 인해 코드 가독성이 떨어집니다. 보안
-                    강화 API 키 관리와 입력값 검증이 미흡해 보안 위험이
-                    있습니다. 4. 시각화 자료 4.1 PR 등급 분포 ![PR 등급 분포
-                    파이 차트] 4.2 문제 PR 유형 분포 ![문제 PR 유형 분포 바
-                    차트] 4.3 파일 유형별 등급 추이 ![파일 유형별 등급 추이 라인
-                    그래프] 5. 결론 및 추천 5.1 강점 데이터베이스 모델 설계와
-                    유틸리티 코드 재사용성이 매우 우수합니다. 이러한 강점을
-                    유지하면서, 아래 개선점을 해결해 보세요. 5.2 개선점 성능
-                    최적화: 불필요한 쿼리와 복잡한 로직을 단순화하세요. 코드
-                    스타일: 주석을 추가하고, 네이밍 컨벤션을 통일하세요. 보안
-                    강화: API 키를 환경 변수로 관리하고, 입력값을 철저히
-                    검증하세요. 5.3 추천 학습 자료 성능 최적화: "High
-                    Performance MySQL" by Baron Schwartz 코드 스타일: "Clean
-                    Code" by Robert C. Martin 보안: "Web Application Security"
-                    by Andrew Hoffman 6. 향후 목표 성능 최적화: 모든 PR의 성능
-                    등급을 A 이상으로 개선 코드 스타일: 모든 PR에서 코드 스타일
-                    등급 S 달성 보안 강화: 모든 PR에서 보안 등급 S 달성 이
-                    보고서는 사용자가 선택한 PR 리뷰를 종합적으로 분석하여
-                    전체적인 문제점과 개선 방안을 제공합니다. **"AI 코드리뷰
-                    익스텐션"**과 함께 더 나은 개발자로 성장해 보세요! 1. 개요
-                    분석 대상 PR 수: 7개 (사용자 선택) 분석 기간: 2023년 7월 ~
-                    2023년 10월 평균 등급: B (문제 PR로 분류된 비율: 57%) 리뷰
-                    모드: 엄격 모드 (코드 품질, 성능, 보안 강조) 2. 전체적인
-                    문제점 및 개선 방안 2.1 성능 문제 전체적인 문제점 불필요한
-                    데이터베이스 쿼리 반복 여러 PR에서 동일한 데이터를 여러 번
-                    조회하는 문제가 반복되었습니다. 이로 인해 데이터베이스
-                    부하가 증가하고, 응답 시간이 느려졌습니다. 복잡한 로직으로
-                    인한 처리 속도 저하 중첩된 루프나 불필요한 조건문으로 인해
-                    코드 실행 속도가 느린 경우가 많았습니다. 개선 방안 캐싱 도입
-                    자주 조회되는 데이터는 캐싱하여 데이터베이스 조회 횟수를
-                    줄이세요. 예: Redis를 사용해 사용자 데이터를 캐싱합니다.
-                    쿼리 최적화 중복 쿼리를 제거하고, 필요한 데이터를 한 번에
-                    조회하세요. 예: JOIN을 사용해 관련 데이터를 한 번에
-                    가져옵니다. 로직 단순화 복잡한 루프와 조건문을 최소화하고,
-                    알고리즘을 최적화하세요. 예: 리스트 컴프리헨션을 사용해
-                    코드를 간결하게 만듭니다. 2.2 코드 스타일 문제 전체적인
-                    문제점 주석 부족 주요 로직에 대한 설명이 없어 코드를
-                    이해하기 어려운 경우가 많았습니다. 네이밍 컨벤션 불일치
-                    변수와 함수 이름이 직관적이지 않아 코드 가독성이
-                    떨어졌습니다. 개선 방안 주석 추가 주요 로직과 복잡한
-                    알고리즘에는 설명을 추가하세요. 예: 함수의 목적, 입력값,
-                    출력값을 명시합니다. 네이밍 컨벤션 통일 변수와 함수 이름은
-                    직관적이고 일관되게 작성하세요. 예: get_user_by_id()와 같이
-                    명확한 이름을 사용합니다. 2.3 보안 문제 전체적인 문제점 API
-                    키 하드코딩 민감한 정보가 코드에 직접 작성되어 보안 위험이
-                    있었습니다. 입력값 검증 부족 사용자 입력값을 충분히 검증하지
-                    않아 SQL Injection 등의 위험이 있었습니다. 개선 방안 환경
-                    변수 사용 API 키와 같은 민감한 정보는 환경 변수로
-                    관리하세요. 예: os.environ을 사용해 환경 변수를 로드합니다.
-                    입력값 검증 강화 모든 사용자 입력값은 철저히 검증하세요. 예:
-                    pydantic 라이브러리를 사용해 입력값을 검증합니다. 3. 종합
-                    평가 3.1 강점 데이터베이스 모델 설계 데이터베이스 모델
-                    설계가 매우 우수합니다. 유틸리티 코드 재사용성 재사용성이
-                    높은 유틸리티 코드가 많아 팀 전체에 도움이 됩니다. 3.2
-                    개선점 성능 최적화 불필요한 쿼리와 복잡한 로직으로 인해
-                    성능이 저하되는 경우가 많습니다. 코드 스타일 주석 부족과
-                    네이밍 컨벤션 불일치로 인해 코드 가독성이 떨어집니다. 보안
-                    강화 API 키 관리와 입력값 검증이 미흡해 보안 위험이
-                    있습니다. 4. 시각화 자료 4.1 PR 등급 분포 ![PR 등급 분포
-                    파이 차트] 4.2 문제 PR 유형 분포 ![문제 PR 유형 분포 바
-                    차트] 4.3 파일 유형별 등급 추이 ![파일 유형별 등급 추이 라인
-                    그래프] 5. 결론 및 추천 5.1 강점 데이터베이스 모델 설계와
-                    유틸리티 코드 재사용성이 매우 우수합니다. 이러한 강점을
-                    유지하면서, 아래 개선점을 해결해 보세요. 5.2 개선점 성능
-                    최적화: 불필요한 쿼리와 복잡한 로직을 단순화하세요. 코드
-                    스타일: 주석을 추가하고, 네이밍 컨벤션을 통일하세요. 보안
-                    강화: API 키를 환경 변수로 관리하고, 입력값을 철저히
+                    문제점 주석 부족 주요 로직에 대한 설명이 없어 코드 이해하기
+                    어려운 경우가 많았습니다. 네이밍 컨벤션 불일치 변수와 함수
+                    이름이 직관적이지 않아 코드 가독성이 떨어졌습니다. 개선 방안
+                    주석 추가 주요 로직과 복잡한 알고리즘에는 설명을 추가하세요.
+                    예: 함수의 목적, 입력값, 출력값을 명시합니다. 네이밍 컨벤션
+                    통일 변수와 함수 이름은 직관적이고 일관되게 작성하세요. 예:
+                    get_user_by_id()와 같이 명확한 이름을 사용합니다. 2.3 보안
+                    문제 전체적인 문제점 API 키 하드코딩 민감한 정보가 코드에
+                    직접 작성되어 보안 위험이 있었습니다. 입력값 검증 부족
+                    사용자 입력값을 충분히 검증하지 않아 SQL Injection 등의
+                    위험이 있었습니다. 개선 방안 환경 변수 사용 API 키와 같은
+                    민감한 정보는 환경 변수로 관리하세요. 예: os.environ을
+                    사용해 환경 변수를 로드합니다. 입력값 검증 강화 모든 사용자
+                    입력값은 철저히 검증하세요. 예: pydantic 라이브러리를 사용해
+                    입력값을 검증합니다. 3. 종합 평가 3.1 강점 데이터베이스 모델
+                    설계 데이터베이스 모델 설계가 매우 우수합니다. 유틸리티 코드
+                    재사용성 재사용성이 높은 유틸리티 코드가 많아 팀 전체에
+                    도움이 됩니다. 3.2 개선점 성능 최적화 불필요한 쿼리와 복잡한
+                    로직으로 인해 성능이 저하되는 경우가 많습니다. 코드 스타일
+                    주석 부족과 네이밍 컨벤션 불일치로 인해 코드 가독성이
+                    떨어집니다. 보안 강화 API 키 관리와 입력값 검증이 미흡해
+                    보안 위험이 있습니다. 4. 시각화 자료 4.1 PR 등급 분포 ![PR
+                    등급 분포 파이 차트] 4.2 문제 PR 유형 분포 ![문제 PR 유형
+                    분포 바 차트] 4.3 파일 유형별 등급 추이 ![파일 유형별 등급
+                    추이 라인 그래프] 5. 결론 및 추천 5.1 강점 데이터베이스 모델
+                    설계와 유틸리티 코드 재사용성이 매우 우수합니다. 이러한
+                    강점을 유지하면서, 아래 개선점을 해결해 보세요. 5.2 개선점
+                    성능 최적화: 불필요한 쿼리와 복잡한 로직을 단순화하세요.
+                    코드 스타일: 주석을 추가하고, 네이밍 컨벤션을 통일하세요.
+                    보안 강화: API 키를 환경 변수로 관리하고, 입력값을 철저히
                     검증하세요. 5.3 추천 학습 자료 성능 최적화: "High
                     Performance MySQL" by Baron Schwartz 코드 스타일: "Clean
                     Code" by Robert C. Martin 보안: "Web Application Security"
@@ -1454,6 +1475,14 @@ const LoadingWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const LoaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
 `;
 
 export default Report;

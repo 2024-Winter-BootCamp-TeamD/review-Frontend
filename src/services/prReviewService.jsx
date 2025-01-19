@@ -1,7 +1,7 @@
 import api from "./api";
 
 // PR 리뷰 전체 조회
-export const getPRReviews = async (user_id, page, size = 10) => {
+export const getPRReviews = async (user_id, page, size = 20) => {
   try {
     const response = await api.get("/pr-reviews", {
       params: {
@@ -18,7 +18,7 @@ export const getPRReviews = async (user_id, page, size = 10) => {
 };
 
 // PR 리뷰 검색
-export const searchPRReviews = async (user_id, title, page, size = 10) => {
+export const searchPRReviews = async (user_id, title, page, size = 20) => {
   try {
     if (!title) {
       throw new Error("검색어를 입력해주세요.");

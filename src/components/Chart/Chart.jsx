@@ -8,7 +8,6 @@ import ExportData from "highcharts/modules/export-data";
 import Accessibility from "highcharts/modules/accessibility";
 import { getPRReviewCategories } from "../../services/prReviewService";
 
-// styled-components로 변환
 const ChartWrapper = styled.div`
   width: 90%;
   height: 100%;

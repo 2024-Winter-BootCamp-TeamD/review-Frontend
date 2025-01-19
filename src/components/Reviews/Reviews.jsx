@@ -37,18 +37,22 @@ const ReviewItem = styled.div`
   padding: 5px 10px;
   margin-bottom: 10px;
   box-sizing: border-box;
-  background-color: ${({ isSelected, isDarkMode }) => 
-    isSelected ? (isDarkMode ? '#333333' : '#D9D9D9') : (isDarkMode ? '#00000050' : '#FFFFFF')};
+  background-color: ${({ $isSelected, isDarkMode }) => 
+    $isSelected 
+      ? isDarkMode 
+        ? '#333333' 
+        : '#f0f0f0'
+      : 'transparent'};
   font-size: 15px;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  transform: ${({ isSelected }) => isSelected ? 'translateX(5px)' : 'none'};
+  transform: ${({ $isSelected }) => $isSelected ? 'translateX(5px)' : 'none'};
 
   &:hover {
     transform: translateX(5px);
-    background-color: ${({ isSelected, isDarkMode }) => 
-      isSelected ? (isDarkMode ? '#333333' : '#D9D9D9') : (isDarkMode ? '#333333' : '#D9D9D9')};
+    background-color: ${({ $isSelected, isDarkMode }) => 
+      $isSelected ? (isDarkMode ? '#333333' : '#D9D9D9') : (isDarkMode ? '#333333' : '#D9D9D9')};
   }
 `;
 
@@ -233,7 +237,7 @@ const Reviews = ({ onReviewClick, selectedMode, searchTerm, isDarkMode }) => {
       {filteredReviews.map(review => (
         <ReviewItem 
           key={review.id}
-          isSelected={selectedReviewId === review.id}
+          $isSelected={selectedReviewId === review.id}
           isDarkMode={isDarkMode}
           onClick={() => handleReviewClick(review)}
         >

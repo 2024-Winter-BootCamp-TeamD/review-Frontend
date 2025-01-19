@@ -57,7 +57,7 @@ export const getReportById = async (report_id) => {
 // 보고서 삭제
 export const deleteReport = async (report_id) => {
   try {
-    const response = await api.delete(`/reports/${report_id}/delete`);
+    const response = await api.delete(`/reports/${report_id}/delete/`);
     return response.data;
   } catch (error) {
     if (error.response) {

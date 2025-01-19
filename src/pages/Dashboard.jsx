@@ -86,6 +86,37 @@ const CustomTooltip = ({ active, payload, label, isDarkMode }) => {
   return null;
 };
 
+const categoryDisplayNames = {
+  optimize: "Optimize",
+  clean: "Clean Code",
+  // 필요에 따라 추가 매핑
+};
+
+const PieCustomTooltip = ({ active, payload, isDarkMode }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div
+        style={{
+          backgroundColor: isDarkMode ? "#000000" : "#FFFFFF",
+          padding: "10px",
+          border: "1px solid #CCCCCC",
+          borderRadius: "5px",
+          textAlign: "left",
+        }}
+      >
+        <p style={{ margin: 0 }}><strong>{categoryDisplayNames[data.name] || data.name}</strong></p>
+        {data.problems.map((p, idx) => (
+          <p key={idx} style={{ margin: 0 }}>
+            {`${p.problem_type}: ${p.count}`}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
 const Dashboard = ({ isDarkMode }) => {
   const [username, setUsername] = useState("Nekerworld");
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -335,7 +366,7 @@ const Dashboard = ({ isDarkMode }) => {
                       borderRadius: "2px",
                     }}
                   ></div>
-                  <span>{entry.name}</span>
+                  <span>{categoryDisplayNames[entry.name] || entry.name}</span>
                 </div>
               ))}
             </div>
@@ -435,7 +466,7 @@ const Dashboard = ({ isDarkMode }) => {
                       </g>
                     )}
                   />
-                  <Tooltip />
+                  <Tooltip content={<PieCustomTooltip isDarkMode={isDarkMode} />} />
                 </PieChart>
               </ResponsiveContainer>
             </div>

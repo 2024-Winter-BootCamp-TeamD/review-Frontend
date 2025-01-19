@@ -317,14 +317,22 @@ const Dashboard = ({ isDarkMode }) => {
                     display: "flex",
                     alignItems: "center",
                     marginRight: "20px",
+                    backgroundColor:
+                      highlightIndex === index ? PIE_COLORS_LEGEND[0] : PIE_COLORS_LEGEND[2],
+                    color:
+                      highlightIndex === index ? "#000000" : "#FFFFFF",
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    transition: "background-color 0.3s, color 0.3s",
                   }}
                 >
                   <div
                     style={{
-                      width: "12px",
-                      height: "12px",
+                      width: "0px",
+                      height: "0px",
                       backgroundColor: PIE_COLORS_LEGEND[index % PIE_COLORS_LEGEND.length],
                       marginRight: "8px",
+                      borderRadius: "2px",
                     }}
                   ></div>
                   <span>{entry.name}</span>

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import ModeSelectButton from "../components/ModeselectButton/ModeSelectButton.jsx";
 import "./Dashboard.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { fetchUserInfo, getAverageGrade, getRecentReview, switchMode } from "../services/DashboardService.jsx";
+import api from "../services/api.jsx";
+import { fetchUserInfo, getAverageGrade, getRecentReview } from "../services/DashboardService.jsx";
 import GitHubCalendar from "react-github-calendar";
 
 // 등급을 값으로 변환하는 매핑
@@ -187,14 +188,22 @@ const Dashboard = ({ isDarkMode }) => {
   }, [profileLoaded]);
 
   const handleModeChange = useCallback(async (mode) => {
+    if (!fetchuserdata) {
+      console.error("사용자 데이터가 로드되지 않았습니다.");
+      return;
+    }
+    const user_id = fetchuserdata.user_details.id;
     try {
-      const response = await switchMode(mode);
-      setSelectedMode(response.review_mode); // 서버 응답에 따라 모드 업데이트
+      const response = await api.put(`/users/${user_id}/mode/`, {
+        review_mode: mode.toLowerCase(), // 소문자로 변환하여 전송 (예: 'clean mode')
+      });
+      // 서버 응답에 따라 모드 업데이트
+      setSelectedMode(response.data.review_mode);
+      console.log("모드 변경 성공:", response.data);
     } catch (error) {
       console.error("모드 변경 실패:", error);
-      alert("모드 변경에 실패했습니다. 다시 시도해주세요.");
     }
-  }, []);
+  }, [fetchuserdata]);
 
   // 왼쪽 범례 하이라이트 색 | 하이라이트되지 않은 차트 색 (투명) | 왼쪽 범례 하이라이트 되지 않은 색
   const PIE_COLORS_LEGEND = ["#AEF060", "#DCDCDC00", "#343C2F"];
@@ -255,23 +264,41 @@ const Dashboard = ({ isDarkMode }) => {
 
       {/* Mode Select Buttons */}
       <div className="dashboard-mode-select" style={{ justifyContent: "space-between" }}>
-        {[
-          { modeName: "Basic", description: "Default Mode.", modeColor: "#FF794E" },
-          { modeName: "Study", description: "Hint Only.", modeColor: "#FFCD39" },
-          { modeName: "Newbie", description: "Study Together.", modeColor: "#70BF73" },
-          { modeName: "Clean Code", description: "Follow Coding Conventions.", modeColor: "#4DABF5" },
-          { modeName: "Optimize", description: "Performance First.", modeColor: "#BC6FCD" },
-        ].map((mode) => (
-          <ModeSelectButton
-            key={mode.modeName}
-            modeName={mode.modeName}
-            description={mode.description}
-            modeColor={mode.modeColor}
-            isSelected={selectedMode === mode.modeName}
-            onClick={() => handleModeChange(mode.modeName)}
-            isDarkMode={isDarkMode}
-          />
-        ))}
+        <ModeSelectButton
+          modeName="Basic"
+          description="Default Mode."
+          modeColor="#FF794E"
+          isSelected={selectedMode === "basic mode"}
+          onClick={() => handleModeChange("basic mode")}
+        />
+        <ModeSelectButton
+          modeName="Study"
+          description="Hint Only."
+          modeColor="#FFCD39"
+          isSelected={selectedMode === "study mode"}
+          onClick={() => handleModeChange("study mode")}
+        />
+        <ModeSelectButton
+          modeName="Clean Code"
+          description="Follow Coding Conventions."
+          modeColor="#4DABF5"
+          isSelected={selectedMode === "clean mode"}
+          onClick={() => handleModeChange("clean mode")}
+        />
+        <ModeSelectButton
+          modeName="Optimize"
+          description="Performance First."
+          modeColor="#BC6FCD"
+          isSelected={selectedMode === "optimize mode"}
+          onClick={() => handleModeChange("optimize mode")}
+        />
+        <ModeSelectButton
+          modeName="Newbie"
+          description="Study Together."
+          modeColor="#70BF73"
+          isSelected={selectedMode === "new bie mode"}
+          onClick={() => handleModeChange("new bie mode")}
+        />
       </div>
 
       {/* Charts */}

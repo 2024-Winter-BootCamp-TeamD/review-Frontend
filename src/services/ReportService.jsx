@@ -84,7 +84,8 @@ export const downloadReport = async (report_id) => {
 // 보고서 작성에 사용된 모드 조회
 export const getReportModes = async (report_id) => {
   try {
-    const response = await api.get(`/reports/${report_id}/modes`);
+    const response = await api.get(`/reports/${report_id}/mode`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("보고서 모드 조회 중 오류 발생:", error);

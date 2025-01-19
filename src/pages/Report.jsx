@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -9,40 +9,47 @@ import { ResponsiveRadar } from "@nivo/radar";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 import LoadingIndicator from "../components/LoadingIndicator/LoadingIndicator";
+import {
+  getReports,
+  deleteReport,
+  downloadReport,
+  getReportModes,
+  createReport,
+} from "../services/ReportService";
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
-const ALL_MODES = ["Basic", "Study", "Newbie", "Clean Code", "Optimize"];
+const ALL_MODES = ["basic", "study", "newbie", "clean", "optimize"];
 
 const MODE_COLORS = {
-  Basic: {
+  basic: {
     bg: "#FFF1EC",
     text: "#FF794E",
   },
-  Study: {
+  study: {
     bg: "#FFF9E6",
     text: "#FFCD39",
   },
-  "Clean Code": {
-    bg: "#4DABF5",
+  clean: {
+    bg: "#EDF6FD",
     text: "#4DABF5",
   },
-  Optimize: {
-    bg: "#BC6FCD",
+  optimize: {
+    bg: "#F9F0F7",
     text: "#BC6FCD",
   },
-  Newbie: {
-    bg: "#70BF73",
+  newbie: {
+    bg: "#F0F9F0",
     text: "#70BF73",
   },
 };
 
 const GRADE_COLORS = {
-  S: "#FF6B6B", // 빨간색 계열
-  A: "#4A90E2", // 파란색 계열
-  B: "#50C878", // 초록색 계열
-  C: "#FFB84D", // 주황색 계열
-  D: "#808080", // 회색 계열
+  S: "#FF6B6B",
+  A: "#4A90E2",
+  B: "#50C878",
+  C: "#FFB84D",
+  D: "#808080",
 };
 
 const ISSUE_TYPE_COLORS = {
@@ -53,7 +60,7 @@ const ISSUE_TYPE_COLORS = {
   "버그 가능성": "#B5179E",
   기타: "#748CAB",
 };
-// 레이더 차트 데이터 추가
+
 const radarData = [
   {
     metric: "PR1",
@@ -96,6 +103,7 @@ const radarData = [
     Study: 60,
   },
 ];
+
 const GRAPHS = [
   {
     title: "PR별 점수 지표",
@@ -225,6 +233,75 @@ const GRAPHS = [
   },
 ];
 
+const ModeListContainer = styled.div`
+  flex: 2;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: #00000000;
+`;
+
+const ModeTag = styled.span.attrs((props) => ({
+  className: props.className,
+}))`
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: ${({ $isActive, $mode }) =>
+    $isActive ? MODE_COLORS[$mode].bg : "#f5f5f5"};
+  color: ${({ $isActive, $mode }) =>
+    $isActive ? MODE_COLORS[$mode].text : "#666666"};
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const ModeList = ({ reportId }) => {
+  const [modes, setModes] = useState([]);
+
+  useEffect(() => {
+    const fetchModes = async () => {
+      try {
+        const response = await getReportModes(reportId);
+        console.log("API 응답:", response);
+        console.log("설정된 모드:", response.modes);
+        setModes(response.modes);
+      } catch (error) {
+        console.error("모드 정보 로드 실패:", error);
+      }
+    };
+    fetchModes();
+  }, [reportId]);
+
+  console.log("현재 modes 상태:", modes);
+  console.log("ALL_MODES:", ALL_MODES);
+
+  return (
+    <ModeListContainer>
+      {ALL_MODES.map((mode, index) => {
+        const isActive = modes.includes(mode);
+        console.log(`${mode} 활성화 여부:`, isActive);
+
+        return (
+          <ModeTag
+            key={index}
+            $isActive={isActive}
+            $mode={mode}
+            style={{ marginRight: "8px" }}
+          >
+            {mode}
+          </ModeTag>
+        );
+      })}
+    </ModeListContainer>
+  );
+};
+
 const Report = ({ isDarkMode }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -234,6 +311,10 @@ const Report = ({ isDarkMode }) => {
   const graphTypes = Object.keys(GRAPHS);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedItems, setSelectedItems] = useState(new Set());
+  const [reportData, setReportData] = useState([]);
+
+  // userId 임시 하드코딩
+  const userId = 1;
 
   const modalItems = [
     {
@@ -310,64 +391,76 @@ const Report = ({ isDarkMode }) => {
     },
   ];
 
-  const reportData = [
-    {
-      id: 1,
-      image: image,
-      title: "PR 보고서1",
-      createdAt: "2024-03-15",
-      reviewCount: 25,
-      modes: ALL_MODES,
-    },
-    {
-      id: 2,
-      image: image,
-      title: "PR 보고서2",
-      createdAt: "2024-03-15",
-      reviewCount: 15,
-      modes: ["Optimize", "Basic"],
-    },
-    {
-      id: 3,
-      image: image,
-      title: "PR 보고서3",
-      createdAt: "2024-03-15",
-      reviewCount: 25,
-      modes: ["Basic"],
-    },
-    {
-      id: 4,
-      image: image,
-      title: "PR 보고서4",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Newbie"],
-    },
-    {
-      id: 7,
-      image: image,
-      title: "PR 보고서5",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Clean Code", "Study"],
-    },
-    {
-      id: 5,
-      image: image,
-      title: "PR 보고서6",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Clean Code", "Study"],
-    },
-    {
-      id: 6,
-      image: image,
-      title: "PR 보고서7",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Clean Code", "Study"],
-    },
-  ];
+  useEffect(() => {
+    loadReports();
+  }, []);
+
+  const loadReports = async () => {
+    try {
+      const response = await getReports(userId);
+      const formattedReports = response.reports.map((report) => ({
+        id: report.report_id,
+        image: image,
+        title: report.title,
+        createdAt: report.created_at.split(" ")[0],
+        reviewCount: report.review_num,
+      }));
+
+      setReportData(formattedReports);
+    } catch (error) {
+      console.error("보고서 로드 실패:", error);
+    }
+  };
+
+  const handleDeleteReport = async (reportId, e) => {
+    e.stopPropagation();
+    try {
+      await deleteReport(reportId);
+      loadReports();
+    } catch (error) {
+      console.error("보고서 삭제 실패:", error);
+    }
+  };
+
+  const handleDownloadReport = async (reportId, e) => {
+    e.stopPropagation();
+    try {
+      const response = await downloadReport(reportId);
+      window.open(response.pdf_url, "_blank");
+    } catch (error) {
+      console.error("보고서 다운로드 실패:", error);
+    }
+  };
+
+  const handleCreateReport = async () => {
+    setIsLoading(true);
+    try {
+      const selectedPrIds = Array.from(selectedItems);
+      const response = await createReport(
+        userId,
+        "새로운 PR 보고서",
+        selectedPrIds
+      );
+
+      setIsLoading(false);
+      setIsModalOpen(false);
+      setSelectedItems(new Set());
+
+      const newReport = {
+        id: response.report_id,
+        title: response.title,
+        createdAt: response.created_at,
+        reviewCount: response.review_num,
+      };
+
+      setSelectedReport(newReport);
+      setIsDetailModalOpen(true);
+      loadReports();
+    } catch (error) {
+      setIsLoading(false);
+      console.error("보고서 생성 실패:", error);
+    }
+  };
 
   const toggleItemSelection = (itemId) => {
     setSelectedItems((prev) => {
@@ -405,8 +498,8 @@ const Report = ({ isDarkMode }) => {
   // 모달 닫기 함수
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedItems(new Set()); // 선택된 항목 초기화
-    setSearchQuery(""); // 검색어도 초기화
+    setSelectedItems(new Set());
+    setSearchQuery("");
   };
 
   // 보고서 상세 보기 핸들러
@@ -434,54 +527,56 @@ const Report = ({ isDarkMode }) => {
     }
   };
 
-  const handleCreateReport = () => {
-    setIsLoading(true);
-    // 로딩이 100%가 되면 모달을 닫고 상세 보고서를 보여주기 위해 5초 후에 실행
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsModalOpen(false);
-      setSelectedItems(new Set());
-      // 새로운 보고서 데이터 생성 (예시)
-      const newReport = {
-        id: reportData.length + 1,
-        image: image,
-        title: "새로운 PR 보고서",
-        createdAt: new Date().toISOString().split('T')[0],
-        reviewCount: selectedItems.size,
-        modes: ALL_MODES,
-      };
-      // 새로 생성된 보고서로 상세 모달 열기
-      setSelectedReport(newReport);
-      setIsDetailModalOpen(true);
-    }, 5000);
-  };
-
   return (
     <ReportWrapper>
-      {/* <SearchBarSC
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        isDarkMode={isDarkMode}
-      /> */}
       <PageTitle isDarkMode={isDarkMode}>Report</PageTitle>
       <CategoryBar isDarkMode={isDarkMode}>
-        <CategoryItem style={{ width: "50px", justifyContent: "center" }} isDarkMode={isDarkMode}></CategoryItem>
-        <CategoryItem style={{ width: "115px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{ width: "50px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        ></CategoryItem>
+        <CategoryItem
+          style={{ width: "125px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        >
           Report Name
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{ width: "105px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        >
           Date
         </CategoryItem>
-        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingLeft: "3vw" }} isDarkMode={isDarkMode}>
-         Comments
+        <CategoryItem
+          style={{
+            flex: 1,
+            justifyContent: "flex-start",
+            paddingLeft: "3.5vw",
+          }}
+          isDarkMode={isDarkMode}
+        >
+          Comments
         </CategoryItem>
-        <CategoryItem style={{ flex: 1, justifyContent: "flex-start", paddingRight: "2vw" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{
+            flex: 1,
+            justifyContent: "flex-start",
+            paddingRight: "1.5vw",
+          }}
+          isDarkMode={isDarkMode}
+        >
           Used Review Modes
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{ width: "110px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        >
           Download
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{ width: "100px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        >
           Delete
         </CategoryItem>
       </CategoryBar>
@@ -497,25 +592,23 @@ const Report = ({ isDarkMode }) => {
                 <img src={report.image} alt="report thumbnail" />
               </ReportImage>
               <ReportTitle isDarkMode={isDarkMode}>{report.title}</ReportTitle>
-              <CreatedDate isDarkMode={isDarkMode}>{report.createdAt}</CreatedDate>
+              <CreatedDate isDarkMode={isDarkMode}>
+                {report.createdAt}
+              </CreatedDate>
               <ReviewCount isDarkMode={isDarkMode}>
                 Total of {report.reviewCount} AI review comments
               </ReviewCount>
-              <ModeList>
-                {ALL_MODES.map((mode, index) => (
-                  <ModeTag
-                    key={index}
-                    isActive={report.modes.includes(mode)}
-                    mode={mode}
-                  >
-                    {mode}
-                  </ModeTag>
-                ))}
-              </ModeList>
-              <DownloadButton isDarkMode={isDarkMode}>
+              <ModeList reportId={report.id} />
+              <DownloadButton
+                isDarkMode={isDarkMode}
+                onClick={(e) => handleDownloadReport(report.id, e)}
+              >
                 <DownloadIcon />
               </DownloadButton>
-              <DeleteButton isDarkMode={isDarkMode}>
+              <DeleteButton
+                isDarkMode={isDarkMode}
+                onClick={(e) => handleDeleteReport(report.id, e)}
+              >
                 <DeleteIcon />
               </DeleteButton>
             </ReportItem>
@@ -530,7 +623,10 @@ const Report = ({ isDarkMode }) => {
 
       {isModalOpen && (
         <ModalOverlay onClick={handleCloseModal}>
-          <ModalContent onClick={(e) => e.stopPropagation()} isDarkMode={isDarkMode}>
+          <ModalContent
+            onClick={(e) => e.stopPropagation()}
+            isDarkMode={isDarkMode}
+          >
             {!isLoading ? (
               <>
                 <ModalHeader>
@@ -572,8 +668,12 @@ const Report = ({ isDarkMode }) => {
                       <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
                       <PRTitle isDarkMode={isDarkMode}>{item.title}</PRTitle>
                       <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
-                      <Grade grade={item.grade} isDarkMode={isDarkMode}>{item.grade}</Grade>
-                      <IssueType isDarkMode={isDarkMode}>{item.issueType}</IssueType>
+                      <Grade grade={item.grade} isDarkMode={isDarkMode}>
+                        {item.grade}
+                      </Grade>
+                      <IssueType isDarkMode={isDarkMode}>
+                        {item.issueType}
+                      </IssueType>
                     </ModalItem>
                   ))}
                 </ModalItemList>
@@ -606,13 +706,7 @@ const Report = ({ isDarkMode }) => {
                   <InfoDivider />
                   <InfoItem>
                     <InfoLabel>리뷰 모드</InfoLabel>
-                    <ModeList>
-                      {selectedReport.modes.map((mode, index) => (
-                        <ModeTag key={index} isActive={true} mode={mode}>
-                          {mode}
-                        </ModeTag>
-                      ))}
-                    </ModeList>
+                    <ModeList reportId={selectedReport.id} />
                   </InfoItem>
                 </HeaderInfo>
                 <CloseButton onClick={handleCloseDetailModal}>
@@ -736,6 +830,62 @@ const Report = ({ isDarkMode }) => {
                     등급 S 달성 보안 강화: 모든 PR에서 보안 등급 S 달성 이
                     보고서는 사용자가 선택한 PR 리뷰를 종합적으로 분석하여
                     전체적인 문제점과 개선 방안을 제공합니다. **"AI 코드리뷰
+                    익스텐션"**과 함께 더 나은 개발자로 성장해 보세요! 1. 개요
+                    분석 대상 PR 수: 7개 (사용자 선택) 분석 기간: 2023년 7월 ~
+                    2023년 10월 평균 등급: B (문제 PR로 분류된 비율: 57%) 리뷰
+                    모드: 엄격 모드 (코드 품질, 성능, 보안 강조) 2. 전체적인
+                    문제점 및 개선 방안 2.1 성능 문제 전체적인 문제점 불필요한
+                    데이터베이스 쿼리 반복 여러 PR에서 동일한 데이터를 여러 번
+                    조회하는 문제가 반복되었습니다. 이로 인해 데이터베이스
+                    부하가 증가하고, 응답 시간이 느려졌습니다. 복잡한 로직으로
+                    인한 처리 속도 저하 중첩된 루프나 불필요한 조건문으로 인해
+                    코드 실행 속도가 느린 경우가 많았습니다. 개선 방안 캐싱 도입
+                    자주 조회되는 데이터는 캐싱하여 데이터베이스 조회 횟수를
+                    줄이세요. 예: Redis를 사용해 사용자 데이터를 캐싱합니다.
+                    쿼리 최적화 중복 쿼리를 제거하고, 필요한 데이터를 한 번에
+                    조회하세요. 예: JOIN을 사용해 관련 데이터를 한 번에
+                    가져옵니다. 로직 단순화 복잡한 루프와 조건문을 최소화하고,
+                    알고리즘을 최적화하세요. 예: 리스트 컴프리헨션을 사용해
+                    코드를 간결하게 만듭니다. 2.2 코드 스타일 문제 전체적인
+                    문제점 주석 부족 주요 로직에 대한 설명이 없어 코드를
+                    이해하기 어려운 경우가 많았습니다. 네이밍 컨벤션 불일치
+                    변수와 함수 이름이 직관적이지 않아 코드 가독성이
+                    떨어졌습니다. 개선 방안 주석 추가 주요 로직과 복잡한
+                    알고리즘에는 설명을 추가하세요. 예: 함수의 목적, 입력값,
+                    출력값을 명시합니다. 네이밍 컨벤션 통일 변수와 함수 이름은
+                    직관적이고 일관되게 작성하세요. 예: get_user_by_id()와 같이
+                    명확한 이름을 사용합니다. 2.3 보안 문제 전체적인 문제점 API
+                    키 하드코딩 민감한 정보가 코드에 직접 작성되어 보안 위험이
+                    있었습니다. 입력값 검증 부족 사용자 입력값을 충분히 검증하지
+                    않아 SQL Injection 등의 위험이 있었습니다. 개선 방안 환경
+                    변수 사용 API 키와 같은 민감한 정보는 환경 변수로
+                    관리하세요. 예: os.environ을 사용해 환경 변수를 로드합니다.
+                    입력값 검증 강화 모든 사용자 입력값은 철저히 검증하세요. 예:
+                    pydantic 라이브러리를 사용해 입력값을 검증합니다. 3. 종합
+                    평가 3.1 강점 데이터베이스 모델 설계 데이터베이스 모델
+                    설계가 매우 우수합니다. 유틸리티 코드 재사용성 재사용성이
+                    높은 유틸리티 코드가 많아 팀 전체에 도움이 됩니다. 3.2
+                    개선점 성능 최적화 불필요한 쿼리와 복잡한 로직으로 인해
+                    성능이 저하되는 경우가 많습니다. 코드 스타일 주석 부족과
+                    네이밍 컨벤션 불일치로 인해 코드 가독성이 떨어집니다. 보안
+                    강화 API 키 관리와 입력값 검증이 미흡해 보안 위험이
+                    있습니다. 4. 시각화 자료 4.1 PR 등급 분포 ![PR 등급 분포
+                    파이 차트] 4.2 문제 PR 유형 분포 ![문제 PR 유형 분포 바
+                    차트] 4.3 파일 유형별 등급 추이 ![파일 유형별 등급 추이 라인
+                    그래프] 5. 결론 및 추천 5.1 강점 데이터베이스 모델 설계와
+                    유틸리티 코드 재사용성이 매우 우수합니다. 이러한 강점을
+                    유지하면서, 아래 개선점을 해결해 보세요. 5.2 개선점 성능
+                    최적화: 불필요한 쿼리와 복잡한 로직을 단순화하세요. 코드
+                    스타일: 주석을 추가하고, 네이밍 컨벤션을 통일하세요. 보안
+                    강화: API 키를 환경 변수로 관리하고, 입력값을 철저히
+                    검증하세요. 5.3 추천 학습 자료 성능 최적화: "High
+                    Performance MySQL" by Baron Schwartz 코드 스타일: "Clean
+                    Code" by Robert C. Martin 보안: "Web Application Security"
+                    by Andrew Hoffman 6. 향후 목표 성능 최적화: 모든 PR의 성능
+                    등급을 A 이상으로 개선 코드 스타일: 모든 PR에서 코드 스타일
+                    등급 S 달성 보안 강화: 모든 PR에서 보안 등급 S 달성 이
+                    보고서는 사용자가 선택한 PR 리뷰를 종합적으로 분석하여
+                    전체적인 문제점과 개선 방안을 제공합니다. **"AI 코드리뷰
                     익스텐션"**과 함께 더 나은 개발자로 성장해 보세요!
                   </ContentText>
                 </ReportContent>
@@ -770,8 +920,8 @@ const Report = ({ isDarkMode }) => {
 
 const ReportWrapper = styled.div`
   height: 100%;
- margin-top: 10px;
- display: flex;
+  margin-top: 10px;
+  display: flex;
   flex-direction: column;
   overflow: hidden;
   margin-left: 10px;
@@ -816,24 +966,6 @@ const ReviewCount = styled.div`
   font-weight: 500;
   font-size: 14px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
-`;
-
-const ModeList = styled.div`
-  flex: 2;
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-  background: #00000000;
-`;
-
-const ModeTag = styled.span`
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: "00000000";
-  color: ${(props) => (props.isActive ? MODE_COLORS[props.mode].text : "#666")};
-  transition: all 0.2s ease-in-out;
 `;
 
 const IconButton = styled.button`
@@ -887,14 +1019,15 @@ const CategoryBar = styled.div`
   align-items: center;
   width: 87rem;
   height: auto;
-  padding: 0 20px;  
+  padding: 0 20px;
   margin-top: 24px;
   margin-left: 60px;
   margin-bottom: 0px;
   gap: 40px;
   border-radius: 15px;
   background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ECECEC")};
-  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030")};
+  border: ${({ isDarkMode }) =>
+    isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030"};
 `;
 
 const CategoryItem = styled.div`
@@ -910,9 +1043,9 @@ const CategoryItem = styled.div`
 `;
 
 const ReportTitle = styled.h1`
-  width: 100px;
+  width: 120px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
-  font-size: 20px;
+  font-size: 16px;
 `;
 
 const ReportList = styled.div`
@@ -925,7 +1058,7 @@ const ReportList = styled.div`
 
   &::-webkit-scrollbar {
     width: 8px;
-    margin-left: 4px; // 스크롤바를 리스트에서 살짝 띄움
+    margin-left: 4px;
   }
 
   &::-webkit-scrollbar-track {
@@ -1021,23 +1154,24 @@ const ModalItem = styled.div`
   display: flex;
   align-items: center;
   padding: 20px 30px;
-  background: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : 'white')};
+  background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "white")};
   border-radius: 15px;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
   gap: 30px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
 
   &:hover {
     transform: translateX(5px);
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#000000' : '#f8f9fa')};
+    background-color: ${({ isDarkMode }) =>
+      isDarkMode ? "#000000" : "#f8f9fa"};
   }
 
   ${(props) =>
     props.selected &&
     `
-    background-color: ${props.isDarkMode ? '#10204C' : '#C0CDF2'};
+    background-color: ${props.isDarkMode ? "#10204C" : "#C0CDF2"};
   `}
 `;
 
@@ -1069,14 +1203,14 @@ const ReviewMode = styled.div`
 const PRTitle = styled.div`
   flex: 1;
   font-size: 16px;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
 `;
 
 const PRDate = styled.div`
   width: 100px;
   color: #666;
   font-size: 14px;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
 `;
 
 const Grade = styled.div`
@@ -1089,7 +1223,7 @@ const Grade = styled.div`
 
 const IssueType = styled.div`
   width: 120px;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
   text-align: right;
   flex-shrink: 0;
 `;
@@ -1131,7 +1265,6 @@ const SearchBarWrapper = styled.div`
   margin-left: 0vw;
 `;
 
-// 새로운 styled components 추가
 const CheckboxRound = styled.div`
   width: 1.6em;
   height: 1.6em;
@@ -1159,7 +1292,6 @@ const ButtonCheckboxContainer = styled.div`
   margin-right: 3vw;
 `;
 
-// 새로운 스타일 컴포넌트 추가
 const DetailModalContent = styled(ModalContent)`
   width: 90rem;
   height: 90vh;
@@ -1223,21 +1355,22 @@ const ReportContent = styled.div`
   background-color: white;
   padding: 20px;
   overflow-y: auto;
-  
+
   &::-webkit-scrollbar {
-  width: 12px;
+    width: 12px;
   }
   &::-webkit-scrollbar-track {
-    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    background: ${({ isDarkMode }) => (isDarkMode ? "#4A4A4A" : "#D9D9D9")};
     border-radius: 10px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    background-color: ${({ isDarkMode }) =>
+      isDarkMode ? "#FFFFFF" : "#777777"};
     border-radius: 10px;
-    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? "#333" : "#f0f0f0")};
   }
   &::-webkit-scrollbar-thumb:hover {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#c7c7c7" : "#555")};
   }
 `;
 

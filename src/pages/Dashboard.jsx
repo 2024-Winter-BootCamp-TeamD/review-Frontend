@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ModeSelectButton from "../components/ModeselectButton/ModeSelectButton.jsx";
 import "./Dashboard.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { getAverageGrade, getRecentReview, switchMode, fetchUserInfo } from "../services/DashboardService.jsx";
+import { fetchUserInfo, getAverageGrade, getRecentReview, switchMode } from "../services/DashboardService.jsx";
 import GitHubCalendar from "react-github-calendar";
 
 // 등급을 값으로 변환하는 매핑

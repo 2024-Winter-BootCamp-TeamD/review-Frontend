@@ -396,12 +396,13 @@ const Report = ({ isDarkMode }) => {
     }
 
     setIsLoading(true);
+    setIsTitleModalOpen(false);
+
     try {
       const selectedPrIds = Array.from(selectedItems);
       const response = await createReport(userId, reportTitle, selectedPrIds);
 
       setIsLoading(false);
-      setIsTitleModalOpen(false);
       setIsModalOpen(false);
       setSelectedItems(new Set());
       setReportTitle("");
@@ -416,7 +417,7 @@ const Report = ({ isDarkMode }) => {
 
       setSelectedReport(newReport);
       setIsDetailModalOpen(true);
-      loadReports();
+      handleReportClick(newReport);
     } catch (error) {
       setIsLoading(false);
       console.error("보고서 생성 실패:", error);

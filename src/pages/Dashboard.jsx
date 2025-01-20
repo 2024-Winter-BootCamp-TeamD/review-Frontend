@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from 'prop-types';
-import ModeSelectButton from "../components/ModeselectButton/ModeSelectButton.jsx";
+import ModeSelectButton from "../components/ModeselectButton/Modeselectbutton.jsx";
 import "./Dashboard.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import api from "../services/api.jsx";
@@ -29,7 +29,7 @@ const valueToGrade = {
   2: 'E',
   1: 'F',
   0: '0'
-};
+}; 
 
 const Username = ({ username }) => {
   const [fontSize, setFontSize] = useState("24px");

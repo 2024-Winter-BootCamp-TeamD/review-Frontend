@@ -39,7 +39,7 @@ const Sidebar = ({isDarkMode}) => {
       className={`sidebar ${isDarkMode ? "sidebar-dark-mode" : "sidebar-light-mode"}`}
     >
       <div className="sidebar-rounded-top"></div>
-      <h1 className="sidebar-logo">REFACTORY</h1>
+      <h1 className="sidebar-logo refactory-logo">REFACTORY</h1>
       {buttons.map((buttonText) => (
         <SidebarButton
           key={buttonText}

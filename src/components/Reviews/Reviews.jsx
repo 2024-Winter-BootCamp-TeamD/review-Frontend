@@ -30,6 +30,7 @@ const ReviewsContainer = styled.div`
 const ReviewItem = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: 830px;
   min-height: 57px;
   border: 1px solid #ccc;
@@ -56,7 +57,8 @@ const ReviewSummary = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-top: 12px;
+  height: 45px;
+  margin: 0;
 `;
 
 const ReviewMode = styled.div`

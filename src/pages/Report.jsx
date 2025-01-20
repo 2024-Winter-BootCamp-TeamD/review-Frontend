@@ -325,6 +325,8 @@ const Report = ({ isDarkMode }) => {
   const MIN_SELECTIONS = 5; // 최소 선택 개수 상수 추가
   const [reportDetail, setReportDetail] = useState(null);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
+  const [reportTitle, setReportTitle] = useState("");
 
   // userId 임시 하드코딩
   const userId = 1;
@@ -379,25 +381,32 @@ const Report = ({ isDarkMode }) => {
     }
   };
 
-  const handleCreateReport = async () => {
+  const handleCreateReport = () => {
     if (selectedItems.size < MIN_SELECTIONS) {
       alert("최소 5개의 PR을 선택해주세요.");
+      return;
+    }
+    setIsTitleModalOpen(true);
+  };
+
+  const handleSubmitReport = async () => {
+    if (!reportTitle.trim()) {
+      alert("보고서 제목을 입력해주세요.");
       return;
     }
 
     setIsLoading(true);
     try {
       const selectedPrIds = Array.from(selectedItems);
-      const response = await createReport(
-        userId,
-        "새로운 PR 보고서",
-        selectedPrIds
-      );
+      const response = await createReport(userId, reportTitle, selectedPrIds);
 
       setIsLoading(false);
+      setIsTitleModalOpen(false);
       setIsModalOpen(false);
       setSelectedItems(new Set());
+      setReportTitle("");
 
+      // 새로 생성된 보고서 상세 보기로 이동
       const newReport = {
         id: response.report_id,
         title: response.title,
@@ -411,6 +420,7 @@ const Report = ({ isDarkMode }) => {
     } catch (error) {
       setIsLoading(false);
       console.error("보고서 생성 실패:", error);
+      alert("보고서 생성에 실패했습니다.");
     }
   };
 
@@ -860,6 +870,48 @@ const Report = ({ isDarkMode }) => {
               )}
             </ReportContentWrapper>
           </DetailModalContent>
+        </ModalOverlay>
+      )}
+
+      {/* 보고서 제목 입력 모달 */}
+      {isTitleModalOpen && (
+        <ModalOverlay
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsTitleModalOpen(false);
+            setReportTitle("");
+          }}
+        >
+          <TitleModalContent
+            onClick={(e) => e.stopPropagation()}
+            isDarkMode={isDarkMode}
+          >
+            <TitleModalHeader>
+              <h3>Report Title</h3>
+              <CloseButton
+                onClick={() => {
+                  setIsTitleModalOpen(false);
+                  setReportTitle("");
+                }}
+              >
+                <CloseIcon />
+              </CloseButton>
+            </TitleModalHeader>
+            <TitleInput
+              value={reportTitle}
+              onChange={(e) => setReportTitle(e.target.value)}
+              placeholder="input Report Title..."
+              isDarkMode={isDarkMode}
+            />
+            <ButtonContainer>
+              <PlayfulButton
+                onClick={handleSubmitReport}
+                disabled={!reportTitle.trim()}
+              >
+                {isLoading ? "Creating..." : "Create"}
+              </PlayfulButton>
+            </ButtonContainer>
+          </TitleModalContent>
         </ModalOverlay>
       )}
     </ReportWrapper>
@@ -1410,6 +1462,50 @@ const LoaderWrapper = styled.div`
   align-items: center;
   padding: 20px;
   width: 100%;
+`;
+
+const TitleModalContent = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: ${(props) => (props.isDarkMode ? "#2a2a2a" : "#ffffff")};
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  z-index: 1001;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
+const TitleModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+`;
+
+const TitleInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid ${(props) => (props.isDarkMode ? "#444" : "#ddd")};
+  border-radius: 4px;
+  margin-bottom: 20px;
+  background: ${(props) => (props.isDarkMode ? "#333" : "#fff")};
+  color: ${(props) => (props.isDarkMode ? "#fff" : "#333")};
+
+  &:focus {
+    outline: none;
+    border-color: #aef060;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export default Report;

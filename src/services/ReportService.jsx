@@ -24,13 +24,10 @@ export const createReport = async (user_id, report_title, pr_ids) => {
       throw new Error("PR은 5개에서 10개 사이로 선택해야 합니다.");
     }
 
-    const reportData = {
-      user_id,
+    const response = await api.post(`/reports/${user_id}/`, {
       report_title,
-      pr_ids,
-    };
-
-    const response = await api.post("/reports", reportData);
+      pr_ids: pr_ids, // 배열 그대로 전송
+    });
     return response.data;
   } catch (error) {
     console.error("보고서 작성 요청 중 오류 발생:", error);

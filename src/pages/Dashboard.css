@@ -68,8 +68,8 @@ body.dark-mode .dashboard-profile-container {
   color: #777;
   box-shadow: 0vw 2px 4px rgba(0, 0, 0, 0.2);
   height: 30vh; /* 고정 높이 */
-  padding-left: 2%;
-  padding-right: 2%;
+  padding-left: 5%;
+  padding-right: 8%;
   border-radius: 8px;
 }
 

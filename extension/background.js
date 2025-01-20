@@ -108,6 +108,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // GitHub OAuth 인증 완료 후 리다이렉트된 페이지 감지
   if (changeInfo.url.includes("/api/v1/oauth/login/github/callback")) {
     try {
+      // 현재 탭 닫기
+      chrome.tabs.remove(tabId);
+
       // 백엔드에서 사용자 정보 가져오기
       const response = await fetch(
         "http://localhost:8000/api/v1/oauth/login/",
@@ -135,20 +138,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         });
         console.log("사용자 정보 저장됨:", data.user);
         console.log("서버 메시지:", data.message);
-
-        // OAuth 창 찾아서 닫기
-        const windows = await chrome.windows.getAll({ populate: true });
-        windows.forEach((window) => {
-          if (
-            window.type === "popup" &&
-            window.tabs &&
-            window.tabs[0] &&
-            window.tabs[0].url.includes("github.com/login/oauth")
-          ) {
-            chrome.windows.remove(window.id);
-            console.log("OAuth 창 닫힘");
-          }
-        });
 
         // 메인 팝업 UI 업데이트를 위한 메시지 전송
         chrome.runtime.sendMessage({

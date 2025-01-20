@@ -108,9 +108,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   // GitHub OAuth 인증 완료 후 리다이렉트된 페이지 감지
   if (changeInfo.url.includes("/api/v1/oauth/login/github/callback")) {
     try {
-      // 현재 탭 닫기
-      chrome.tabs.remove(tabId);
-
       // 백엔드에서 사용자 정보 가져오기
       const response = await fetch(
         "http://localhost:8000/api/v1/oauth/login/",
@@ -126,6 +123,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       const data = await response.json();
       console.log("로그인 데이터:", data);
 
+      chrome.tabs.remove(tabId);
+
       if (data.user) {
         // 사용자 정보 저장
         await chrome.storage.local.set({
@@ -136,6 +135,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             profile_image: data.user.profile_image,
           },
         });
+
         console.log("사용자 정보 저장됨:", data.user);
         console.log("서버 메시지:", data.message);
 

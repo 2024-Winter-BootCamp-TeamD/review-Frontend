@@ -2,92 +2,11 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>코드 리뷰 어시스턴트</title>
-    <style>
-      body {
-        width: 300px;
-        height: 120px;
-        margin: 0;
-        padding: 20px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          sans-serif;
-      }
-
-      .container {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .login-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        padding: 12px;
-        background-color: #24292e;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-      }
-
-      .login-button:hover {
-        background-color: #2f363d;
-      }
-
-      .github-icon {
-        margin-right: 8px;
-      }
-
-      .title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 16px;
-        color: #24292e;
-      }
-
-      .logout-button {
-        margin-top: 10px;
-        padding: 8px 16px;
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.2s;
-      }
-
-      .logout-button:hover {
-        background-color: #c82333;
-      }
-
-      .user-info {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        padding: 10px;
-      }
-
-      .login-message {
-        margin: 10px 0;
-        padding: 8px;
-        border-radius: 4px;
-        background-color: #28a745;
-        color: white;
-        text-align: center;
-        font-size: 14px;
-      }
-    </style>
+    <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <div class="container">
-      <h1 class="title">코드 리뷰 어시스턴트</h1>
+      <h1 class="title">Refactory</h1>
       <button class="login-button" id="githubLogin">
         <svg
           class="github-icon"

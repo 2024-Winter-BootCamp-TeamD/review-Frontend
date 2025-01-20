@@ -45,4 +45,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       state: "fullscreen",
     });
   }
+
+  if (request.action === "checkUserInfo") {
+    chrome.storage.local.get("userInfo", (result) => {
+      sendResponse({ userInfo: result.userInfo || null });
+    });
+    return true;
+  }
 });

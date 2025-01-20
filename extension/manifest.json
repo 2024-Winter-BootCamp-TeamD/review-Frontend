@@ -3,9 +3,10 @@
   "name": "코드 리뷰 어시스턴트",
   "version": "1.0",
   "description": "GitHub 코드 리뷰를 위한 AI 어시스턴트",
-  "permissions": ["activeTab", "storage", "tabs", "scripting"],
-  "host_permissions": ["https://github.com/*"],
+  "permissions": ["activeTab", "storage", "tabs", "scripting", "identity"],
+  "host_permissions": ["https://github.com/*", "http://localhost:8000/*"],
   "action": {
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

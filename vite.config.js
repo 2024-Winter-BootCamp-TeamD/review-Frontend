@@ -29,6 +29,14 @@ export default defineConfig({
           src: "./extension/content.css", // content.css 추가
           dest: "./dist",
         },
+        {
+          src: "./extension/popup.html", // content.css 추가
+          dest: "./dist",
+        },
+        {
+          src: "./extension/popup.js", // content.css 추가
+          dest: "./dist",
+        },
       ],
       hook: "writeBundle",
       verbose: true,

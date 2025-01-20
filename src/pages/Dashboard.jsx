@@ -1,163 +1,212 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import PropTypes from 'prop-types';
 import ModeSelectButton from "../components/ModeselectButton/ModeSelectButton.jsx";
 import "./Dashboard.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import api from "../services/api.jsx";
+import { fetchUserInfo, getAverageGrade, getRecentReview } from "../services/DashboardService.jsx";
+import GitHubCalendar from "react-github-calendar";
 
-const Dashboard = ({ isDarkMode }) => {
-  const username = "Nekerworld"; //Default
-  const [profileLoaded, setProfileLoaded] = useState(false)
-  useEffect(() => {
-    setProfileLoaded(true);
-  }, []);
-  const Username = ({ username }) => {
-    const [fontSize, setFontSize] = useState("24px");
+// 등급을 값으로 변환하는 매핑
+const gradeToValue = {
+  S: 7,
+  A: 6,
+  B: 5,
+  C: 4,
+  D: 3,
+  E: 2,
+  F: 1,
+  0: 0
+};
+
+// 값에서 등급으로 변환하는 매핑 (Y축 레이블용)
+const valueToGrade = {
+  7: 'S',
+  6: 'A',
+  5: 'B',
+  4: 'C',
+  3: 'D',
+  2: 'E',
+  1: 'F',
+  0: '0'
+};
+
+const Username = ({ username }) => {
+  const [fontSize, setFontSize] = useState("24px");
   
-    useEffect(() => {
-      if (username.length > 10) {
-        setFontSize("2vh"); // 글자 길이가 10자를 넘으면 폰트 크기를 줄임
-      } else {
-        setFontSize("3.5vh"); // 기본 폰트 크기
-      }
-    }, [username]);
+  useEffect(() => {
+    if (username.length > 10) {
+      setFontSize("2vh"); // 글자 길이가 10자를 넘으면 폰트 크기 줄임
+    } else {
+      setFontSize("3.5vh"); // 기본 폰트 크기
+    }
+  }, [username]);
+
+  return (
+    <h3
+      className="dashboard-username"
+      style={{
+        fontSize: fontSize,
+        textAlign: "center",
+        wordWrap: "break-word",
+        whiteSpace: "normal",
+        maxWidth: "100%",
+      }}
+    >
+      {username || "Username"}
+    </h3>
+  );
+};
+
+Username.propTypes = {
+  username: PropTypes.string.isRequired
+};
+
+// 커스텀 툴팁 컴포넌트
+const CustomTooltip = ({ active, payload, label, isDarkMode }) => {
+  if (active && payload && payload.length) {
+    const gradeValue = payload[0].value;
+    const gradeKey = valueToGrade[gradeValue] || "N/A";
     return (
-      <h3
-        className="dashboard-username"
+      <div
         style={{
-          fontSize: fontSize, // 동적으로 폰트 크기 설정
-          textAlign: "center",
-          wordWrap: "break-word",
-          whiteSpace: "normal",
-          maxWidth: "100%",
+          backgroundColor: isDarkMode ? "#000000" : "#FFFFFF",
+          padding: "10px",
+          border: "1px solid #CCCCCC",
+          borderRadius: "5px",
+          textAlign: "left",
         }}
       >
-        {username || "Username"}
-      </h3>
+        <p style={{ margin: 0 }}>{label}</p>
+        <p style={{ margin: 0 }}>
+          <strong>Average Grade:</strong> {gradeKey}
+        </p>
+      </div>
     );
-  };
+  }
+  return null;
+};
 
-  const initialData = {
-    Basic: [
-      { date: "2025-01-09", grade: "A" },
-      { date: "2025-01-10", grade: "D" },
-      { date: "2025-01-11", grade: "B" },
-      { date: "2025-01-12", grade: "F" },
-      { date: "2025-01-13", grade: "A" },
-      { date: "2025-01-14", grade: "S" },
-    ],
-    "Clean Code": [
-      { date: "2025-01-09", grade: "A" },
-      { date: "2025-01-10", grade: "D" },
-      { date: "2025-01-11", grade: "B" },
-      { date: "2025-01-12", grade: "A" },
-      { date: "2025-01-13", grade: "S" },
-      { date: "2025-01-14", grade: "S" },
-    ],
-    Optimize: [
-      { date: "2025-01-09", grade: "F" },
-      { date: "2025-01-10", grade: "D" },
-      { date: "2025-01-11", grade: "B" },
-      { date: "2025-01-12", grade: "A" },
-      { date: "2025-01-13", grade: "E" },
-      { date: "2025-01-14", grade: "S" },
-    ],
-    Newbie: [
-      { date: "2025-01-09", grade: "F" },
-      { date: "2025-01-10", grade: "E" },
-      { date: "2025-01-11", grade: "B" },
-      { date: "2025-01-12", grade: "A" },
-      { date: "2025-01-13", grade: "S" },
-      { date: "2025-01-14", grade: "S" },
-    ],
-    Study: [
-      { date: "2025-01-09", grade: "B" },
-      { date: "2025-01-10", grade: "D" },
-      { date: "2025-01-11", grade: "F" },
-      { date: "2025-01-12", grade: "A" },
-      { date: "2025-01-13", grade: "S" },
-      { date: "2025-01-14", grade: "B" },
-    ],
-  };
+const categoryDisplayNames = {
+  optimize: "Optimize",
+  clean: "Clean Code",
+  // 필요에 따라 추가 매핑
+};
 
-  const gradeToValue = { S: 7, A: 6, B: 5, C: 4, D: 3, E: 2, F: 1, 0: 0 };
-  // 라인차트 툴팁 컴포넌트
-  const CustomTooltip = ({ active, payload, label, isDarkMode }) => {
-    if (active && payload && payload.length) {
-      const gradeValue = payload[0].value; // 첫 번째 데이터의 값 가져오기
-      const gradeKey = Object.keys(gradeToValue).find(
-        (key) => gradeToValue[key] === gradeValue
-      ); // gradeValue에 해당하는 등급 찾기
-      return (
-        <div
-          style={{
-            backgroundColor: isDarkMode ? "#000000" : "#FFFFFF", // 다크 모드일 때 배경색 설정
-            padding: "10px",
-            border: "1px solid #CCCCCC",
-            borderRadius: "5px",
-            textAlign: "left",
-          }}
-        >
-          <p style={{ margin: 0 }}>{label}</p>
-          <p style={{ margin: 0 }}>
-            <strong>Average Grade:</strong> {gradeKey || "N/A"}
+const PieCustomTooltip = ({ active, payload, isDarkMode }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div
+        style={{
+          backgroundColor: isDarkMode ? "#000000" : "#FFFFFF",
+          padding: "10px",
+          border: "1px solid #CCCCCC",
+          borderRadius: "5px",
+          textAlign: "left",
+        }}
+      >
+        <p style={{ margin: 0 }}><strong>{categoryDisplayNames[data.name] || data.name}</strong></p>
+        {data.problems.map((p, idx) => (
+          <p key={idx} style={{ margin: 0 }}>
+            {`${p.problem_type}: ${p.count}`}
           </p>
-        </div>
-      );
-    }
-    return null; // 툴팁이 활성화되지 않으면 아무것도 렌더링하지 않음
-  };  
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
+const Dashboard = ({ isDarkMode }) => {
+  const [username, setUsername] = useState("Nekerworld");
+  const [profileLoaded, setProfileLoaded] = useState(false);
   const [selectedMode, setSelectedMode] = useState("Basic");
   const [chartData, setChartData] = useState([]);
+  const [pieChartData, setPieChartData] = useState([]);
+  const [highlightIndex, setHighlightIndex] = useState(0);
+  const [fetchuserdata, setFetchUserData] = useState(null);
 
   useEffect(() => {
-    const processData = (modeData) => {
-      const allDates = ["2025-01-09","2025-01-10", "2025-01-11", "2025-01-12","2025-01-13","2025-01-14"];
-      return allDates.map((date) => {
-        const entry = modeData.find((d) => d.date === date);
-        return {
-          date,
-          gradeValue: entry ? gradeToValue[entry.grade] : 0,
-        };
-      });
+    const loadUserInfo = async () => {
+      try {
+        const userInfo = await fetchUserInfo();
+        setUsername(userInfo.user_details.github_username);
+        setSelectedMode(userInfo.review_mode || "Basic");
+        setProfileLoaded(true);
+        setFetchUserData(userInfo);
+      } catch (error) {
+        console.error("사용자 데이터를 불러오는 중 오류 발생:", error);
+      }
     };
 
-    setChartData(processData(initialData[selectedMode]));
-  }, [selectedMode]);
+    loadUserInfo();
+  }, []);
 
-  const modes = [
-    { modeName: "Basic", description: "Default Mode.", modeColor: "#FF794E" },
-    { modeName: "Study", description: "Hint Only.", modeColor: "#FFCD39" },
-    { modeName: "Newbie", description: "Study Together.", modeColor: "#70BF73" },
-    { modeName: "Clean Code", description: "Follow Coding Conventions.", modeColor: "#4DABF5" },
-    { modeName: "Optimize", description: "Performance First.", modeColor: "#BC6FCD" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [averageGradeResponse, recentReviewData] = await Promise.all([
+          getAverageGrade(),  // 라인차트
+          getRecentReview(),  // 도넛차트
+        ]);
 
-  const issueCategories = ["Clean Code", "Memory", "Execution Time"];
-  const recentReviews = [
-    { id: 1, issues: ["Execution Time"] },
-    { id: 2, issues: ["Memory"] },
-    { id: 3, issues: ["Clean Code"] },
-    { id: 4, issues: ["Execution Time"] },
-    { id: 5, issues: ["Execution Time"] },
-    { id: 6, issues: ["Memory"] },
-    { id: 7, issues: ["Execution Time"] },
-    { id: 8, issues: ["Execution Time"] },
-    { id: 9, issues: ["Memory"] },
-    { id: 10, issues: ["Clean Code"] },
-  ];
+        // 평균 등급 데이터 처리
+        const averageGradeData = averageGradeResponse.data.map(item => ({
+          date: item.date,
+          average_grade: gradeToValue[item.average_grade] || 0,
+        }));
+        setChartData(averageGradeData);
+        console.log("Chart Data:", averageGradeData); // 데이터 확인
 
-  // 리뷰 데이터를 집계하여 각 카테고리별 문제 발생 횟수를 계산
-  const pieChartData = issueCategories.map((category) => ({
-    name: category,
-    value: recentReviews.reduce(
-      (count, review) => count + (review.issues.includes(category) ? 1 : 0),
-      0
-    ),
-  }));
+        // 최근 리뷰 데이터 그룹화 및 파이 차트 데이터 설정
+        const groupedData = recentReviewData.data.reduce((acc, item) => {
+          if (!acc[item.category]) {
+            acc[item.category] = {
+              name: item.category,
+              value: 0,
+              problems: [],
+            };
+          }
+          acc[item.category].value += item.count;
+          acc[item.category].problems.push({
+            problem_type: item.problem_type,
+            count: item.count,
+          });
+          return acc;
+        }, {});
+        const pieData = Object.values(groupedData);
+        setPieChartData(pieData);
+      } catch (error) {
+        console.error("데이터를 가져오는 중 오류 발생:", error);
+      }
+    };
+
+    if (profileLoaded) {
+      fetchData();
+    }
+  }, [profileLoaded]);
+
+  const handleModeChange = useCallback(async (mode) => {
+    if (!fetchuserdata) {
+      console.error("사용자 데이터가 로드되지 않았습니다.");
+      return;
+    }
+    const user_id = fetchuserdata.user_details.id;
+    try {
+      const response = await api.put(`/users/${user_id}/mode/`, {
+        review_mode: mode.toLowerCase(), // 소문자로 변환하여 전송 (예: 'clean mode')
+      });
+      // 서버 응답에 따라 모드 업데이트
+      setSelectedMode(response.data.review_mode);
+      console.log("모드 변경 성공:", response.data);
+    } catch (error) {
+      console.error("모드 변경 실패:", error);
+    }
+  }, [fetchuserdata]);
 
   // 왼쪽 범례 하이라이트 색 | 하이라이트되지 않은 차트 색 (투명) | 왼쪽 범례 하이라이트 되지 않은 색
-  const PIE_COLORS = ["#AEF060", "#DCDCDC00", "#343C2F"];
-  const [highlightIndex, setHighlightIndex] = useState(0);
+  const PIE_COLORS_LEGEND = ["#AEF060", "#DCDCDC00", "#343C2F"];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -178,6 +227,10 @@ const Dashboard = ({ isDarkMode }) => {
     }
   }, [isDarkMode]);
 
+  if (!fetchuserdata) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -186,9 +239,9 @@ const Dashboard = ({ isDarkMode }) => {
           <div className="dashboard-profile-container">
               <div className="dashboard-profile-section">
                   <img
-                  src={`https://avatars.githubusercontent.com/${username}`}
-                  alt="GitHub Profile"
-                  className="dashboard-profile-image"
+                    src={`https://avatars.githubusercontent.com/u/${fetchuserdata.github_id}?v=4`}
+                    alt="GitHub Profile"
+                    className="dashboard-profile-image"
                   />
                   <Username username={username} />
               </div>
@@ -197,89 +250,114 @@ const Dashboard = ({ isDarkMode }) => {
 
         {/* GitHub Contributions Graph */}
         <div className="dashboard-github-graph">
-            <img
-            src={`https://ghchart.rshah.org/${username}`} /* GitHub 그래프 URL */
-            alt="GitHub Contributions"
-            className="dashboard-contributions-graph"
-            />
+          <GitHubCalendar
+            username={username}
+            showWeekdayLabels
+            colorScheme={isDarkMode ? "dark" : "light"}
+            theme={{
+              light: ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127'], // 밝은 테마 색상
+              dark: ['#e0f7fa', '#80deea', '#26c6da', '#0097a7', '#006064'] // 어두운 테마 색상
+            }}
+          />
         </div>
       </header>
 
       {/* Mode Select Buttons */}
       <div className="dashboard-mode-select" style={{ justifyContent: "space-between" }}>
-        {modes.map((mode) => (
-          <ModeSelectButton
-            key={mode.modeName}
-            modeName={mode.modeName}
-            description={mode.description}
-            modeColor={mode.modeColor}
-            isSelected={selectedMode === mode.modeName}
-            onClick={() => setSelectedMode(mode.modeName)}
-            isDarkMode={isDarkMode}
-          />
-        ))}
+        <ModeSelectButton
+          modeName="Basic"
+          description="Default Mode."
+          modeColor="#FF794E"
+          isSelected={selectedMode === "basic mode"}
+          onClick={() => handleModeChange("basic mode")}
+        />
+        <ModeSelectButton
+          modeName="Study"
+          description="Hint Only."
+          modeColor="#FFCD39"
+          isSelected={selectedMode === "study mode"}
+          onClick={() => handleModeChange("study mode")}
+        />
+        <ModeSelectButton
+          modeName="Clean Code"
+          description="Follow Coding Conventions."
+          modeColor="#4DABF5"
+          isSelected={selectedMode === "clean mode"}
+          onClick={() => handleModeChange("clean mode")}
+        />
+        <ModeSelectButton
+          modeName="Optimize"
+          description="Performance First."
+          modeColor="#BC6FCD"
+          isSelected={selectedMode === "optimize mode"}
+          onClick={() => handleModeChange("optimize mode")}
+        />
+        <ModeSelectButton
+          modeName="Newbie"
+          description="Study Together."
+          modeColor="#70BF73"
+          isSelected={selectedMode === "new bie mode"}
+          onClick={() => handleModeChange("new bie mode")}
+        />
       </div>
 
       {/* Charts */}
       <div className="dashboard-charts">
+        {/* 평균 등급 라인 차트 */}
         <div className="dashboard-line-chart">
           <h3>Average Grades</h3>
-          <ResponsiveContainer width="90%" height="85%">
-            <LineChart data={chartData}>
-              <XAxis
-                dataKey="date"
-                tickFormatter={(value) => `Date: ${value}`}
-                axisLine={true}
-                tickLine={true}
-                tick={false}
-              />
-              <YAxis
-                type="number"
-                domain={[0, 7]} // Y축 범위
-                ticks={[0, 1, 2, 3, 4, 5, 6, 7]} // Y축 틱 값
-                tickFormatter={(value) =>
-                  Object.keys(gradeToValue).find((key) => gradeToValue[key] === value) || ""
-                } // 라벨 값 설정
-                allowDecimals={false}
-                axisLine={true} // 세로축 선 제거
-                tickLine={false} // 라벨과 연결된 가로선 제거
-                tick={{
-                  fontWeight: "bold", // 라벨 볼드 효과
-                  dx: -20, // 라벨을 Y축에서 왼쪽(-)으로 10px 이동
-                  fontSize: 12,
-                  fill: isDarkMode ? "#FFFFFF" : "#000000", // 다크 모드일 때 흰색, 라이트 모드일 때 검정색
-                }}
-              />
-              <defs>
-                <filter id="lineShadow" x="-50%" y="-50%" width="400%" height="400%">
-                  <feDropShadow
-                    dx="8"       /* X축으로 그림자 이동 */
-                    dy="10"       /* Y축으로 그림자 이동 */
-                    stdDeviation="12" /* 그림자 흐림 정도 */
-                    floodColor="#000000" /* 그림자 색상 */
-                  />
-                </filter>
-              </defs>
-              <Tooltip content={<CustomTooltip isDarkMode={isDarkMode} />} />
-              <Line 
-                type="monotone" 
-                dataKey="gradeValue" 
-                stroke={isDarkMode ? "#FFFFFF" : "#000000"} // 다크 모드일 때 흰색, 라이트 모드일 때 검정색
-                strokeWidth={4}
-                filter="url(#lineShadow)"
-                dot={({ cx, cy }) => (
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={7} // 점의 크기
-                    fill={isDarkMode ? "#000000" : "#FFFFFF"} // 다크 모드일 때 검정색, 라이트 모드일 때 흰색
-                    stroke={isDarkMode ? "#FFFFFF" : "#000000"} // 다크 모드일 때 흰색, 라이트 모드일 때 검정색
-                  />
-                )}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {chartData.length > 0 ? (
+            <ResponsiveContainer width="90%" height="85%">
+              <LineChart data={chartData}>
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(value) => {
+                    const date = new Date(value);
+                    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                  }}
+                  axisLine={true}
+                  tickLine={true}
+                  tick={{ fill: isDarkMode ? "#FFFFFF" : "#000000" }}
+                />
+                <YAxis
+                  type="number"
+                  domain={[0, 7]} // Y축 범위
+                  ticks={[0, 1, 2, 3, 4, 5, 6, 7]} // Y축 틱 값
+                  tickFormatter={(value) => valueToGrade[value] || ""}
+                  allowDecimals={false}
+                  axisLine={true}
+                  tickLine={false}
+                  tick={{
+                    fontWeight: "bold",
+                    fontSize: 12,
+                    fill: isDarkMode ? "#FFFFFF" : "#000000",
+                  }}
+                />
+                <Tooltip content={<CustomTooltip isDarkMode={isDarkMode} />} />
+                <Line 
+                  type="monotone" 
+                  dataKey="average_grade" 
+                  stroke={isDarkMode ? "#FFFFFF" : "#000000"} 
+                  strokeWidth={4}
+                  dot={({ cx, cy, index }) => (
+                    <circle
+                      key={`dot-${index}`}
+                      cx={cx}
+                      cy={cy}
+                      r={7}
+                      fill={isDarkMode ? "#000000" : "#FFFFFF"}
+                      stroke={isDarkMode ? "#FFFFFF" : "#000000"}
+                    />
+                  )}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <p>데이터를 불러오는 중...</p>
+          )}
         </div>
+
+        {/* 도넛 차트 */}
         <div className="dashboard-donut-chart-container">
           <div className="dashboard-chart-wrapper">
             <div className="dashboard-chart-title">
@@ -294,13 +372,28 @@ const Dashboard = ({ isDarkMode }) => {
                   key={index}
                   className="dashboard-legend-item"
                   style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginRight: "20px",
                     backgroundColor:
-                      highlightIndex === index ? PIE_COLORS[0] : PIE_COLORS[2],
+                      highlightIndex === index ? PIE_COLORS_LEGEND[0] : PIE_COLORS_LEGEND[2],
                     color:
                       highlightIndex === index ? "#000000" : "#FFFFFF",
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    transition: "background-color 0.3s, color 0.3s",
                   }}
                 >
-                  {entry.name}
+                  <div
+                    style={{
+                      width: "0px",
+                      height: "0px",
+                      backgroundColor: PIE_COLORS_LEGEND[index % PIE_COLORS_LEGEND.length],
+                      marginRight: "8px",
+                      borderRadius: "2px",
+                    }}
+                  ></div>
+                  <span>{categoryDisplayNames[entry.name] || entry.name}</span>
                 </div>
               ))}
             </div>
@@ -400,7 +493,7 @@ const Dashboard = ({ isDarkMode }) => {
                       </g>
                     )}
                   />
-                  <Tooltip />
+                  <Tooltip content={<PieCustomTooltip isDarkMode={isDarkMode} />} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -411,4 +504,8 @@ const Dashboard = ({ isDarkMode }) => {
   );
 };
 
-export default Dashboard
+Dashboard.propTypes = {
+  isDarkMode: PropTypes.bool.isRequired,
+};
+
+export default Dashboard;

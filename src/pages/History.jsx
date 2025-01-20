@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Chart from '../components/Chart/Chart';
 import SearchBar from '../components/SearchBar/SearchBar';
 import Reviews from '../components/Reviews/Reviews';
+import { getPRReviewCategories, getPRReviews } from '../services/prReviewService';
 
 const HistoryContainer = styled.div`
   position: relative;
@@ -181,9 +182,55 @@ const History = ({ isDarkMode }) => {
   const [selectedReview, setSelectedReview] = useState('');
   const [selectedMode, setSelectedMode] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [statistics, setStatistics] = useState({
+    basic: 0,
+    study: 0,
+    newbie: 0,
+    clean: 0,
+    optimize: 0,
+  });
+  const [reviews, setReviews] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  const handleReviewClick = (content) => {
-    setSelectedReview(content);
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      try {
+        const user_id = 1;
+        const response = await getPRReviewCategories(user_id);
+        setStatistics(response.statistics || {});
+      } catch (error) {
+        console.error("Error fetching statistics:", error);
+      }
+    };
+
+    fetchStatistics();
+  }, []);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setLoading(true);
+        const user_id = 1;
+        const response = await getPRReviews(user_id, currentPage);
+        
+        if (response.data) {
+          setReviews(response.data);
+          setTotalPages(response.totalPages);
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [currentPage, selectedMode]);
+
+  const handleReviewClick = (review) => {
+    setSelectedReview(review.total_review || '');
   };
 
   const handleSliceClick = (mode) => {
@@ -206,12 +253,18 @@ const History = ({ isDarkMode }) => {
               isDarkMode={isDarkMode}
             />
             <ChartLegend>
-              {['BASIC', 'STUDY', 'NEWBIE', 'CLEAN', 'OPTIMIZE'].map((mode) => (
+              {[
+                { mode: 'BASIC', count: statistics.basic },
+                { mode: 'STUDY', count: statistics.study },
+                { mode: 'NEWBIE', count: statistics.newbie },
+                { mode: 'CLEAN', count: statistics.clean },
+                { mode: 'OPTIMIZE', count: statistics.optimize }
+              ].map(({ mode, count }) => (
                 <LegendContainer key={mode} selectedMode={selectedMode} mode={mode}>
                   <LegendItem mode={mode}>
                     <span>{mode}</span>
                   </LegendItem>
-                  <LegendCount isDarkMode={isDarkMode}>……………… 12</LegendCount>
+                  <LegendCount isDarkMode={isDarkMode}>……………… {count}</LegendCount>
                 </LegendContainer>
               ))}
             </ChartLegend>
@@ -227,10 +280,15 @@ const History = ({ isDarkMode }) => {
               />
             </SearchBarContainer>
             <Reviews 
+              reviews={reviews}
               onReviewClick={handleReviewClick} 
               selectedMode={selectedMode} 
               searchTerm={searchTerm} 
-              isDarkMode={isDarkMode} 
+              isDarkMode={isDarkMode}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              loading={loading}
             />
           </ReviewListBox>
         </LeftContainer>

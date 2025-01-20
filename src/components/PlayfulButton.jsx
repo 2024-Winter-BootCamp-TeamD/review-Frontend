@@ -1,7 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
 
-const PlayfulButton = ({ children, className = "", onClick }) => {
+const PlayfulButton = ({
+  children,
+  className = "",
+  onClick,
+  disabled = false,
+}) => {
   const buttonRef = useRef(null);
 
   useEffect(() => {
@@ -33,13 +38,13 @@ const PlayfulButton = ({ children, className = "", onClick }) => {
   }, [children]);
 
   const handleMouseEnter = (e) => {
-    if (!buttonRef.current.classList.contains("out")) {
+    if (!disabled && !buttonRef.current.classList.contains("out")) {
       buttonRef.current.classList.add("in");
     }
   };
 
   const handleMouseLeave = (e) => {
-    if (buttonRef.current.classList.contains("in")) {
+    if (!disabled && buttonRef.current.classList.contains("in")) {
       buttonRef.current.classList.add("out");
       setTimeout(() => {
         buttonRef.current?.classList.remove("in", "out");
@@ -53,7 +58,8 @@ const PlayfulButton = ({ children, className = "", onClick }) => {
       className={`button ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
     >
       {children}
     </StyledButton>
@@ -91,6 +97,8 @@ const StyledButton = styled.button`
   --background-hover: #2a331f;
   --hover-back: #2a331f;
   --hover-front: #2a331f;
+  --disabled-background: #cccccc;
+  --disabled-color: #666666;
 
   padding: 8px 20px;
   min-width: 120px;
@@ -106,12 +114,16 @@ const StyledButton = styled.button`
   outline: none;
   position: relative;
   overflow: hidden;
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   -webkit-appearance: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-mask-image: -webkit-radial-gradient(white, black);
-  color: var(--c, var(--color));
-  background: var(--b, var(--background));
+  color: ${(props) =>
+    props.disabled ? "var(--disabled-color)" : "var(--c, var(--color))"};
+  background: ${(props) =>
+    props.disabled
+      ? "var(--disabled-background)"
+      : "var(--b, var(--background))"};
   transition:
     color 0.2s linear var(--c-d, 0.2s),
     background 0.3s linear var(--b-d, 0.2s);
@@ -121,7 +133,10 @@ const StyledButton = styled.button`
     &:after {
       content: "";
       position: absolute;
-      background: var(--pb, var(--hover-back));
+      background: ${(props) =>
+        props.disabled
+          ? "var(--disabled-background)"
+          : "var(--pb, var(--hover-back))"};
       top: 0;
       left: 0;
       right: 0;
@@ -159,17 +174,21 @@ const StyledButton = styled.button`
     --name: ${moveKeyframes};
 
     &:not(.out) {
-      --c: var(--color-hover);
-      --b: var(--background-hover);
+      --c: ${(props) =>
+        props.disabled ? "var(--disabled-color)" : "var(--color-hover)"};
+      --b: ${(props) =>
+        props.disabled
+          ? "var(--disabled-background)"
+          : "var(--background-hover)"};
 
       &:before,
       &:after {
-        --y: 0;
-        --br: 5%;
+        --y: ${(props) => (props.disabled ? "50%" : "0")};
+        --br: ${(props) => (props.disabled ? "40%" : "5%")};
       }
 
       &:after {
-        --br: 10%;
+        --br: ${(props) => (props.disabled ? "40%" : "10%")};
         --d-d: 0.02s;
       }
     }

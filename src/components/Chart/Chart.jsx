@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
-import styled from 'styled-components';
-import Highcharts from 'highcharts';
-import Exporting from 'highcharts/modules/exporting';
-import ExportData from 'highcharts/modules/export-data';
-import Accessibility from 'highcharts/modules/accessibility';
+// src/components/Chart/Chart.jsx
 
-// styled-components로 변환
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import Highcharts from "highcharts";
+import Exporting from "highcharts/modules/exporting";
+import ExportData from "highcharts/modules/export-data";
+import Accessibility from "highcharts/modules/accessibility";
+import { getPRReviewCategories } from "../../services/prReviewService";
+
 const ChartWrapper = styled.div`
   width: 90%;
   height: 100%;
@@ -21,17 +23,39 @@ const ChartInner = styled.div`
 `;
 
 // Highcharts modules
-if (Exporting && typeof Exporting === 'function') {
+if (Exporting && typeof Exporting === "function") {
   Exporting(Highcharts);
 }
-if (ExportData && typeof ExportData === 'function') {
+if (ExportData && typeof ExportData === "function") {
   ExportData(Highcharts);
 }
-if (Accessibility && typeof Accessibility === 'function') {
+if (Accessibility && typeof Accessibility === "function") {
   Accessibility(Highcharts);
 }
 
 const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
+  const [statistics, setStatistics] = useState({
+    basic: 0,
+    newbie: 0,
+    study: 0,
+    optimize: 0,
+    clean: 0,
+  });
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      try {
+        const user_id = 1; // Replace with dynamic user ID if needed
+        const response = await getPRReviewCategories(user_id);
+        setStatistics(response.statistics || {});
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+      }
+    };
+
+    fetchChartData();
+  }, []);
+
   useEffect(() => {
     const originalAnimate = Highcharts.seriesTypes.pie.prototype.animate;
 
@@ -78,7 +102,7 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
                         chart.update({
                           plotOptions: {
                             pie: {
-                              innerSize: '40%',
+                              innerSize: "40%",
                               borderRadius: 8,
                             },
                           },
@@ -99,17 +123,20 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
       };
     })(Highcharts);
 
-    const chart = Highcharts.chart('chart-container', {
+    const chart = Highcharts.chart("chart-container", {
       chart: {
-        type: 'pie',
-        backgroundColor: 'transparent',
+        type: "pie",
+        backgroundColor: "transparent",
         reflow: true,
         events: {
           load: function () {
             const chart = this;
             chart.renderer
               .label(
-                'Total<br>42',
+                `Total<br>${Object.values(statistics).reduce(
+                  (sum, val) => sum + val,
+                  0
+                )}`,
                 chart.plotLeft + chart.plotWidth / 2,
                 chart.plotTop + chart.plotHeight / 2 - 30,
                 null,
@@ -118,35 +145,33 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
                 true
               )
               .css({
-                color: isDarkMode ? '#FFFFFF' : '#000000',
-                fontSize: '24px',
-                fontWeight: 'bold',
-                textAlign: 'center',
+                color: isDarkMode ? "#FFFFFF" : "#000000",
+                fontSize: "24px",
+                fontWeight: "bold",
+                textAlign: "center",
               })
-              .attr({ align: 'center' })
+              .attr({ align: "center" })
               .add()
               .toFront();
-
-            Highcharts.seriesTypes.pie.prototype.animate = function () {};
           },
         },
       },
-      title: { text: '' },
-      subtitle: { text: '' },
+      title: { text: "" },
+      subtitle: { text: "" },
       tooltip: {
-        headerFormat: '',
+        headerFormat: "",
         pointFormat:
-          '<span style="color:{point.color}">●</span> {point.name}: <b>{point.percentage:.1f}%</b>',
+          "<span style=\"color:{point.color}\">●</span> {point.name}: <b>{point.percentage:.1f}%</b>",
       },
-      accessibility: { 2: { valueSuffix: '%' } },
+      accessibility: { 2: { valueSuffix: "%" } },
       plotOptions: {
         pie: {
           allowPointSelect: true,
           borderWidth: 2,
-          cursor: 'pointer',
+          cursor: "pointer",
           dataLabels: {
             enabled: true,
-            format: '<b>{point.name}</b><br>{point.percentage}%',
+            format: "<b>{point.name}</b><br>{point.percentage}%",
             distance: 20,
           },
           point: {
@@ -157,22 +182,19 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
                 }
                 const series = this.series;
 
-                 // 클릭된 조각의 상태 확인
-      if (this.isSelected) {
-        // 이미 선택된 상태라면 모든 조각의 불투명도를 원래대로 복원
-        series.points.forEach((point) => {
-          point.graphic.css({ opacity: 1 });
-          point.isSelected = false; // 상태 초기화
-        });
-      } else {
-        // 선택되지 않은 상태라면 클릭된 조각 강조, 나머지 조각 흐리게
-        series.points.forEach((point) => {
-          if (point === this) {
-            point.graphic.css({ opacity: 1 });
-            point.isSelected = true; // 선택 상태 설정
-          } else {
-            point.graphic.css({ opacity: 0.3 });
-                      point.isSelected = false; // 다른 조각은 선택 해제
+                if (this.isSelected) {
+                  series.points.forEach((point) => {
+                    point.graphic.css({ opacity: 1 });
+                    point.isSelected = false;
+                  });
+                } else {
+                  series.points.forEach((point) => {
+                    if (point === this) {
+                      point.graphic.css({ opacity: 1 });
+                      point.isSelected = true;
+                    } else {
+                      point.graphic.css({ opacity: 0.3 });
+                      point.isSelected = false;
                     }
                   });
                 }
@@ -188,17 +210,21 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
           enableMouseTracking: false,
           animation: { duration: 1200 },
           colorByPoint: true,
-          data: [            
-            { name: 'BASIC', y: 25.6, color: '#FF5722' },
-            { name: 'STUDY', y: 14.2, color: '#FFC107' },
-            { name: 'NEWBIE', y: 20.2, color: '#70BF73' },
-            { name: 'CLEAN', y: 21.3, color: '#4DABF5' },
-            { name: 'OPTIMIZE', y: 18.7, color: '#BC6FCD' },
+          data: [
+            { name: "BASIC", y: statistics.basic, color: "#FF5722" },
+            { name: "STUDY", y: statistics.study, color: "#FFC107" },
+            { name: "NEWBIE", y: statistics.newbie, color: "#70BF73" },
+            { name: "CLEAN", y: statistics.clean, color: "#4DABF5" },
+            { name: "OPTIMIZE", y: statistics.optimize, color: "#BC6FCD" },
           ],
         },
       ],
     });
-  }, [isDarkMode]);
+
+    return () => {
+      chart.destroy();
+    };
+  }, [statistics, isDarkMode]);
 
   return (
     <ChartWrapper>

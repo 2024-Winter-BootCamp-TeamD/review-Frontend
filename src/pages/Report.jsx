@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -8,40 +8,50 @@ import SearchBar from "../components/SearchBar/SearchBar";
 import { ResponsiveRadar } from "@nivo/radar";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
+import LoadingIndicator from "../components/LoadingIndicator/LoadingIndicator";
+import {
+  getReports,
+  deleteReport,
+  downloadReport,
+  getReportModes,
+  createReport,
+  getPrReviews,
+  getReportById,
+} from "../services/ReportService";
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
-const ALL_MODES = ["Basic", "Study", "Newbie", "Clean Code", "Optimize"];
+const ALL_MODES = ["basic", "study", "newbie", "clean", "optimize"];
 
 const MODE_COLORS = {
-  Basic: {
+  basic: {
     bg: "#FFF1EC",
     text: "#FF794E",
   },
-  Study: {
+  study: {
     bg: "#FFF9E6",
     text: "#FFCD39",
   },
-  "Clean Code": {
-    bg: "#4DABF5",
+  clean: {
+    bg: "#EDF6FD",
     text: "#4DABF5",
   },
-  Optimize: {
-    bg: "#BC6FCD",
+  optimize: {
+    bg: "#F9F0F7",
     text: "#BC6FCD",
   },
-  Newbie: {
-    bg: "#70BF73",
+  newbie: {
+    bg: "#F0F9F0",
     text: "#70BF73",
   },
 };
 
 const GRADE_COLORS = {
-  S: "#FF6B6B", // 빨간색 계열
-  A: "#4A90E2", // 파란색 계열
-  B: "#50C878", // 초록색 계열
-  C: "#FFB84D", // 주황색 계열
-  D: "#808080", // 회색 계열
+  S: "#FF6B6B",
+  A: "#4A90E2",
+  B: "#50C878",
+  C: "#FFB84D",
+  D: "#808080",
 };
 
 const ISSUE_TYPE_COLORS = {
@@ -52,7 +62,7 @@ const ISSUE_TYPE_COLORS = {
   "버그 가능성": "#B5179E",
   기타: "#748CAB",
 };
-// 레이더 차트 데이터 추가
+
 const radarData = [
   {
     metric: "PR1",
@@ -95,10 +105,11 @@ const radarData = [
     Study: 60,
   },
 ];
+
 const GRAPHS = [
   {
     title: "PR별 점수 지표",
-    component: (data) => (
+    component: (data = radarData) => (
       <ResponsiveRadar
         data={data}
         keys={["Basic", "Study", "Newbie", "Clean Code", "Optimize"]}
@@ -224,6 +235,75 @@ const GRAPHS = [
   },
 ];
 
+const ModeListContainer = styled.div`
+  flex: 2;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: #00000000;
+`;
+
+const ModeTag = styled.span.attrs((props) => ({
+  className: props.className,
+}))`
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: ${({ $isActive, $mode }) =>
+    $isActive ? MODE_COLORS[$mode].bg : "#f5f5f5"};
+  color: ${({ $isActive, $mode }) =>
+    $isActive ? MODE_COLORS[$mode].text : "#666666"};
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+const ModeList = ({ reportId }) => {
+  const [modes, setModes] = useState([]);
+
+  useEffect(() => {
+    const fetchModes = async () => {
+      try {
+        const response = await getReportModes(reportId);
+        console.log("API 응답:", response);
+        console.log("설정된 모드:", response.modes);
+        setModes(response.modes);
+      } catch (error) {
+        console.error("모드 정보 로드 실패:", error);
+      }
+    };
+    fetchModes();
+  }, [reportId]);
+
+  console.log("현재 modes 상태:", modes);
+  console.log("ALL_MODES:", ALL_MODES);
+
+  return (
+    <ModeListContainer>
+      {ALL_MODES.map((mode, index) => {
+        const isActive = modes.includes(mode);
+        console.log(`${mode} 활성화 여부:`, isActive);
+
+        return (
+          <ModeTag
+            key={index}
+            $isActive={isActive}
+            $mode={mode}
+            style={{ marginRight: "8px" }}
+          >
+            {mode}
+          </ModeTag>
+        );
+      })}
+    </ModeListContainer>
+  );
+};
+
 const Report = ({ isDarkMode }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -231,152 +311,119 @@ const Report = ({ isDarkMode }) => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [currentGraphIndex, setCurrentGraphIndex] = useState(0);
   const graphTypes = Object.keys(GRAPHS);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const [reportData, setReportData] = useState([]);
+  const [modalItems, setModalItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [isLoadingPRs, setIsLoadingPRs] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const observerTarget = useRef(null);
+  const MAX_SELECTIONS = 10; // 최대 선택 개수 상수 추가
+  const MIN_SELECTIONS = 5; // 최소 선택 개수 상수 추가
+  const [reportDetail, setReportDetail] = useState(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
+  const [reportTitle, setReportTitle] = useState("");
 
-  const reportData = [
-    {
-      id: 1,
-      image: image,
-      title: "PR 보고서1",
-      createdAt: "2024-03-15",
-      reviewCount: 25,
-      modes: ALL_MODES,
-    },
-    {
-      id: 2,
-      image: image,
-      title: "PR 보고서2",
-      createdAt: "2024-03-15",
-      reviewCount: 15,
-      modes: ["Optimize", "Basic"],
-    },
-    {
-      id: 3,
-      image: image,
-      title: "PR 보고서3",
-      createdAt: "2024-03-15",
-      reviewCount: 25,
-      modes: ["Basic"],
-    },
-    {
-      id: 4,
-      image: image,
-      title: "PR 보고서4",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Newbie"],
-    },
-    {
-      id: 7,
-      image: image,
-      title: "PR 보고서5",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Clean Code", "Study"],
-    },
-    {
-      id: 5,
-      image: image,
-      title: "PR 보고서6",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Clean Code", "Study"],
-    },
-    {
-      id: 6,
-      image: image,
-      title: "PR 보고서7",
-      createdAt: "2024-03-15",
-      reviewCount: 20,
-      modes: ["Optimize", "Clean Code", "Study"],
-    },
-  ];
+  // userId 임시 하드코딩
+  const userId = 1;
 
-  const [isChecked, setIsChecked] = useState(false);
-  const handleCreateReport = () => {
-    // 나중에 API 연동을 위한 임시 함수
-    console.log("Report creation requested:", { isChecked });
-    // 모달 닫기 등의 UI 처리가 필요하다면 여기에 추가
+  useEffect(() => {
+    loadReports();
+  }, []);
+
+  const loadReports = async () => {
+    try {
+      const response = await getReports(userId);
+      const formattedReports = response.reports.map((report) => ({
+        id: report.report_id,
+        image: image,
+        title: report.title,
+        createdAt: report.created_at.split(" ")[0],
+        reviewCount: report.review_num,
+      }));
+
+      setReportData(formattedReports);
+    } catch (error) {
+      console.error("보고서 로드 실패:", error);
+    }
   };
 
-  // 예시 데이터
-  const modalItems = [
-    {
-      id: 1,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "A",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 2,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "C",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 3,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "D",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 4,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "S",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 5,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "D",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 6,
-      mode: "Basic",
-      title: "Feat/#67 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "A",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 7,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "S",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 8,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "B",
-      issueType: "Design Pattern",
-    },
-    {
-      id: 9,
-      mode: "Basic",
-      title: "Feat/#68 로고 디자인 반영",
-      date: "2024.01.03",
-      grade: "C",
-      issueType: "Design Pattern",
-    },
+  const handleDeleteReport = async (reportId, e) => {
+    e.stopPropagation(); // 이벤트 버블링 방지
 
-    // ... 더 많은 아이템
-  ];
+    // 삭제 확인
+    const isConfirmed = window.confirm(
+      "이 보고서를 삭제하시겠습니까? \n삭제하면 복구할 수 없습니다."
+    );
+    if (!isConfirmed) return;
 
-  const [selectedItems, setSelectedItems] = useState(new Set());
+    try {
+      await deleteReport(reportId);
+      // 삭제 후 목록 새로고침
+      loadReports();
+    } catch (error) {
+      console.error("보고서 삭제 실패:", error);
+      alert("보고서 삭제에 실패했습니다.");
+    }
+  };
+
+  const handleDownloadReport = async (reportId, e) => {
+    e.stopPropagation();
+    try {
+      const response = await downloadReport(reportId);
+      window.open(response.pdf_url, "_blank");
+    } catch (error) {
+      console.error("보고서 다운로드 실패:", error);
+    }
+  };
+
+  const handleCreateReport = () => {
+    if (selectedItems.size < MIN_SELECTIONS) {
+      alert("최소 5개의 PR을 선택해주세요.");
+      return;
+    }
+    setIsTitleModalOpen(true);
+  };
+
+  const handleSubmitReport = async () => {
+    if (!reportTitle.trim()) {
+      alert("보고서 제목을 입력해주세요.");
+      return;
+    }
+
+    setIsLoading(true);
+    setIsTitleModalOpen(false);
+
+    try {
+      const selectedPrIds = Array.from(selectedItems);
+      const response = await createReport(userId, reportTitle, selectedPrIds);
+
+      setIsLoading(false);
+      setIsModalOpen(false);
+      setSelectedItems(new Set());
+      setReportTitle("");
+
+      // 새로 생성된 보고서 상세 보기로 이동
+      const newReport = {
+        id: response.report_id,
+        title: response.title,
+        createdAt: response.created_at,
+        reviewCount: response.review_num,
+      };
+
+      setSelectedReport(newReport);
+      setIsDetailModalOpen(true);
+      handleReportClick(newReport);
+    } catch (error) {
+      setIsLoading(false);
+      console.error("보고서 생성 실패:", error);
+      alert("보고서 생성에 실패했습니다.");
+    }
+  };
 
   const toggleItemSelection = (itemId) => {
     setSelectedItems((prev) => {
@@ -384,17 +431,51 @@ const Report = ({ isDarkMode }) => {
       if (newSet.has(itemId)) {
         newSet.delete(itemId);
       } else {
+        if (newSet.size >= MAX_SELECTIONS) {
+          alert("최대 10개까지만 선택할 수 있습니다.");
+          return prev;
+        }
         newSet.add(itemId);
       }
       return newSet;
     });
   };
 
+  // 전체 선택 토글 함수 수정
   const toggleSelectAll = () => {
-    if (selectedItems.size === modalItems.length) {
-      setSelectedItems(new Set());
+    if (
+      filteredModalItems.length > 0 &&
+      filteredModalItems.every((item) => selectedItems.has(item.id))
+    ) {
+      // 필터링된 아이템들의 ID만 선택 해제
+      const newSelectedItems = new Set(selectedItems);
+      filteredModalItems.forEach((item) => {
+        newSelectedItems.delete(item.id);
+      });
+      setSelectedItems(newSelectedItems);
     } else {
-      setSelectedItems(new Set(modalItems.map((item) => item.id)));
+      // 필터링된 아이템들의 ID를 기존 선택에 추가 (최대 10개까지)
+      const newSelectedItems = new Set(selectedItems);
+      let remainingSlots = MAX_SELECTIONS - newSelectedItems.size;
+
+      if (remainingSlots <= 0) {
+        alert("최대 10개까지만 선택할 수 있습니다.");
+        return;
+      }
+
+      filteredModalItems.some((item) => {
+        if (!newSelectedItems.has(item.id)) {
+          if (remainingSlots > 0) {
+            newSelectedItems.add(item.id);
+            remainingSlots--;
+            return false; // continue
+          }
+          return true; // break
+        }
+        return false;
+      });
+
+      setSelectedItems(newSelectedItems);
     }
   };
 
@@ -408,26 +489,39 @@ const Report = ({ isDarkMode }) => {
     (item) =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.mode.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.issueType.toLowerCase().includes(searchQuery.toLowerCase())
+      item.issueType.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.grade.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // 모달 닫기 함수
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedItems(new Set()); // 선택된 항목 초기화
-    setSearchQuery(""); // 검색어도 초기화
+    setSelectedItems(new Set());
+    setSearchQuery("");
   };
 
   // 보고서 상세 보기 핸들러
-  const handleReportClick = (report) => {
-    setSelectedReport(report);
+  const handleReportClick = async (report) => {
     setIsDetailModalOpen(true);
+    setSelectedReport(report);
+    setIsLoadingDetail(true);
+
+    try {
+      const detail = await getReportById(report.id);
+      setReportDetail(detail);
+    } catch (error) {
+      console.error("보고서 상세 정보 로드 실패:", error);
+      alert("보고서 상세 정보를 불러오는데 실패했습니다.");
+    } finally {
+      setIsLoadingDetail(false);
+    }
   };
 
   // 상세 모달 닫기 핸들러
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);
     setSelectedReport(null);
+    setReportDetail(null);
   };
 
   // 그래프 네비게이션 함수
@@ -443,32 +537,132 @@ const Report = ({ isDarkMode }) => {
     }
   };
 
+  // PR 리뷰 목록 로드 함수 수정
+  const loadPrReviews = async (pageToLoad = currentPage) => {
+    if (pageToLoad === 1) {
+      setIsLoadingPRs(true);
+    } else {
+      setIsLoadingMore(true);
+    }
+
+    try {
+      const response = await getPrReviews(userId, pageToLoad);
+      const formattedItems = response.data.map((item) => ({
+        id: item.id,
+        mode: item.review_mode,
+        title: item.title,
+        date: new Date(item.created_at).toLocaleDateString(),
+        grade: item.aver_grade,
+        issueType: item.problem_type,
+      }));
+
+      if (pageToLoad === 1) {
+        setModalItems(formattedItems);
+      } else {
+        setModalItems((prev) => [...prev, ...formattedItems]);
+      }
+
+      setHasNextPage(response.hasNextPage);
+      setTotalPages(response.totalPages);
+    } catch (error) {
+      console.error("PR 리뷰 목록 로드 실패:", error);
+    } finally {
+      if (pageToLoad === 1) {
+        setIsLoadingPRs(false);
+      } else {
+        setIsLoadingMore(false);
+      }
+    }
+  };
+
+  // 무한 스크롤 observer 설정
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          entries[0].isIntersecting &&
+          hasNextPage &&
+          !isLoadingMore &&
+          isModalOpen
+        ) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isLoadingMore, isModalOpen]);
+
+  // 모달이 열릴 때 초기 데이터 로드
+  useEffect(() => {
+    if (isModalOpen) {
+      setCurrentPage(1);
+      loadPrReviews(1);
+    }
+  }, [isModalOpen]);
+
+  // 페이지 변경시 추가 데이터 로드
+  useEffect(() => {
+    if (currentPage > 1 && isModalOpen) {
+      loadPrReviews(currentPage);
+    }
+  }, [currentPage]);
+
   return (
     <ReportWrapper>
-      {/* <SearchBarSC
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        isDarkMode={isDarkMode}
-      /> */}
       <PageTitle isDarkMode={isDarkMode}>Report</PageTitle>
       <CategoryBar isDarkMode={isDarkMode}>
-        <CategoryItem style={{ width: "50px", justifyContent: "center" }} isDarkMode={isDarkMode}></CategoryItem>
-        <CategoryItem style={{ width: "115px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{ width: "50px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        ></CategoryItem>
+        <CategoryItem
+          style={{ width: "125px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        >
           Report Name
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{ width: "105px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        >
           Date
         </CategoryItem>
-        <CategoryItem style={{ width: "10vw", justifyContent: "flex-end"}} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{
+            flex: 1,
+            justifyContent: "flex-start",
+            paddingLeft: "3.5vw",
+          }}
+          isDarkMode={isDarkMode}
+        >
           Comments
         </CategoryItem>
-        <CategoryItem style={{ width: "22vw", justifyContent: "center"}} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{
+            flex: 1,
+            justifyContent: "flex-start",
+            paddingRight: "1.5vw",
+          }}
+          isDarkMode={isDarkMode}
+        >
           Used Review Modes
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{ width: "110px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        >
           Download
         </CategoryItem>
-        <CategoryItem style={{ width: "100px", justifyContent: "center" }} isDarkMode={isDarkMode}>
+        <CategoryItem
+          style={{ width: "100px", justifyContent: "center" }}
+          isDarkMode={isDarkMode}
+        >
           Delete
         </CategoryItem>
       </CategoryBar>
@@ -484,25 +678,23 @@ const Report = ({ isDarkMode }) => {
                 <img src={report.image} alt="report thumbnail" />
               </ReportImage>
               <ReportTitle isDarkMode={isDarkMode}>{report.title}</ReportTitle>
-              <CreatedDate isDarkMode={isDarkMode}>{report.createdAt}</CreatedDate>
+              <CreatedDate isDarkMode={isDarkMode}>
+                {report.createdAt}
+              </CreatedDate>
               <ReviewCount isDarkMode={isDarkMode}>
                 Total of {report.reviewCount} AI review comments
               </ReviewCount>
-              <ModeList>
-                {ALL_MODES.map((mode, index) => (
-                  <ModeTag
-                    key={index}
-                    isActive={report.modes.includes(mode)}
-                    mode={mode}
-                  >
-                    {mode}
-                  </ModeTag>
-                ))}
-              </ModeList>
-              <DownloadButton isDarkMode={isDarkMode}>
+              <ModeList reportId={report.id} />
+              <DownloadButton
+                isDarkMode={isDarkMode}
+                onClick={(e) => handleDownloadReport(report.id, e)}
+              >
                 <DownloadIcon />
               </DownloadButton>
-              <DeleteButton isDarkMode={isDarkMode}>
+              <DeleteButton
+                isDarkMode={isDarkMode}
+                onClick={(e) => handleDeleteReport(report.id, e)}
+              >
                 <DeleteIcon />
               </DeleteButton>
             </ReportItem>
@@ -517,58 +709,103 @@ const Report = ({ isDarkMode }) => {
 
       {isModalOpen && (
         <ModalOverlay onClick={handleCloseModal}>
-          <ModalContent onClick={(e) => e.stopPropagation()} isDarkMode={isDarkMode}>
-            <ModalHeader>
-              <ButtonCheckboxContainer>
-                <CheckboxRound
-                  checked={selectedItems.size === modalItems.length}
-                  onClick={toggleSelectAll}
-                />
-                <PlayfulButton onClick={handleCreateReport}>
-                  {`Create New Report${selectedItems.size > 0 ? ` (${selectedItems.size})` : ""}`}
-                </PlayfulButton>
-              </ButtonCheckboxContainer>
-              <SearchBarWrapper>
-                <SearchBar
-                  width="800px"
-                  placeholder="search pull request..."
-                  backgroundColor={isDarkMode ? "#00000050" : "#f5f5f5"}
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  isDarkMode={isDarkMode}
-                />
-              </SearchBarWrapper>
-              <CloseButton onClick={handleCloseModal}>
-                <CloseIcon />
-              </CloseButton>
-            </ModalHeader>
+          <ModalContent
+            onClick={(e) => e.stopPropagation()}
+            isDarkMode={isDarkMode}
+          >
+            {!isLoading ? (
+              <>
+                <ModalHeader>
+                  <ButtonCheckboxContainer>
+                    <CheckboxRound
+                      checked={
+                        filteredModalItems.length > 0 &&
+                        filteredModalItems.every((item) =>
+                          selectedItems.has(item.id)
+                        )
+                      }
+                      onClick={toggleSelectAll}
+                    />
+                    <PlayfulButton
+                      onClick={handleCreateReport}
+                      disabled={selectedItems.size < MIN_SELECTIONS}
+                    >
+                      {`Create New Report${selectedItems.size > 0 ? ` (${selectedItems.size}/${MAX_SELECTIONS})` : ""}`}
+                    </PlayfulButton>
+                  </ButtonCheckboxContainer>
+                  <SearchBarWrapper>
+                    <SearchBar
+                      width="800px"
+                      placeholder="search pull request..."
+                      backgroundColor={isDarkMode ? "#00000050" : "#f5f5f5"}
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                      isDarkMode={isDarkMode}
+                    />
+                  </SearchBarWrapper>
+                  <CloseButton onClick={handleCloseModal}>
+                    <CloseIcon />
+                  </CloseButton>
+                </ModalHeader>
 
-            <ModalItemList>
-              {filteredModalItems.map((item) => (
-                <ModalItem
-                  key={item.id}
-                  selected={selectedItems.has(item.id)}
-                  onClick={() => toggleItemSelection(item.id)}
-                  isDarkMode={isDarkMode}
-                >
-                  <CheckCircle checked={selectedItems.has(item.id)}>
-                    {selectedItems.has(item.id) && "✓"}
-                  </CheckCircle>
-                  <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
-                  <PRTitle isDarkMode={isDarkMode}>{item.title}</PRTitle>
-                  <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
-                  <Grade grade={item.grade} isDarkMode={isDarkMode}>{item.grade}</Grade>
-                  <IssueType isDarkMode={isDarkMode}>{item.issueType}</IssueType>
-                </ModalItem>
-              ))}
-            </ModalItemList>
+                <ModalItemList>
+                  {modalItems.length > 0 ? (
+                    <>
+                      {filteredModalItems.map((item) => (
+                        <ModalItem
+                          key={item.id}
+                          selected={selectedItems.has(item.id)}
+                          onClick={() => toggleItemSelection(item.id)}
+                          isDarkMode={isDarkMode}
+                        >
+                          <CheckCircle checked={selectedItems.has(item.id)}>
+                            {selectedItems.has(item.id) && "✓"}
+                          </CheckCircle>
+                          <ReviewMode mode={item.mode}>{item.mode}</ReviewMode>
+                          <PRTitle isDarkMode={isDarkMode}>
+                            {item.title}
+                          </PRTitle>
+                          <PRDate isDarkMode={isDarkMode}>{item.date}</PRDate>
+                          <Grade grade={item.grade} isDarkMode={isDarkMode}>
+                            {item.grade}
+                          </Grade>
+                          <IssueType isDarkMode={isDarkMode}>
+                            {item.issueType}
+                          </IssueType>
+                        </ModalItem>
+                      ))}
+                      {hasNextPage && (
+                        <LoaderWrapper ref={observerTarget}>
+                          {isLoadingMore && <LoadingIndicator size="small" />}
+                        </LoaderWrapper>
+                      )}
+                    </>
+                  ) : (
+                    <div style={{ textAlign: "center", padding: "20px" }}>
+                      {isLoadingPRs ? (
+                        <LoadingIndicator />
+                      ) : (
+                        "PR 리뷰가 없습니다."
+                      )}
+                    </div>
+                  )}
+                </ModalItemList>
+              </>
+            ) : (
+              <LoadingWrapper>
+                <LoadingIndicator />
+              </LoadingWrapper>
+            )}
           </ModalContent>
         </ModalOverlay>
       )}
 
       {isDetailModalOpen && selectedReport && (
         <ModalOverlay onClick={handleCloseDetailModal}>
-          <DetailModalContent onClick={(e) => e.stopPropagation()}>
+          <DetailModalContent
+            onClick={(e) => e.stopPropagation()}
+            isDarkMode={isDarkMode}
+          >
             <DetailHeader>
               <HeaderContent>
                 <h2>{selectedReport.title}</h2>
@@ -585,13 +822,7 @@ const Report = ({ isDarkMode }) => {
                   <InfoDivider />
                   <InfoItem>
                     <InfoLabel>리뷰 모드</InfoLabel>
-                    <ModeList>
-                      {selectedReport.modes.map((mode, index) => (
-                        <ModeTag key={index} isActive={true} mode={mode}>
-                          {mode}
-                        </ModeTag>
-                      ))}
-                    </ModeList>
+                    <ModeList reportId={selectedReport.id} />
                   </InfoItem>
                 </HeaderInfo>
                 <CloseButton onClick={handleCloseDetailModal}>
@@ -599,148 +830,89 @@ const Report = ({ isDarkMode }) => {
                 </CloseButton>
               </HeaderContent>
             </DetailHeader>
+
             <ReportContentWrapper>
-              <ReportContent>
-                <ReportContent>
-                  <ContentTitle>AI 코드리뷰 익스텐션 보고서</ContentTitle>
-                  <ContentText>
-                    1. 개요 분석 대상 PR 수: 7개 (사용자 선택) 분석 기간: 2023년
-                    7월 ~ 2023년 10월 평균 등급: B (문제 PR로 분류된 비율: 57%)
-                    리뷰 모드: 엄격 모드 (코드 품질, 성능, 보안 강조) 2.
-                    전체적인 문제점 및 개선 방안 2.1 성능 문제 전체적인 문제점
-                    불필요한 데이터베이스 쿼리 반복 여러 PR에서 동일한 데이터를
-                    여러 번 조회하는 문제가 반복되었습니다. 이로 인해
-                    데이터베이스 부하가 증가하고, 응답 시간이 느려졌습니다.
-                    복잡한 로직으로 인한 처리 속도 저하 중첩된 루프나 불필요한
-                    조건문으로 인해 코드 실행 속도가 느린 경우가 많았습니다.
-                    개선 방안 캐싱 도입 자주 조회되는 데이터는 캐싱하여
-                    데이터베이스 조회 횟수를 줄이세요. 예: Redis를 사용해 사용자
-                    데이터를 캐싱합니다. 쿼리 최적화 중복 쿼리를 제거하고,
-                    필요한 데이터를 한 번에 조회하세요. 예: JOIN을 사용해 관련
-                    데이터를 한 번에 가져옵니다. 로직 단순화 복잡한 루프와
-                    조건문을 최소화하고, 알고리즘을 최적화하세요. 예: 리스트
-                    컴프리헨션을 사용해 코드를 간결하게 만듭니다. 2.2 코드
-                    스타일 문제 전체적인 문제점 주석 부족 주요 로직에 대한
-                    설명이 없어 코드를 이해하기 어려운 경우가 많았습니다. 네이밍
-                    컨벤션 불일치 변수와 함수 이름이 직관적이지 않아 코드
-                    가독성이 떨어졌습니다. 개선 방안 주석 추가 주요 로직과
-                    복잡한 알고리즘에는 설명을 추가하세요. 예: 함수의 목적,
-                    입력값, 출력값을 명시합니다. 네이밍 컨벤션 통일 변수와 함수
-                    이름은 직관적이고 일관되게 작성하세요. 예:
-                    get_user_by_id()와 같이 명확한 이름을 사용합니다. 2.3 보안
-                    문제 전체적인 문제점 API 키 하드코딩 민감한 정보가 코드에
-                    직접 작성되어 보안 위험이 있었습니다. 입력값 검증 부족
-                    사용자 입력값을 충분히 검증하지 않아 SQL Injection 등의
-                    위험이 있었습니다. 개선 방안 환경 변수 사용 API 키와 같은
-                    민감한 정보는 환경 변수로 관리하세요. 예: os.environ을
-                    사용해 환경 변수를 로드합니다. 입력값 검증 강화 모든 사용자
-                    입력값은 철저히 검증하세요. 예: pydantic 라이브러리를 사용해
-                    입력값을 검증합니다. 3. 종합 평가 3.1 강점 데이터베이스 모델
-                    설계 데이터베이스 모델 설계가 매우 우수합니다. 유틸리티 코드
-                    재사용성 재사용성이 높은 유틸리티 코드가 많아 팀 전체에
-                    도움이 됩니다. 3.2 개선점 성능 최적화 불필요한 쿼리와 복잡한
-                    로직으로 인해 성능이 저하되는 경우가 많습니다. 코드 스타일
-                    주석 부족과 네이밍 컨벤션 불일치로 인해 코드 가독성이
-                    떨어집니다. 보안 강화 API 키 관리와 입력값 검증이 미흡해
-                    보안 위험이 있습니다. 4. 시각화 자료 4.1 PR 등급 분포 ![PR
-                    등급 분포 파이 차트] 4.2 문제 PR 유형 분포 ![문제 PR 유형
-                    분포 바 차트] 4.3 파일 유형별 등급 추이 ![파일 유형별 등급
-                    추이 라인 그래프] 5. 결론 및 추천 5.1 강점 데이터베이스 모델
-                    설계와 유틸리티 코드 재사용성이 매우 우수합니다. 이러한
-                    강점을 유지하면서, 아래 개선점을 해결해 보세요. 5.2 개선점
-                    성능 최적화: 불필요한 쿼리와 복잡한 로직을 단순화하세요.
-                    코드 스타일: 주석을 추가하고, 네이밍 컨벤션을 통일하세요.
-                    보안 강화: API 키를 환경 변수로 관리하고, 입력값을 철저히
-                    검증하세요. 5.3 추천 학습 자료 성능 최적화: "High
-                    Performance MySQL" by Baron Schwartz 코드 스타일: "Clean
-                    Code" by Robert C. Martin 보안: "Web Application Security"
-                    by Andrew Hoffman 6. 향후 목표 성능 최적화: 모든 PR의 성능
-                    등급을 A 이상으로 개선 코드 스타일: 모든 PR에서 코드 스타일
-                    등급 S 달성 보안 강화: 모든 PR에서 보안 등급 S 달성 이
-                    보고서는 사용자가 선택한 PR 리뷰를 종합적으로 분석하여
-                    전체적인 문제점과 개선 방안을 제공합니다. **"AI 코드리뷰
-                    익스텐션"**과 함께 더 나은 개발자로 성장해 보세요! 1. 개요
-                    분석 대상 PR 수: 7개 (사용자 선택) 분석 기간: 2023년 7월 ~
-                    2023년 10월 평균 등급: B (문제 PR로 분류된 비율: 57%) 리뷰
-                    모드: 엄격 모드 (코드 품질, 성능, 보안 강조) 2. 전체적인
-                    문제점 및 개선 방안 2.1 성능 문제 전체적인 문제점 불필요한
-                    데이터베이스 쿼리 반복 여러 PR에서 동일한 데이터를 여러 번
-                    조회하는 문제가 반복되었습니다. 이로 인해 데이터베이스
-                    부하가 증가하고, 응답 시간이 느려졌습니다. 복잡한 로직으로
-                    인한 처리 속도 저하 중첩된 루프나 불필요한 조건문으로 인해
-                    코드 실행 속도가 느린 경우가 많았습니다. 개선 방안 캐싱 도입
-                    자주 조회되는 데이터는 캐싱하여 데이터베이스 조회 횟수를
-                    줄이세요. 예: Redis를 사용해 사용자 데이터를 캐싱합니다.
-                    쿼리 최적화 중복 쿼리를 제거하고, 필요한 데이터를 한 번에
-                    조회하세요. 예: JOIN을 사용해 관련 데이터를 한 번에
-                    가져옵니다. 로직 단순화 복잡한 루프와 조건문을 최소화하고,
-                    알고리즘을 최적화하세요. 예: 리스트 컴프리헨션을 사용해
-                    코드를 간결하게 만듭니다. 2.2 코드 스타일 문제 전체적인
-                    문제점 주석 부족 주요 로직에 대한 설명이 없어 코드를
-                    이해하기 어려운 경우가 많았습니다. 네이밍 컨벤션 불일치
-                    변수와 함수 이름이 직관적이지 않아 코드 가독성이
-                    떨어졌습니다. 개선 방안 주석 추가 주요 로직과 복잡한
-                    알고리즘에는 설명을 추가하세요. 예: 함수의 목적, 입력값,
-                    출력값을 명시합니다. 네이밍 컨벤션 통일 변수와 함수 이름은
-                    직관적이고 일관되게 작성하세요. 예: get_user_by_id()와 같이
-                    명확한 이름을 사용합니다. 2.3 보안 문제 전체적인 문제점 API
-                    키 하드코딩 민감한 정보가 코드에 직접 작성되어 보안 위험이
-                    있었습니다. 입력값 검증 부족 사용자 입력값을 충분히 검증하지
-                    않아 SQL Injection 등의 위험이 있었습니다. 개선 방안 환경
-                    변수 사용 API 키와 같은 민감한 정보는 환경 변수로
-                    관리하세요. 예: os.environ을 사용해 환경 변수를 로드합니다.
-                    입력값 검증 강화 모든 사용자 입력값은 철저히 검증하세요. 예:
-                    pydantic 라이브러리를 사용해 입력값을 검증합니다. 3. 종합
-                    평가 3.1 강점 데이터베이스 모델 설계 데이터베이스 모델
-                    설계가 매우 우수합니다. 유틸리티 코드 재사용성 재사용성이
-                    높은 유틸리티 코드가 많아 팀 전체에 도움이 됩니다. 3.2
-                    개선점 성능 최적화 불필요한 쿼리와 복잡한 로직으로 인해
-                    성능이 저하되는 경우가 많습니다. 코드 스타일 주석 부족과
-                    네이밍 컨벤션 불일치로 인해 코드 가독성이 떨어집니다. 보안
-                    강화 API 키 관리와 입력값 검증이 미흡해 보안 위험이
-                    있습니다. 4. 시각화 자료 4.1 PR 등급 분포 ![PR 등급 분포
-                    파이 차트] 4.2 문제 PR 유형 분포 ![문제 PR 유형 분포 바
-                    차트] 4.3 파일 유형별 등급 추이 ![파일 유형별 등급 추이 라인
-                    그래프] 5. 결론 및 추천 5.1 강점 데이터베이스 모델 설계와
-                    유틸리티 코드 재사용성이 매우 우수합니다. 이러한 강점을
-                    유지하면서, 아래 개선점을 해결해 보세요. 5.2 개선점 성능
-                    최적화: 불필요한 쿼리와 복잡한 로직을 단순화하세요. 코드
-                    스타일: 주석을 추가하고, 네이밍 컨벤션을 통일하세요. 보안
-                    강화: API 키를 환경 변수로 관리하고, 입력값을 철저히
-                    검증하세요. 5.3 추천 학습 자료 성능 최적화: "High
-                    Performance MySQL" by Baron Schwartz 코드 스타일: "Clean
-                    Code" by Robert C. Martin 보안: "Web Application Security"
-                    by Andrew Hoffman 6. 향후 목표 성능 최적화: 모든 PR의 성능
-                    등급을 A 이상으로 개선 코드 스타일: 모든 PR에서 코드 스타일
-                    등급 S 달성 보안 강화: 모든 PR에서 보안 등급 S 달성 이
-                    보고서는 사용자가 선택한 PR 리뷰를 종합적으로 분석하여
-                    전체적인 문제점과 개선 방안을 제공합니다. **"AI 코드리뷰
-                    익스텐션"**과 함께 더 나은 개발자로 성장해 보세요!
-                  </ContentText>
-                </ReportContent>
-              </ReportContent>
-              <ReportGraph>
-                <GraphTitle>
-                  {GRAPHS[graphTypes[currentGraphIndex]].title}
-                </GraphTitle>
-                <GraphNavButton
-                  style={{ left: "10px" }}
-                  onClick={() => navigateGraph("prev")}
-                >
-                  ←
-                </GraphNavButton>
-                <div style={{ height: "600px" }}>
-                  {GRAPHS[graphTypes[currentGraphIndex]].component(radarData)}
-                </div>
-                <GraphNavButton
-                  style={{ right: "10px" }}
-                  onClick={() => navigateGraph("next")}
-                >
-                  →
-                </GraphNavButton>
-              </ReportGraph>
+              {isLoadingDetail ? (
+                <LoadingWrapper>
+                  <LoadingIndicator />
+                </LoadingWrapper>
+              ) : reportDetail ? (
+                <>
+                  <ReportContent>
+                    <ContentTitle>AI 코드리뷰 익스텐션 보고서</ContentTitle>
+                    <ContentText>{reportDetail.content}</ContentText>
+                  </ReportContent>
+
+                  <ReportGraph>
+                    <GraphTitle>
+                      {GRAPHS[graphTypes[currentGraphIndex]].title}
+                    </GraphTitle>
+                    <GraphNavButton
+                      style={{ left: "10px" }}
+                      onClick={() => navigateGraph("prev")}
+                    >
+                      ←
+                    </GraphNavButton>
+                    <div style={{ height: "600px" }}>
+                      {GRAPHS[graphTypes[currentGraphIndex]].component(
+                        reportDetail.graphData
+                      )}
+                    </div>
+                    <GraphNavButton
+                      style={{ right: "10px" }}
+                      onClick={() => navigateGraph("next")}
+                    >
+                      →
+                    </GraphNavButton>
+                  </ReportGraph>
+                </>
+              ) : (
+                <div>데이터를 불러올 수 없습니다.</div>
+              )}
             </ReportContentWrapper>
           </DetailModalContent>
+        </ModalOverlay>
+      )}
+
+      {/* 보고서 제목 입력 모달 */}
+      {isTitleModalOpen && (
+        <ModalOverlay
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsTitleModalOpen(false);
+            setReportTitle("");
+          }}
+        >
+          <TitleModalContent
+            onClick={(e) => e.stopPropagation()}
+            isDarkMode={isDarkMode}
+          >
+            <TitleModalHeader>
+              <h3>Report Title</h3>
+              <CloseButton
+                onClick={() => {
+                  setIsTitleModalOpen(false);
+                  setReportTitle("");
+                }}
+              >
+                <CloseIcon />
+              </CloseButton>
+            </TitleModalHeader>
+            <TitleInput
+              value={reportTitle}
+              onChange={(e) => setReportTitle(e.target.value)}
+              placeholder="input Report Title..."
+              isDarkMode={isDarkMode}
+            />
+            <ButtonContainer>
+              <PlayfulButton
+                onClick={handleSubmitReport}
+                disabled={!reportTitle.trim()}
+              >
+                {isLoading ? "Creating..." : "Create"}
+              </PlayfulButton>
+            </ButtonContainer>
+          </TitleModalContent>
         </ModalOverlay>
       )}
     </ReportWrapper>
@@ -749,10 +921,11 @@ const Report = ({ isDarkMode }) => {
 
 const ReportWrapper = styled.div`
   height: 100%;
-  width: 70vw;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-left: 10px;
 `;
 
 const PageTitle = styled.h1`
@@ -796,24 +969,6 @@ const ReviewCount = styled.div`
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
 `;
 
-const ModeList = styled.div`
-  flex: 2;
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-  background: #00000000;
-`;
-
-const ModeTag = styled.span`
-  padding: 3px 3px;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: "00000000";
-  color: ${(props) => (props.isActive ? MODE_COLORS[props.mode].text : "#666")};
-  transition: all 0.2s ease-in-out;
-`;
-
 const IconButton = styled.button`
   background: none;
   border: none;
@@ -845,8 +1000,8 @@ const DeleteButton = styled(IconButton)`
 const ReportItem = styled.div`
   display: flex;
   align-items: center;
-  width: 65vw;
-  gap: 2vw;
+  width: 87rem;
+  gap: 45px;
   margin-top: 10px;
   margin-left: 20px;
   margin-bottom: 10px;
@@ -863,21 +1018,22 @@ const CategoryBar = styled.div`
   top: 0;
   display: flex;
   align-items: center;
-  width: 65vw;
+  width: 87rem;
   height: auto;
+  padding: 0 20px;
   margin-top: 24px;
   margin-left: 60px;
   margin-bottom: 0px;
-  gap: 2vw;
+  gap: 40px;
   border-radius: 15px;
   background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ECECEC")};
-  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030")};
-  z-index: 1;
+  border: ${({ isDarkMode }) =>
+    isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030"};
 `;
 
 const CategoryItem = styled.div`
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
-  font-size: clamp(15px, 0.8vw, 18px);
+  font-size: 18px;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -888,9 +1044,9 @@ const CategoryItem = styled.div`
 `;
 
 const ReportTitle = styled.h1`
-  width: 100px;
+  width: 120px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
-  font-size: 20px;
+  font-size: 16px;
 `;
 
 const ReportList = styled.div`
@@ -899,11 +1055,11 @@ const ReportList = styled.div`
   flex-direction: column;
   margin-left: 20px;
   overflow-y: auto;
-  width: 67vw;
+  width: 90rem;
 
   &::-webkit-scrollbar {
     width: 8px;
-    margin-left: 4px; // 스크롤바를 리스트에서 살짝 띄움
+    margin-left: 4px;
   }
 
   &::-webkit-scrollbar-track {
@@ -999,23 +1155,24 @@ const ModalItem = styled.div`
   display: flex;
   align-items: center;
   padding: 20px 30px;
-  background: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : 'white')};
+  background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "white")};
   border-radius: 15px;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
   gap: 30px;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
 
   &:hover {
     transform: translateX(5px);
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#000000' : '#f8f9fa')};
+    background-color: ${({ isDarkMode }) =>
+      isDarkMode ? "#000000" : "#f8f9fa"};
   }
 
   ${(props) =>
     props.selected &&
     `
-    background-color: ${props.isDarkMode ? '#10204C' : '#C0CDF2'};
+    background-color: ${props.isDarkMode ? "#10204C" : "#C0CDF2"};
   `}
 `;
 
@@ -1047,14 +1204,14 @@ const ReviewMode = styled.div`
 const PRTitle = styled.div`
   flex: 1;
   font-size: 16px;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
 `;
 
 const PRDate = styled.div`
   width: 100px;
   color: #666;
   font-size: 14px;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
 `;
 
 const Grade = styled.div`
@@ -1067,7 +1224,7 @@ const Grade = styled.div`
 
 const IssueType = styled.div`
   width: 120px;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#D6D6D6' : '#333333')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
   text-align: right;
   flex-shrink: 0;
 `;
@@ -1109,7 +1266,6 @@ const SearchBarWrapper = styled.div`
   margin-left: 0vw;
 `;
 
-// 새로운 styled components 추가
 const CheckboxRound = styled.div`
   width: 1.6em;
   height: 1.6em;
@@ -1137,7 +1293,6 @@ const ButtonCheckboxContainer = styled.div`
   margin-right: 3vw;
 `;
 
-// 새로운 스타일 컴포넌트 추가
 const DetailModalContent = styled(ModalContent)`
   width: 90rem;
   height: 90vh;
@@ -1201,21 +1356,22 @@ const ReportContent = styled.div`
   background-color: white;
   padding: 20px;
   overflow-y: auto;
-  
+
   &::-webkit-scrollbar {
-  width: 12px;
+    width: 12px;
   }
   &::-webkit-scrollbar-track {
-    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    background: ${({ isDarkMode }) => (isDarkMode ? "#4A4A4A" : "#D9D9D9")};
     border-radius: 10px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    background-color: ${({ isDarkMode }) =>
+      isDarkMode ? "#FFFFFF" : "#777777"};
     border-radius: 10px;
-    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? "#333" : "#f0f0f0")};
   }
   &::-webkit-scrollbar-thumb:hover {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#c7c7c7" : "#555")};
   }
 `;
 
@@ -1291,6 +1447,66 @@ const ContentTitle = styled.h3`
   font-weight: 600;
   margin-bottom: 16px;
   color: #333;
+`;
+
+const LoadingWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LoaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+`;
+
+const TitleModalContent = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: ${(props) => (props.isDarkMode ? "#2a2a2a" : "#ffffff")};
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  z-index: 1001;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
+const TitleModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+`;
+
+const TitleInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid ${(props) => (props.isDarkMode ? "#444" : "#ddd")};
+  border-radius: 4px;
+  margin-bottom: 20px;
+  background: ${(props) => (props.isDarkMode ? "#333" : "#fff")};
+  color: ${(props) => (props.isDarkMode ? "#fff" : "#333")};
+
+  &:focus {
+    outline: none;
+    border-color: #aef060;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 export default Report;

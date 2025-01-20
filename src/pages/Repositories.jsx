@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SearchBar from "../components/SearchBar/SearchBar";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
+import {
+  getActiveReposById,
+  getInactiveReposById,
+  toggleRepoStatus,
+} from "../services/repositoryService";
 import PublicIcon from "@mui/icons-material/Public";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import AccountTreeIcon from "@mui/icons-material/AccountTree";
@@ -12,16 +16,19 @@ import BugReportIcon from "@mui/icons-material/BugReport";
 const RepositoryContainer = styled.div`
   width: 46%;
   height: 57rem;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#f0f0f0')};
+  background-color: ${({ isDarkMode }) =>
+    isDarkMode ? "#00000050" : "#FFFFFFFF"};
   border-radius: 20px;
-  box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0px 4px 8px 3px rgba(0, 0, 0, 0.15),
+    0px 1px 3px 0px rgba(0, 0, 0, 0.3);
   padding: 20px;
   overflow: hidden;
-  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
 `;
 
 const RepositoryTitle = styled.h1`
-  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
   text-align: center;
   font-family: Poppins;
   font-size: 30px;
@@ -60,16 +67,19 @@ const RepositoryWrapper = styled.div`
     width: 12px; /* 스크롤바 너비 */
   }
   &::-webkit-scrollbar-track {
-    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')}; /* 트랙 배경색 */
+    background: ${({ isDarkMode }) =>
+      isDarkMode ? "#4A4A4A" : "#D9D9D9"}; /* 트랙 배경색 */
     border-radius: 10px; /* 둥근 모서리 */
   }
   &::-webkit-scrollbar-thumb {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')}; /* 스크롤바 색상 */
+    background-color: ${({ isDarkMode }) =>
+      isDarkMode ? "#FFFFFF" : "#777777"}; /* 스크롤바 색상 */
     border-radius: 10px; /* 둥근 모서리 */
-    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')}; /* 스크롤바와 트랙 사이의 간격 */
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? "#333" : "#f0f0f0")}; /* 스크롤바와 트랙 사이의 간격 */
   }
   &::-webkit-scrollbar-thumb:hover {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')}; /* 호버 시 스크롤바 색상 */
+    background-color: ${({ isDarkMode }) =>
+      isDarkMode ? "#c7c7c7" : "#555"}; /* 호버 시 스크롤바 색상 */
   }
 `;
 
@@ -78,15 +88,15 @@ const RepositoryItem = styled.div`
   min-height: 85px;
   margin: 20px auto;
   padding: 15px;
-  background: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#ffffff')};
-  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+  background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ffffff")};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
   border-radius: 20px;
   box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   gap: 15px;
   position: relative;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
 `;
 
 const RepoImage = styled.img`
@@ -133,7 +143,7 @@ const RepoName = styled.span`
 `;
 
 const PublicLabel = styled.span`
-  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#E6E6E6" : "#666666")};
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -141,7 +151,7 @@ const PublicLabel = styled.span`
 `;
 
 const RepoDescription = styled.p`
-  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#E6E6E6" : "#666666")};
   font-size: 14px;
   margin: 0;
   max-width: 19rem;
@@ -154,7 +164,7 @@ const RepoStats = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#E6E6E6" : "#666666")};
   font-size: 12px;
 `;
 
@@ -162,7 +172,7 @@ const StatItem = styled.span`
   display: flex;
   align-items: center;
   gap: 4px;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#E6E6E6' : '#666666')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#E6E6E6" : "#666666")};
 `;
 
 const getLanguageColor = (language) => {
@@ -202,83 +212,38 @@ const Language = styled.span`
 `;
 
 const Repositories = ({ isDarkMode }) => {
-  const [unselectedRepos, setUnselectedRepos] = useState([
-    {
-      id: 1,
-      name: "YSKIM",
-      description: "김윤성의 리액트 프로젝트 레포지토리입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "JavaScript",
-    },
-    {
-      id: 2,
-      name: "Algorithm-Study",
-      description: "알고리즘 문제 풀이 및 스터디 자료를 정리하는 저장소입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "Python",
-    },
-    {
-      id: 3,
-      name: "Portfolio-2024",
-      description: "2024년 개인 포트폴리오 웹사이트 프로젝트입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "TypeScript",
-    },
-    {
-      id: 4,
-      name: "React-Shopping-Mall",
-      description: "리액트로 구현한 쇼핑몰 프로젝트입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "JavaScript",
-    },
-    {
-      id: 5,
-      name: "Spring-Board-Project",
-      description: "스프링 부트로 만든 게시판 프로젝트입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "Java",
-    },
-    {
-      id: 6,
-      name: "Next.js-Blog",
-      description: "Next.js로 제작한 개인 블로그 프로젝트입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "TypeScript",
-    },
-    {
-      id: 7,
-      name: "Machine-Learning-Study",
-      description: "머신러닝 학습 내용을 정리한 저장소입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "Python",
-    },
-    {
-      id: 8,
-      name: "Docker-Practice",
-      description: "도커 실습 및 예제 코드를 정리한 저장소입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "Shell",
-    },
-    {
-      id: 9,
-      name: "Vue-Weather-App",
-      description: "Vue.js로 만든 날씨 정보 애플리케이션입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "Vue",
-    },
-    {
-      id: 10,
-      name: "iOS-Swift-Study",
-      description: "iOS 앱 개발 학습 내용을 정리한 저장소입니다.",
-      image: "https://avatars.githubusercontent.com/u/192951892?s=48&v=4",
-      language: "Swift",
-    },
-  ]);
-
+  const [unselectedRepos, setUnselectedRepos] = useState([]);
   const [selectedRepos, setSelectedRepos] = useState([]);
 
   const [searchTermUnselected, setSearchTermUnselected] = useState("");
   const [searchTermSelected, setSearchTermSelected] = useState("");
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      try {
+        const user_id = 1;
+        const [inactiveReposResponse, activeReposResponse] = await Promise.all([
+          getInactiveReposById(user_id),
+          getActiveReposById(user_id),
+        ]);
+
+        const inactiveRepos = inactiveReposResponse.repositories || [];
+        const activeRepos = activeReposResponse.repositories || [];
+
+        setUnselectedRepos(inactiveRepos);
+        setSelectedRepos(activeRepos);
+      } catch (error) {
+        console.error("레포지토리 데이터 로딩 실패:", error);
+        setUnselectedRepos([]);
+        setSelectedRepos([]);
+      }
+    };
+
+    fetchRepos();
+  }, []);
+
+  console.log("unselectedRepos:", unselectedRepos);
+  console.log("selectedRepos:", selectedRepos);
 
   const filteredUnselectedRepos = unselectedRepos.filter((repo) =>
     repo.name.toLowerCase().includes(searchTermUnselected.toLowerCase())
@@ -288,14 +253,37 @@ const Repositories = ({ isDarkMode }) => {
     repo.name.toLowerCase().includes(searchTermSelected.toLowerCase())
   );
 
-  const handleSelect = (repo) => {
-    setUnselectedRepos(unselectedRepos.filter((r) => r.id !== repo.id));
-    setSelectedRepos([...selectedRepos, repo]);
+  const handleSelect = async (repo) => {
+    try {
+      await toggleRepoStatus([repo.id], true);
+      setUnselectedRepos(unselectedRepos.filter((r) => r.id !== repo.id));
+      setSelectedRepos([...selectedRepos, repo]);
+    } catch (error) {
+      console.error("레포지토리 선택 실패:", error);
+    }
   };
 
-  const handleUnselect = (repo) => {
-    setSelectedRepos(selectedRepos.filter((r) => r.id !== repo.id));
-    setUnselectedRepos([...unselectedRepos, repo]);
+  const handleUnselect = async (repo) => {
+    try {
+      await toggleRepoStatus([repo.id], false);
+      setSelectedRepos(selectedRepos.filter((r) => r.id !== repo.id));
+      setUnselectedRepos([...unselectedRepos, repo]);
+    } catch (error) {
+      console.error("레포지토리 선택 해제 실패:", error);
+    }
+  };
+
+  const DateFormatter = ({ isoDate, name }) => {
+    console.log("name:", name);
+    console.log("isoDate:", isoDate);
+    const date = new Date(isoDate);
+    const formattedDate = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(date);
+
+    return <div>Updated on {formattedDate}</div>;
   };
 
   return (
@@ -312,28 +300,28 @@ const Repositories = ({ isDarkMode }) => {
         <RepositoryWrapper isDarkMode={isDarkMode}>
           {filteredUnselectedRepos.map((repo) => (
             <RepositoryItem key={repo.id} isDarkMode={isDarkMode}>
-              <RepoImage src={repo.image} alt="Repository thumbnail" />
+              <RepoImage src={repo.repo_image} alt="Repository thumbnail" />
               <RepoContent>
                 <RepoHeader>
                   <RepoName>{repo.name}</RepoName>
                   <PublicLabel isDarkMode={isDarkMode}>
-                    <PublicIcon sx={{ fontSize: 16, color: isDarkMode ? '#E6E6E6' : '#666666' }} />
+                    <PublicIcon
+                      sx={{
+                        fontSize: 16,
+                        color: isDarkMode ? "#E6E6E6" : "#666666",
+                      }}
+                    />
                     Public
                   </PublicLabel>
                 </RepoHeader>
-                <RepoDescription isDarkMode={isDarkMode}>{repo.description}</RepoDescription>
+                <RepoDescription isDarkMode={isDarkMode}>
+                  {repo.description}
+                </RepoDescription>
                 <RepoStats isDarkMode={isDarkMode}>
                   <Language language={repo.language}>{repo.language}</Language>
                   <StatItem isDarkMode={isDarkMode}>
-                    <AccountTreeIcon sx={{ fontSize: 16 }} />0
+                    <DateFormatter isoDate={repo.repo_updated_at} />
                   </StatItem>
-                  <StatItem isDarkMode={isDarkMode}>
-                    <StarBorderIcon sx={{ fontSize: 16 }} />0
-                  </StatItem>
-                  <StatItem isDarkMode={isDarkMode}>
-                    <BugReportIcon sx={{ fontSize: 16 }} />0
-                  </StatItem>
-                  <StatItem isDarkMode={isDarkMode}>7h</StatItem>
                 </RepoStats>
               </RepoContent>
               <IconWrapper onClick={() => handleSelect(repo)}>
@@ -356,28 +344,31 @@ const Repositories = ({ isDarkMode }) => {
         <RepositoryWrapper isDarkMode={isDarkMode}>
           {filteredSelectedRepos.map((repo) => (
             <RepositoryItem key={repo.id} isDarkMode={isDarkMode}>
-              <RepoImage src={repo.image} alt="Repository thumbnail" />
+              <RepoImage src={repo.repo_image} alt="Repository thumbnail" />
               <RepoContent>
                 <RepoHeader>
                   <RepoName>{repo.name}</RepoName>
                   <PublicLabel isDarkMode={isDarkMode}>
-                    <PublicIcon sx={{ fontSize: 16, color: isDarkMode ? '#E6E6E6' : '#666666' }} />
+                    <PublicIcon
+                      sx={{
+                        fontSize: 16,
+                        color: isDarkMode ? "#E6E6E6" : "#666666",
+                      }}
+                    />
                     Public
                   </PublicLabel>
                 </RepoHeader>
-                <RepoDescription isDarkMode={isDarkMode}>{repo.description}</RepoDescription>
+                <RepoDescription isDarkMode={isDarkMode}>
+                  {repo.description}
+                </RepoDescription>
                 <RepoStats isDarkMode={isDarkMode}>
                   <Language language={repo.language}>{repo.language}</Language>
                   <StatItem isDarkMode={isDarkMode}>
-                    <AccountTreeIcon sx={{ fontSize: 16 }} />0
+                    <DateFormatter
+                      isoDate={repo.repo_updated_at}
+                      name={repo.name}
+                    />
                   </StatItem>
-                  <StatItem isDarkMode={isDarkMode}>
-                    <StarBorderIcon sx={{ fontSize: 16 }} />0
-                  </StatItem>
-                  <StatItem isDarkMode={isDarkMode}>
-                    <BugReportIcon sx={{ fontSize: 16 }} />0
-                  </StatItem>
-                  <StatItem isDarkMode={isDarkMode}>7h</StatItem>
                 </RepoStats>
               </RepoContent>
               <IconWrapper onClick={() => handleUnselect(repo)}>

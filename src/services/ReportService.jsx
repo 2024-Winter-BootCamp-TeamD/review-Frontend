@@ -3,7 +3,7 @@ import api from "./api";
 // 보고서 전체 조회
 export const getReports = async (user_id, page = 1, size = 10) => {
   try {
-    const response = await api.get(`/reports/${user_id}`, {
+    const response = await api.get(`/reports/${user_id}/`, {
       params: {
         page,
         size,

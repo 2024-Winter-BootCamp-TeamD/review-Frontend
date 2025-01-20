@@ -16,9 +16,10 @@ const HistoryContainer = styled.div`
 
 const PageName = styled.div`
   position: absolute;
-  top: -10px;
+  top: -30px;
   left: 50px;
-  font-size: 40px;
+  font-size: 50px;
+  font-weight: bold;
   margin: 0;
   color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
@@ -127,7 +128,7 @@ const BoxTitle = styled.p`
   left: 20px;
   margin: 0;
   font-size: 25px;
-  font-weight: bold;
+  font-weight: 500;
   z-index: 1000;
   color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
@@ -174,7 +175,7 @@ const LegendItem = styled.div`
 
 const LegendCount = styled.div`
   font-size: 15px;
-  font-weight: bold;
+  font-weight: 500;
   color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 

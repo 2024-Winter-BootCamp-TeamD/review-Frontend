@@ -56,3 +56,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       .addEventListener("click", handleGitHubLogin);
   }
 });
+
+// 클라이언트에서 메시지 수신 리스너 추가
+window.addEventListener('message', async (event) => {
+  if (event.data.type === 'AUTH_SUCCESS') {
+    const userInfo = event.data.data;
+    await chrome.storage.local.set({ userInfo });
+    // 추가 처리...
+  }
+});

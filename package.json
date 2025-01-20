@@ -21,6 +21,7 @@
     "axios": "^1.7.9",
     "axois": "^0.0.1-security",
     "highcharts": "^12.1.2",
+    "highcharts-react-official": "^3.2.1",
     "prettier": "^3.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -1,23 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import styled from 'styled-components';
 
 import Dashboard from "./pages/Dashboard.jsx";
 import History from "./pages/History.jsx";
 import Repositories from "./pages/Repositories.jsx";
 import Report from "./pages/Report.jsx";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
-import Home from "./pages/Home.jsx";
 import "./App.css";
 import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
 import ModeSwitchButton from "./components/ModeSwitchButton/ModeSwitchButton.jsx";
-
-const ContentDiv = styled.div`
-  flex-grow: 1;
-  padding: 20px;
-  margin-left: 300px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#121212' : '#FFFFFF')};
-`;
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -38,15 +29,14 @@ function App() {
     <Router>
       <div className="app">
         <Sidebar isDarkMode={isDarkMode} />
-        <ContentDiv isDarkMode={isDarkMode}>
+        <div className="content">
           <Routes>
             <Route path="/" element={<Dashboard isDarkMode={isDarkMode} />} />
             <Route path="/history" element={<History isDarkMode={isDarkMode} />} />
             <Route path="/repositories" element={<Repositories isDarkMode={isDarkMode} />} />
             <Route path="/report" element={<Report isDarkMode={isDarkMode} />} />
-            <Route path="/home" element={<Home />} />
           </Routes>
-        </ContentDiv>
+        </div>
         <div className="top-buttons">
           <ModeSwitchButton onToggle={toggleDarkMode} isDarkMode={isDarkMode} />
           <NotificationButton hasNotification={true} notificationCount={3} isDarkMode={isDarkMode}/>

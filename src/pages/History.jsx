@@ -11,7 +11,7 @@ const HistoryContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFFFF')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF')};
 `;
 
 const PageName = styled.div`
@@ -265,7 +265,7 @@ const History = ({ isDarkMode }) => {
                   <LegendItem mode={mode}>
                     <span>{mode}</span>
                   </LegendItem>
-                  <LegendCount isDarkMode={isDarkMode}>……………… {count}</LegendCount>
+                  <LegendCount isDarkMode={isDarkMode}>∙∙∙∙∙∙∙∙ {count}</LegendCount>
                 </LegendContainer>
               ))}
             </ChartLegend>

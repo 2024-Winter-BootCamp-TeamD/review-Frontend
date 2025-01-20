@@ -15,13 +15,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === "toggleFloatingButton") {
-    if (!window.floatingButtonState.isFloatingButtonVisible) {
-      injectFloatingButton();
+    if (request.show) {
+      // show가 true면 무조건 표시
+      if (!window.floatingButtonState.isFloatingButtonVisible) {
+        injectFloatingButton();
+        window.floatingButtonState.isFloatingButtonVisible = true;
+      }
     } else {
-      removeFloatingButton();
+      // show가 false거나 없으면 토글
+      if (!window.floatingButtonState.isFloatingButtonVisible) {
+        injectFloatingButton();
+      } else {
+        removeFloatingButton();
+      }
+      window.floatingButtonState.isFloatingButtonVisible =
+        !window.floatingButtonState.isFloatingButtonVisible;
     }
-    window.floatingButtonState.isFloatingButtonVisible =
-      !window.floatingButtonState.isFloatingButtonVisible;
   }
 });
 

@@ -4,7 +4,11 @@
   "version": "1.0",
   "description": "GitHub 코드 리뷰를 위한 AI 어시스턴트",
   "permissions": ["activeTab", "storage", "tabs", "scripting", "identity"],
-  "host_permissions": ["https://github.com/*", "http://localhost:8000/*"],
+  "host_permissions": [
+    "https://github.com/*",
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

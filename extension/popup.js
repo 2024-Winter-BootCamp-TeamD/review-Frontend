@@ -26,8 +26,8 @@ async function handleGitHubLogin() {
       {
         url: "https://github.com/login/oauth/authorize?client_id=Ov23liTHrg74CjBEbO5R&redirect_uri=http://127.0.0.1:8000/api/v1/oauth/login/github/callback/&scope=repo,read:org,public_repo,write:discussion",
         type: "popup",
-        width: 400,
-        height: 400,
+        width: 800,
+        height: 600,
       },
       (window) => {
         console.log("OAuth 창이 열렸습니다:", window.id);

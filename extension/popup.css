@@ -2,9 +2,11 @@
 
 body {
   width: 200px;
-  padding: 16px;
+  padding: 10px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
+  background-color: #ffffff;
+  border-radius: 40px;
 }
 
 .container {
@@ -14,12 +16,15 @@ body {
 }
 
 .title {
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 16px;
-  color: #24292e;
+  color: #091a04;
   text-align: center;
-  font-family: "Passion One", serif;
+  -webkit-text-stroke-width: 1;
+  -webkit-text-stroke-color: rgba(185, 255, 102, 0.8);
+  font-family: "Passion One";
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 50% */
 }
 
 .login-button {
@@ -27,6 +32,7 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
+  margin-bottom: 10px;
   background-color: #24292e;
   color: white;
   border: none;

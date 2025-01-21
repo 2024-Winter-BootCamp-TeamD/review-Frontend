@@ -9,6 +9,15 @@ export const fetchUserInfo = async () => {
     if (!user_id) {
       throw new Error("로그인된 사용자 정보를 찾을 수 없습니다.");
     }
+
+    const response = await api.get(`/users/${user_id}/`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "사용자 정보 가져오기 에러:",
+      error.response?.data || error.message
+    );
+    throw error;
   }
 };
 

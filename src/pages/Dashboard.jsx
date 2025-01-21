@@ -6,6 +6,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Responsive
 import api from "../services/api.jsx";
 import { fetchUserInfo, getAverageGrade, getRecentReview } from "../services/DashboardService.jsx";
 import GitHubCalendar from "react-github-calendar";
+import LoadingIndicator from '../components/LoadingIndicator/LoadingIndicator';
 
 // 등급을 값으로 변환하는 매핑
 const gradeToValue = {
@@ -228,7 +229,7 @@ const Dashboard = ({ isDarkMode }) => {
   }, [isDarkMode]);
 
   if (!fetchuserdata) {
-    return <div>Loading...</div>;
+    return <LoadingIndicator />;
   }
 
   return (

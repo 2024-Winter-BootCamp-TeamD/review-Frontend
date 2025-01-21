@@ -5,7 +5,6 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PlayfulButton from "../components/PlayfulButton";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchBar from "../components/SearchBar/SearchBar";
-import { ResponsiveRadar } from "@nivo/radar";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 import LoadingIndicator from "../components/LoadingIndicator/LoadingIndicator";
@@ -18,6 +17,16 @@ import {
   getPrReviews,
   getReportById,
 } from "../services/ReportService";
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import 'highcharts/highcharts-more';
+import 'highcharts/modules/exporting';
+import 'highcharts/modules/export-data';
+import 'highcharts/modules/accessibility';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
@@ -63,175 +72,205 @@ const ISSUE_TYPE_COLORS = {
   기타: "#748CAB",
 };
 
-const radarData = [
-  {
-    metric: "PR1",
-    Basic: 80,
-    "Clean Code": 90,
-    Optimize: 70,
-    Newbie: 60,
-    Study: 85,
-  },
-  {
-    metric: "PR2",
-    Basic: 75,
-    "Clean Code": 65,
-    Optimize: 95,
-    Newbie: 55,
-    Study: 70,
-  },
-  {
-    metric: "PR3",
-    Basic: 85,
-    "Clean Code": 80,
-    Optimize: 75,
-    Newbie: 65,
-    Study: 90,
-  },
-  {
-    metric: "PR4",
-    Basic: 70,
-    "Clean Code": 95,
-    Optimize: 65,
-    Newbie: 80,
-    Study: 75,
-  },
-  {
-    metric: "PR5",
-    Basic: 65,
-    "Clean Code": 85,
-    Optimize: 80,
-    Newbie: 70,
-    Study: 60,
-  },
-];
+// 예시 데이터에서 가져온거라 medalData 라고 함
+const medalData = {
+    categories: [
+        'PR 1',
+        'PR 2',
+        'PR 3',
+        'PR 4',
+        'PR 5',
+        'PR 6',
+        'PR 7',
+        'PR 8',
+        'PR 9',
+        'PR 10',
+    ],
+    // Basic, Study, Clean Code, Optimize, Newbie 순서로 데이터 입력
+    series: [
+        { name: 'Basic', data: [10, 0, 30, 0, 50, 0, 0, 0, 0, 0] },
+        { name: 'Study', data: [0, 0, 0, 0, 0, 0, 50, 0, 0, 0] },
+        { name: 'Clean Code', data: [0, 0, 0, 0, 0, 43, 0, 80, 0, 0] },
+        { name: 'Optimize', data: [0, 0, 0, 80, 0, 0, 0, 0, 30, 0] },
+        { name: 'Newbie', data: [0, 83, 0, 0, 0, 0, 0, 0, 0, 100] }
+    ]
+};
+
+const HighChartBar = () => {
+    const categories = ["S", "A", "B", "C", "D"];
+    const perCategoryHeight = 135; // 각 카테고리에 할당할 높이 (픽셀 단위)
+    const chartHeight = categories.length * perCategoryHeight;
+
+    const chartOptions = {
+        chart: {
+            type: "bar",
+            height: chartHeight, // 동적으로 계산된 차트 높이 설정
+        },
+        title: {
+            text: "",
+        },
+        xAxis: {
+            categories: categories,
+            title: {
+                text: null,
+            },
+            gridLineWidth: 5,
+            lineWidth: 1,
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: "개수",
+                align: "high",
+            },
+            labels: {
+                overflow: "justify",
+            },
+            gridLineWidth: 0,
+            lineWidth: 1,
+        },
+        tooltip: {
+            valueSuffix: " 개",
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: "50%",
+                dataLabels: {
+                    enabled: true,
+                },
+                groupPadding: 0.2,
+            },
+        },
+        legend: {
+            layout: "vertical",
+            align: "right",
+            verticalAlign: "top",
+            x: -40,
+            y: 80,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor: "#FFFFFF",
+            shadow: true,
+        },
+        credits: {
+            enabled: false,
+        },
+        series: [
+            {
+                name: "코드 구조",
+                data: [3, 0, 0, 2, 1],
+            },
+            {
+                name: "성능",
+                data: [1, 1, 0, 0, 0],
+            },
+            {
+                name: "보안",
+                data: [3, 0, 0, 0, 0],
+            },
+            {
+                name: "가독성",
+                data: [2, 0, 0, 0, 1],
+            },
+            {
+                name: "버그 가능성",
+                data: [1, 1, 0, 1, 0],
+            },
+        ],
+    };
+
+    const containerStyle = {
+        minWidth: "310px",
+        maxWidth: "800px",
+        margin: "1em auto",
+    };
+
+    return (
+        <div style={containerStyle}>
+            <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+        </div>
+    );
+};
 
 const GRAPHS = [
   {
     title: "PR별 점수 지표",
-    component: (data = radarData) => (
-      <ResponsiveRadar
-        data={data}
-        keys={["Basic", "Study", "Newbie", "Clean Code", "Optimize"]}
-        indexBy="metric"
-        maxValue={100}
-        margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
-        borderColor={{ from: "color" }}
-        gridLabelOffset={36}
-        dotSize={10}
-        dotColor={{ theme: "background" }}
-        dotBorderWidth={2}
-        colors={Object.values(MODE_COLORS).map((color) => color.text)}
-        blendMode="multiply"
-        motionConfig="wobbly"
-        legends={[
-          {
-            anchor: "top-left",
-            direction: "column",
-            translateX: -50,
-            translateY: -40,
-            itemWidth: 100,
-            itemHeight: 20,
-            itemTextColor: "#999",
-            symbolSize: 12,
-            symbolShape: "circle",
-            effects: [
-              {
-                on: "hover",
-                style: {
-                  itemTextColor: "#000",
-                },
-              },
-            ],
+    component: () => {
+      const styles = {
+        container: { height: '600px' },
+        figure: { minWidth: '320px', maxWidth: '800px', margin: '1em auto', textAlign: 'center', marginTop: '100px' },
+      };
+
+      const options = {
+        colors: ['#FF794E', '#BC6FCD', '#70BF73', '#4DABF5', '#FFCD39'],
+        chart: {
+          type: 'column',
+          inverted: true,
+          polar: true,
+          backgroundColor: '#ffffff',
+        },
+        title: {
+          text: '',
+          align: 'center',
+          style: {
+            fontSize: '24px',
+            color: '#000000',
           },
-        ]}
-      />
-    ),
+        },
+        tooltip: { outside: false, zIndex: 1000 },
+        pane: { size: '100%', innerSize: '10%', endAngle: 270 },
+        xAxis: {
+          categories: medalData.categories,
+          tickInterval: 1,
+          labels: {
+            align: 'right',
+            useHTML: true,
+            allowOverlap: true,
+            step: 1,
+            y: 3,
+            style: { fontSize: '13px' },
+            formatter: function() {
+              if (typeof this.value === 'string') {
+                return this.value.replace(' ', '&nbsp;');
+              }
+              return String(this.value);
+            }
+          },
+          lineWidth: 0,
+          gridLineWidth: 0,
+        },
+        yAxis: {
+          lineWidth: 0,
+          tickInterval: 25,
+          reversedStacks: false,
+          endOnTick: true,
+          showLastLabel: true,
+          gridLineWidth: 5,
+        },
+        plotOptions: {
+          column: {
+            stacking: 'normal',
+            borderWidth: 0,
+            pointPadding: 0,
+            groupPadding: 0.15,
+            borderRadius: '50%',
+          }
+        },
+        series: medalData.series
+      };
+
+      return (
+        <div style={styles.figure}>
+          <div style={styles.container}>
+            <HighchartsReact highcharts={Highcharts} options={options} />
+          </div>
+        </div>
+      );
+    },
   },
   {
-    title: "등급별 분포",
-    component: () => (
-      <ResponsivePie
-        data={[
-          { id: "S", value: 20, color: GRADE_COLORS.S },
-          { id: "A", value: 30, color: GRADE_COLORS.A },
-          { id: "B", value: 25, color: GRADE_COLORS.B },
-          { id: "C", value: 15, color: GRADE_COLORS.C },
-          { id: "D", value: 10, color: GRADE_COLORS.D },
-        ]}
-        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-        innerRadius={0.5}
-        padAngle={0.7}
-        cornerRadius={3}
-        colors={{ datum: "data.color" }}
-        arcLinkLabelsSkipAngle={10}
-        arcLinkLabelsTextColor="#333333"
-        arcLinkLabelsThickness={2}
-        arcLinkLabelsColor={{ from: "color" }}
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor="#ffffff"
-      />
-    ),
-  },
-  {
-    title: "이슈 유형별 분포",
-    component: () => (
-      <ResponsivePie
-        data={[
-          { id: "코드 구조", value: 30, color: ISSUE_TYPE_COLORS["코드 구조"] },
-          { id: "성능", value: 25, color: ISSUE_TYPE_COLORS["성능"] },
-          { id: "보안", value: 15, color: ISSUE_TYPE_COLORS["보안"] },
-          { id: "가독성", value: 20, color: ISSUE_TYPE_COLORS["가독성"] },
-          {
-            id: "버그 가능성",
-            value: 10,
-            color: ISSUE_TYPE_COLORS["버그 가능성"],
-          },
-        ]}
-        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-        innerRadius={0.5}
-        padAngle={0.7}
-        cornerRadius={3}
-        colors={{ datum: "data.color" }}
-        arcLinkLabelsSkipAngle={10}
-        arcLinkLabelsTextColor="#333333"
-        arcLinkLabelsThickness={2}
-        arcLinkLabelsColor={{ from: "color" }}
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor="#ffffff"
-      />
-    ),
-  },
-  {
-    title: "시간별 성능 추이",
-    component: () => (
-      <ResponsiveLine
-        data={[
-          {
-            id: "성능 점수",
-            data: [
-              { x: "1월", y: 85 },
-              { x: "2월", y: 78 },
-              { x: "3월", y: 92 },
-              { x: "4월", y: 88 },
-            ],
-          },
-        ]}
-        margin={{ top: 50, right: 60, bottom: 50, left: 80 }}
-        xScale={{ type: "point" }}
-        yScale={{ type: "linear", min: 0, max: 100 }}
-        axisTop={null}
-        axisRight={null}
-        pointSize={10}
-        pointColor={{ theme: "background" }}
-        pointBorderWidth={2}
-        pointBorderColor={{ from: "serieColor" }}
-        enableArea={true}
-        areaOpacity={0.15}
-        useMesh={true}
-        enableGridX={false}
-      />
-    ),
+    title: "등급 및 이슈 유형별 분포",
+    component: () => <HighChartBar />,
   },
 ];
 
@@ -316,7 +355,6 @@ const Report = ({ isDarkMode }) => {
   const [reportData, setReportData] = useState([]);
   const [modalItems, setModalItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
   const [isLoadingPRs, setIsLoadingPRs] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -612,7 +650,7 @@ const Report = ({ isDarkMode }) => {
   }, [currentPage]);
 
   return (
-    <ReportWrapper>
+    <ReportWrapper isDarkMode={isDarkMode}>
       <PageTitle isDarkMode={isDarkMode}>Report</PageTitle>
       <CategoryBar isDarkMode={isDarkMode}>
         <CategoryItem
@@ -924,6 +962,9 @@ const ReportWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
   margin-left: 10px;
+  // background-color: ${({ isDarkMode }) => (isDarkMode ? '#121212' : '#f0f0f0')};
+  background-color: '#f0f0f0';
+  padding: 20px;
 `;
 
 const PageTitle = styled.h1`
@@ -1423,18 +1464,52 @@ const GraphNavButton = styled.button`
   }
 `;
 
-const GraphTitle = styled.h3`
+const GraphTitle = styled.h2`
   text-align: center;
   margin-bottom: 20px;
-  font-size: 18px;
-  color: #333;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
-const ContentText = styled.p`
+const ContentText = styled(ReactMarkdown).attrs({
+  components: {
+    code({ node, inline, className, children, ...props }) {
+      const match = /language-(\w+)/.exec(className || "");
+      return !inline && match ? (
+        <SyntaxHighlighter
+          style={dark}
+          language={match[1]}
+          PreTag="div"
+          {...props}
+        >
+          {String(children).replace(/\n$/, "")}
+        </SyntaxHighlighter>
+      ) : (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+  },
+})`
   font-size: 14px;
   line-height: 1.6;
   color: #666;
   margin-bottom: 12px;
+  text-align: left;
+
+  /* 필요에 따라 추가 스타일링 가능 */
+  
+  /* 예: 링크 스타일 변경 */
+  a {
+    color: #1e90ff;
+    text-decoration: underline;
+  }
+
+  /* 이미지 스타일 변경 */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
 `;
 
 const ReportContentWrapper = styled.div`

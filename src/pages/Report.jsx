@@ -69,7 +69,7 @@ const ISSUE_TYPE_COLORS = {
   기타: "#748CAB",
 };
 
-// 그래프 데이터 예시
+// 예시 데이터에서 가져온거라 medalData 라고 함
 const medalData = {
     categories: [
         'PR 1',
@@ -94,15 +94,20 @@ const medalData = {
 };
 
 const HighChartBar = () => {
+    const categories = ["S", "A", "B", "C", "D"];
+    const perCategoryHeight = 135; // 각 카테고리에 할당할 높이 (픽셀 단위)
+    const chartHeight = categories.length * perCategoryHeight;
+
     const chartOptions = {
         chart: {
             type: "bar",
+            height: chartHeight, // 동적으로 계산된 차트 높이 설정
         },
         title: {
             text: "",
         },
         xAxis: {
-            categories: ["S", "A", "B", "C", "D"],
+            categories: categories,
             title: {
                 text: null,
             },

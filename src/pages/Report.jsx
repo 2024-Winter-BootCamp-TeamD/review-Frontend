@@ -1194,7 +1194,7 @@ const CheckCircle = styled.div`
 `;
 
 const ReviewMode = styled.div`
-  width: 110px;
+  width: 120px;
   color: ${(props) => MODE_COLORS[props.mode]?.text || "#666"};
   background-color: ${(props) => MODE_COLORS[props.mode]?.bg || "#f5f5f5"};
   padding: 5px 10px;
@@ -1206,7 +1206,7 @@ const ReviewMode = styled.div`
 
 const PRTitle = styled.div`
   flex: 1;
-  font-size: 1px;
+  font-size: 16px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
 `;
 
@@ -1226,7 +1226,7 @@ const Grade = styled.div`
 `;
 
 const IssueType = styled.div`
-  width: 130px;
+  width: 120px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
   text-align: right;
   flex-shrink: 0;

@@ -83,7 +83,7 @@ body {
 .sidebar-logo {
   padding-top: 10vh;
   padding-top: 10vh;
-  font-size: calc(min(8vw * 0.5, 63px));
+  font-size: calc(min(8vw * 0.4, 63px));
   margin-bottom: 3vh;
   font-family: "Passion One", serif;
 }

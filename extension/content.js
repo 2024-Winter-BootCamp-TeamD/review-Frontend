@@ -520,6 +520,7 @@ async function startReview(selectedText, reviewContent) {
                   reviewContent.textContent += content[i];
                   await new Promise((resolve) => setTimeout(resolve, 10)); // 50ms 딜레이 추가
                 }
+                reviewContent.scrollTop = reviewContent.scrollHeight;
               }
             } catch (error) {
               console.error("JSON 파싱 오류:", error);

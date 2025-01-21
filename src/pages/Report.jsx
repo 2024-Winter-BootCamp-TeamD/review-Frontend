@@ -415,6 +415,7 @@ const Report = ({ isDarkMode }) => {
       setSelectedReport(newReport);
       setIsDetailModalOpen(true);
       handleReportClick(newReport);
+      loadReports();
     } catch (error) {
       setIsLoading(false);
       console.error("보고서 생성 실패:", error);

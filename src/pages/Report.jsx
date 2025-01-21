@@ -106,8 +106,8 @@ const HighChartBar = () => {
             title: {
                 text: null,
             },
-            gridLineWidth: 1,
-            lineWidth: 0,
+            gridLineWidth: 5,
+            lineWidth: 1,
         },
         yAxis: {
             min: 0,
@@ -119,6 +119,7 @@ const HighChartBar = () => {
                 overflow: "justify",
             },
             gridLineWidth: 0,
+            lineWidth: 1,
         },
         tooltip: {
             valueSuffix: " 개",
@@ -129,7 +130,7 @@ const HighChartBar = () => {
                 dataLabels: {
                     enabled: true,
                 },
-                groupPadding: 0.1,
+                groupPadding: 0.2,
             },
         },
         legend: {
@@ -149,11 +150,11 @@ const HighChartBar = () => {
         series: [
             {
                 name: "코드 구조",
-                data: [0, 0, 0, 2, 1],
+                data: [3, 0, 0, 2, 1],
             },
             {
                 name: "성능",
-                data: [0, 1, 0, 0, 0],
+                data: [1, 1, 0, 0, 0],
             },
             {
                 name: "보안",
@@ -161,11 +162,11 @@ const HighChartBar = () => {
             },
             {
                 name: "가독성",
-                data: [0, 0, 0, 0, 1],
+                data: [2, 0, 0, 0, 1],
             },
             {
                 name: "버그 가능성",
-                data: [0, 1, 0, 1, 0],
+                data: [1, 1, 0, 1, 0],
             },
         ],
     };
@@ -176,80 +177,9 @@ const HighChartBar = () => {
         margin: "1em auto",
     };
 
-    const dataTableStyle = {
-        fontFamily: "Verdana, sans-serif",
-        borderCollapse: "collapse",
-        border: "1px solid #ebebeb",
-        margin: "10px auto",
-        textAlign: "center",
-        width: "100%",
-        maxWidth: "500px",
-    };
-
-    const captionStyle = {
-        padding: "1em 0",
-        fontSize: "1.2em",
-        color: "#555",
-    };
-
     return (
         <div style={containerStyle}>
             <HighchartsReact highcharts={Highcharts} options={chartOptions} />
-            <table style={dataTableStyle}>
-                <caption style={captionStyle}>데이터 테이블</caption>
-                <thead>
-                    <tr>
-                        <th>등급</th>
-                        <th>코드 구조</th>
-                        <th>성능</th>
-                        <th>보안</th>
-                        <th>가독성</th>
-                        <th>버그 가능성</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>S</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>3</td>
-                        <td>0</td>
-                        <td>0</td>
-                    </tr>
-                    <tr>
-                        <td>A</td>
-                        <td>0</td>
-                        <td>1</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>1</td>
-                    </tr>
-                    <tr>
-                        <td>B</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    </tr>
-                    <tr>
-                        <td>C</td>
-                        <td>2</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>1</td>
-                    </tr>
-                    <tr>
-                        <td>D</td>
-                        <td>1</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>1</td>
-                        <td>0</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     );
 };

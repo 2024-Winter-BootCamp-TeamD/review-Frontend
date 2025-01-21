@@ -622,13 +622,13 @@ const Report = ({ isDarkMode }) => {
           isDarkMode={isDarkMode}
         ></CategoryItem>
         <CategoryItem
-          style={{ width: "125px", justifyContent: "center" }}
+          style={{ width: "125px", justifyContent: "center"}}
           isDarkMode={isDarkMode}
         >
           Report Name
         </CategoryItem>
         <CategoryItem
-          style={{ width: "105px", justifyContent: "center" }}
+          style={{ width: "105px", justifyContent: "center", paddingLeft: "1vw" }}
           isDarkMode={isDarkMode}
         >
           Date
@@ -637,7 +637,7 @@ const Report = ({ isDarkMode }) => {
           style={{
             flex: 1,
             justifyContent: "flex-start",
-            paddingLeft: "3.5vw",
+            paddingLeft: "4.5vw",
           }}
           isDarkMode={isDarkMode}
         >
@@ -647,20 +647,20 @@ const Report = ({ isDarkMode }) => {
           style={{
             flex: 1,
             justifyContent: "flex-start",
-            paddingRight: "1.5vw",
+            paddingLeft: "2.5vw",
           }}
           isDarkMode={isDarkMode}
         >
           Used Review Modes
         </CategoryItem>
         <CategoryItem
-          style={{ width: "110px", justifyContent: "center" }}
+          style={{ width: "110px", justifyContent: "center", paddingLeft: "6vw" }}
           isDarkMode={isDarkMode}
         >
           Download
         </CategoryItem>
         <CategoryItem
-          style={{ width: "100px", justifyContent: "center" }}
+          style={{ width: "100px", justifyContent: "center", paddingLeft: "1.4vw" }}
           isDarkMode={isDarkMode}
         >
           Delete
@@ -957,15 +957,17 @@ const ReportImage = styled.div`
 `;
 
 const CreatedDate = styled.span`
-  width: 100px;
+  width: 110px;
+  margin-right: 20px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
   font-size: 18px;
+  font-weight: 300;
 `;
 
 const ReviewCount = styled.div`
   flex: 1;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
 `;
 
@@ -990,11 +992,13 @@ const IconButton = styled.button`
 `;
 
 const DownloadButton = styled(IconButton)`
+  margin-right: -45px;
   width: 100px;
 `;
 
 const DeleteButton = styled(IconButton)`
   width: 100px;
+  margin-right: -15px;
 `;
 
 const ReportItem = styled.div`
@@ -1019,7 +1023,7 @@ const CategoryBar = styled.div`
   display: flex;
   align-items: center;
   width: 87rem;
-  height: auto;
+  height: 40px;
   padding: 0 20px;
   margin-top: 24px;
   margin-left: 60px;
@@ -1044,9 +1048,10 @@ const CategoryItem = styled.div`
 `;
 
 const ReportTitle = styled.h1`
-  width: 120px;
+  width: 130px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
   font-size: 16px;
+  font-weight: 800;
 `;
 
 const ReportList = styled.div`
@@ -1191,7 +1196,7 @@ const CheckCircle = styled.div`
 `;
 
 const ReviewMode = styled.div`
-  width: 120px;
+  width: 110px;
   color: ${(props) => MODE_COLORS[props.mode]?.text || "#666"};
   background-color: ${(props) => MODE_COLORS[props.mode]?.bg || "#f5f5f5"};
   padding: 5px 10px;
@@ -1203,7 +1208,7 @@ const ReviewMode = styled.div`
 
 const PRTitle = styled.div`
   flex: 1;
-  font-size: 16px;
+  font-size: 1px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
 `;
 
@@ -1223,7 +1228,7 @@ const Grade = styled.div`
 `;
 
 const IssueType = styled.div`
-  width: 120px;
+  width: 130px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
   text-align: right;
   flex-shrink: 0;

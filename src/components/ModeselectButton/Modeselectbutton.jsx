@@ -25,6 +25,7 @@ const Button = styled.button`
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease;
   font-size: clamp(16px, 2vw, 24px);
+  font-family: 'poopins', sans-serif;
 
   &:hover {
     transform: scale(1.05);

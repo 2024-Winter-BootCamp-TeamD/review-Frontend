@@ -1023,13 +1023,13 @@ const CategoryBar = styled.div`
   display: flex;
   align-items: center;
   width: 87rem;
-  height: 40px;
+  height: 45px;
   padding: 0 20px;
-  margin-top: 24px;
+  margin-top: 4px;
   margin-left: 60px;
   margin-bottom: 0px;
   gap: 40px;
-  border-radius: 15px;
+  border-radius: 10px;
   background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ECECEC")};
   border: ${({ isDarkMode }) =>
     isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030"};

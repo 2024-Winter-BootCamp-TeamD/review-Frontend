@@ -407,14 +407,12 @@ function createModal(selectedText) {
             </div>
           </div>
           <div class="modal-right-column">
-            <div class="review-header">
               <h3>리뷰 내용</h3>
               <button class="copy-button">
                 <svg width="16" height="16" viewBox="0 0 24 24">
                   <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>
                 </svg>
               </button>
-            </div>
             <div class="review-content"></div>
           </div>
         </div>
@@ -445,6 +443,7 @@ function createModal(selectedText) {
   startReview(selectedText, modal.querySelector(".review-content"));
 }
 
+// 리뷰 시작 함수
 // 리뷰 시작 함수
 async function startReview(selectedText, reviewContent) {
   try {
@@ -491,47 +490,40 @@ async function startReview(selectedText, reviewContent) {
       throw new Error(errorData.error || "리뷰 요청에 실패했습니다.");
     }
 
-    const contentType = response.headers.get("Content-Type");
+    // 스트리밍 응답 처리
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
 
-    if (contentType && contentType.includes("application/json")) {
-      // JSON 응답 처리
-      const jsonResponse = await response.json();
-      reviewContent.innerHTML = `<div class="review-result">${jsonResponse.result || jsonResponse.message}</div>`;
-    } else {
-      // 스트리밍 응답 처리
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
 
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
+      buffer += decoder.decode(value, { stream: true });
 
-        buffer += decoder.decode(value, { stream: true });
+      // 버퍼에서 이벤트 데이터 추출
+      const events = buffer.split("\n\n");
+      buffer = events.pop() || ""; // 남은 데이터는 버퍼에 보관
 
-        const lines = buffer.split("\n\n");
-        buffer = lines.pop() || "";
+      for (const event of events) {
+        if (event.trim()) {
+          const eventData = event.replace(/^data: /, "").trim();
+          if (eventData) {
+            try {
+              const parsedData = JSON.parse(eventData);
 
-        for (const line of lines) {
-          if (line.trim()) {
-            const newContent = document.createElement("div");
-            const messageText = line.replace("Refactory: ", "");
-            newContent.textContent = messageText;
-
-            if (messageText.includes("Review start")) {
-              newContent.classList.add("review-start");
-            } else if (messageText.includes("Review completed")) {
-              newContent.classList.add("review-completed");
-            } else if (messageText.includes("Review result")) {
-              newContent.classList.add("review-result");
-              newContent.textContent = messageText.replace(
-                "Review result: ",
-                ""
-              );
+              // AI의 스트리밍된 응답 처리
+              if (parsedData.choices && parsedData.choices[0].delta.content) {
+                // 텍스트를 한 글자씩 추가하여 스트리밍 효과 강조
+                const content = parsedData.choices[0].delta.content;
+                for (let i = 0; i < content.length; i++) {
+                  reviewContent.textContent += content[i];
+                  await new Promise((resolve) => setTimeout(resolve, 10)); // 50ms 딜레이 추가
+                }
+              }
+            } catch (error) {
+              console.error("JSON 파싱 오류:", error);
             }
-
-            reviewContent.appendChild(newContent);
-            reviewContent.scrollTop = reviewContent.scrollHeight;
           }
         }
       }

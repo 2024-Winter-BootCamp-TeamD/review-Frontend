@@ -387,7 +387,6 @@ floatingbutton-menu-open-button {
 .modal-header {
   display: flex;
   justify-content: flex-end;
-  padding: 8px;
 }
 
 .modal-close {
@@ -396,7 +395,6 @@ floatingbutton-menu-open-button {
   color: #fff;
   font-size: 24px;
   cursor: pointer;
-  padding: 4px;
 }
 
 .modal-body {
@@ -411,7 +409,7 @@ floatingbutton-menu-open-button {
 .modal-left-column,
 .modal-right-column {
   flex: 1;
-  padding: 16px;
+  padding: 4px 16px 4px 16px;
   overflow-y: auto;
 }
 
@@ -472,8 +470,8 @@ floatingbutton-menu-open-button {
 }
 
 h3 {
-  margin: 0;
-  font-size: 16px;
+  margin-bottom: 4px;
+  font-size: 24px;
   font-weight: 500;
   display: inline-block; /* 인라인 블록으로 변경 */
 }

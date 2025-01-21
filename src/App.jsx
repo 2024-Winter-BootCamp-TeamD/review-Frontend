@@ -14,14 +14,14 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    const savedState = localStorage.getItem('toggleState') === 'true';
+    const savedState = localStorage.getItem("toggleState") === "true";
     setIsDarkMode(savedState);
     document.body.classList.toggle("dark-mode", savedState);
   }, []);
 
   const toggleDarkMode = (newState) => {
     setIsDarkMode(newState);
-    localStorage.setItem('toggleState', newState);
+    localStorage.setItem("toggleState", newState);
     document.body.classList.toggle("dark-mode", newState);
   };
 
@@ -32,9 +32,19 @@ function App() {
         <div className="content">
           <Routes>
             <Route path="/" element={<Dashboard isDarkMode={isDarkMode} />} />
-            <Route path="/history" element={<History isDarkMode={isDarkMode} />} />
-            <Route path="/repositories" element={<Repositories isDarkMode={isDarkMode} />} />
-            <Route path="/report" element={<Report isDarkMode={isDarkMode} />} />
+            <Route
+              path="/history"
+              element={<History isDarkMode={isDarkMode} />}
+            />
+            <Route
+              path="/repositories"
+              element={<Repositories isDarkMode={isDarkMode} />}
+            />
+            <Route
+              path="/report"
+              element={<Report isDarkMode={isDarkMode} />}
+            />
+            <Route path="/home" element={<Home />} />
           </Routes>
         </div>
         <div className="top-buttons">
@@ -47,4 +57,3 @@ function App() {
 }
 
 export default App;
-

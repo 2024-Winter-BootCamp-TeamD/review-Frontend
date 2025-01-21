@@ -221,10 +221,9 @@ const Repositories = ({ isDarkMode }) => {
   useEffect(() => {
     const fetchRepos = async () => {
       try {
-        const user_id = 1;
         const [inactiveReposResponse, activeReposResponse] = await Promise.all([
-          getInactiveReposById(user_id),
-          getActiveReposById(user_id),
+          getInactiveReposById(),
+          getActiveReposById(),
         ]);
 
         const inactiveRepos = inactiveReposResponse.repositories || [];

@@ -1,10 +1,10 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
 import "./Sidebar.css";
 import SidebarButton from "../SidebarButton/SidebarButton.jsx";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const Sidebar = ({isDarkMode}) => {
+const Sidebar = ({ isDarkMode }) => {
   const buttons = ["Dashboard", "History", "Repositories", "Report"];
   const [activeButton, setActiveButton] = useState("");
   const navigate = useNavigate();
@@ -16,7 +16,8 @@ const Sidebar = ({isDarkMode}) => {
       setActiveButton("Dashboard");
     } else {
       const currentPage = path.substring(1);
-      const formattedPage = currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
+      const formattedPage =
+        currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
       setActiveButton(formattedPage);
     }
   }, [location]);
@@ -35,7 +36,7 @@ const Sidebar = ({isDarkMode}) => {
   };
 
   return (
-    <div 
+    <div
       className={`sidebar ${isDarkMode ? "sidebar-dark-mode" : "sidebar-light-mode"}`}
     >
       <div className="sidebar-rounded-top"></div>
@@ -53,7 +54,7 @@ const Sidebar = ({isDarkMode}) => {
 };
 
 Sidebar.propTypes = {
-  isDarkMode: PropTypes.bool.isRequired
+  isDarkMode: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;

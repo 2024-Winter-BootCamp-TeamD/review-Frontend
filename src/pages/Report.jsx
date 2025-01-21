@@ -24,6 +24,8 @@ import 'highcharts/modules/exporting';
 import 'highcharts/modules/export-data';
 import 'highcharts/modules/accessibility';
 import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
@@ -1465,12 +1467,32 @@ const GraphTitle = styled.h2`
   color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
-const ContentText = styled(ReactMarkdown)`
-  /* 기존 <p> 태그 대신 ReactMarkdown을 사용하여 스타일 적용 */
+const ContentText = styled(ReactMarkdown).attrs({
+  components: {
+    code({ node, inline, className, children, ...props }) {
+      const match = /language-(\w+)/.exec(className || "");
+      return !inline && match ? (
+        <SyntaxHighlighter
+          style={dark}
+          language={match[1]}
+          PreTag="div"
+          {...props}
+        >
+          {String(children).replace(/\n$/, "")}
+        </SyntaxHighlighter>
+      ) : (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+  },
+})`
   font-size: 14px;
   line-height: 1.6;
   color: #666;
   margin-bottom: 12px;
+  text-align: left;
 
   /* 필요에 따라 추가 스타일링 가능 */
   
@@ -1486,7 +1508,6 @@ const ContentText = styled(ReactMarkdown)`
     height: auto;
   }
 `;
-
 
 const ReportContentWrapper = styled.div`
   display: flex;
@@ -1561,16 +1582,6 @@ const TitleInput = styled.input`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-`;
-
-const GraphSection = styled.div`
-  margin-top: 40px;
-  display: flex;
-  justify-content: center;
-`;
-
-const GraphWrapper = styled.div`
-  width: 800px;
 `;
 
 export default Report;

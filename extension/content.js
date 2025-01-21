@@ -314,24 +314,30 @@ function createDragButton() {
 function initializeDragHandler() {
   let dragButton = null;
   let isButtonVisible = false;
+  let dragStartPosition = null;
+
+  // mousedown 이벤트로 드래그 시작 위치 저장
+  document.addEventListener("mousedown", (e) => {
+    dragStartPosition = {
+      x: e.clientX,
+      y: e.clientY,
+    };
+  });
 
   // selectionchange 이벤트로 텍스트 선택 감지
   document.addEventListener("selectionchange", () => {
     const selection = window.getSelection();
     const selectedText = selection.toString().trim();
 
-    if (selectedText && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const rect = range.getBoundingClientRect();
-
+    if (selectedText && selection.rangeCount > 0 && dragStartPosition) {
       if (!dragButton) {
         dragButton = createDragButton();
       }
 
-      // 버튼 위치 설정
+      // 버튼 위치를 드래그 시작 위치로 설정
       dragButton.style.position = "fixed";
-      dragButton.style.top = `${rect.top + window.scrollY - 30}px`;
-      dragButton.style.left = `${rect.right + window.scrollX}px`;
+      dragButton.style.top = `${dragStartPosition.y - 40}px`; // 커서 위 40px
+      dragButton.style.left = `${dragStartPosition.x - 16}px`; // 커서 중앙 정렬
       dragButton.style.display = "flex";
       isButtonVisible = true;
 
@@ -348,7 +354,6 @@ function initializeDragHandler() {
   // mousedown 이벤트에서 버튼 외 영역 클릭 감지
   document.addEventListener("mousedown", (e) => {
     if (dragButton && isButtonVisible && !dragButton.contains(e.target)) {
-      // 약간의 지연 시간을 두어 클릭 이벤트가 처리되도록 함
       setTimeout(() => {
         const selection = window.getSelection();
         const selectedText = selection.toString().trim();
@@ -359,6 +364,14 @@ function initializeDragHandler() {
         }
       }, 200);
     }
+  });
+
+  // mouseup 이벤트로 드래그 종료 감지
+  document.addEventListener("mouseup", () => {
+    // 드래그가 끝나면 시작 위치 초기화
+    setTimeout(() => {
+      dragStartPosition = null;
+    }, 100);
   });
 }
 

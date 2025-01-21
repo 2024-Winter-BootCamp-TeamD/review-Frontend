@@ -12,7 +12,7 @@ const DarkMode = ({ onToggle, isDarkMode }) => {
     if (newState) {
       // 다크 모드일 때 배경색과 이미지 설정
       document.body.style.background = `
-        linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
+        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
         url('https://4kwallpapers.com/images/wallpapers/milky-way-starry-sky-night-mountains-lake-reflection-cold-5k-3840x2160-287.jpg')
       `;
       document.body.style.backgroundSize = "cover";

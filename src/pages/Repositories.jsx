@@ -33,7 +33,7 @@ const RepositoryTitle = styled.h1`
   font-family: Poppins;
   font-size: 30px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 20px; /* 66.667% */
   letter-spacing: 0.01px;
   margin-top: 42px;
@@ -138,7 +138,7 @@ const RepoHeader = styled.div`
 `;
 
 const RepoName = styled.span`
-  font-weight: 600;
+  font-weight: 500;
   font-size: 16px;
 `;
 

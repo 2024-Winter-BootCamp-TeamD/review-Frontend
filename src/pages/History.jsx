@@ -14,15 +14,18 @@ const HistoryContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF')};
+=======
   background-color: ${({ isDarkMode }) =>
     isDarkMode ? "#00000000" : "#FFFFFFFF"};
 `;
 
 const PageName = styled.div`
   position: absolute;
-  top: -10px;
+  top: -30px;
   left: 50px;
-  font-size: 40px;
+  font-size: 50px;
+  font-weight: bold;
   margin: 0;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
 `;
@@ -135,7 +138,7 @@ const BoxTitle = styled.p`
   left: 20px;
   margin: 0;
   font-size: 25px;
-  font-weight: bold;
+  font-weight: 500;
   z-index: 1000;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
 `;
@@ -188,8 +191,8 @@ const LegendItem = styled.div`
 
 const LegendCount = styled.div`
   font-size: 15px;
-  font-weight: bold;
-  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
+  font-weight: 500;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 const History = ({ isDarkMode }) => {
@@ -280,9 +283,7 @@ const History = ({ isDarkMode }) => {
                   <LegendItem mode={mode}>
                     <span>{mode}</span>
                   </LegendItem>
-                  <LegendCount isDarkMode={isDarkMode}>
-                    ……………… {count}
-                  </LegendCount>
+                  <LegendCount isDarkMode={isDarkMode}>∙∙∙∙∙∙∙∙ {count}</LegendCount>
                 </LegendContainer>
               ))}
             </ChartLegend>

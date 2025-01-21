@@ -6,7 +6,6 @@ import History from "./pages/History.jsx";
 import Repositories from "./pages/Repositories.jsx";
 import Report from "./pages/Report.jsx";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
-import Home from "./pages/Home.jsx";
 import "./App.css";
 import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
 import ModeSwitchButton from "./components/ModeSwitchButton/ModeSwitchButton.jsx";
@@ -50,7 +49,7 @@ function App() {
         </div>
         <div className="top-buttons">
           <ModeSwitchButton onToggle={toggleDarkMode} isDarkMode={isDarkMode} />
-          <NotificationButton hasNotification={true} notificationCount={0} isDarkMode={isDarkMode}/>
+          <NotificationButton hasNotification={true} notificationCount={3} isDarkMode={isDarkMode}/>
         </div>
       </div>
     </Router>

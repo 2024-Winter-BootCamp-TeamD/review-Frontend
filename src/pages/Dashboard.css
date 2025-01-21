@@ -68,8 +68,8 @@ body.dark-mode .dashboard-profile-container {
   color: #777;
   box-shadow: 0vw 2px 4px rgba(0, 0, 0, 0.2);
   height: 30vh; /* 고정 높이 */
-  padding-left: 2%;
-  padding-right: 2%;
+  padding-left: 5%;
+  padding-right: 8%;
   border-radius: 8px;
 }
 
@@ -123,6 +123,7 @@ body.dark-mode .dashboard-github-graph {
 .dashboard-line-chart h3 {
   font-size: 1.5vw; /* 제목 크기 조정 */
   margin: 2% 0% 2% 3%;
+  font-weight: 500;
 }
 
 .dashboard-donut-chart-container {
@@ -151,14 +152,17 @@ body.dark-mode .dashboard-github-graph {
 }
 
 .dashboard-chart-title h3 {
-  font-size: 24px; /* 제목 폰트 크기 */
-  font-weight: bold;
-  margin-bottom: 5px; /* 제목과 부제목 간 간격 */
+  font-size: 1.5vw; /* 제목 폰트 크기 */
+  font-weight: 500;
+  margin: 2% 0% 2% 3%;
+  margin-bottom: 10px; /* 제목과 부제목 간 간격 */
+  margin-top: -3%;
 }
 
 .dashboard-chart-title p {
   font-size: 16px; /* 부제목 폰트 크기 */
   color: #777;
+  margin-left: 10px;
 }
 
 .dashboard-content-wrapper {
@@ -190,7 +194,7 @@ body.dark-mode .dashboard-github-graph {
   height: 4vh;
   border-radius: 4px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 500;
   color: #ffffff;
   text-align: center;
   margin-bottom: 1vh;

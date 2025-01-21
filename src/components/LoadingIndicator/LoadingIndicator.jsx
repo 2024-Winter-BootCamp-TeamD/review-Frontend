@@ -7,7 +7,7 @@ const LoadingIndicator = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setLoadingNumber((prev) => (prev >= 100 ? 0 : prev + 1));
-    }, 50);
+    }, 40);
 
     return () => clearInterval(interval);
   }, []);

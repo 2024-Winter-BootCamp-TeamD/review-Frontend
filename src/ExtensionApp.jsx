@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard.jsx";
 import History from "./pages/History.jsx";
@@ -10,7 +10,7 @@ import "./App.css";
 import NotificationButton from "./components/NotificationButton/NotificationButton.jsx";
 import ModeSwitchButton from "./components/ModeSwitchButton/ModeSwitchButton.jsx";
 
-function App() {
+function ExtensionApp() {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -26,34 +26,26 @@ function App() {
   };
 
   return (
-    <Router>
+    <BrowserRouter>
       <div className="app">
         <Sidebar isDarkMode={isDarkMode} />
         <div className="content">
           <Routes>
-            <Route path="/" element={<Dashboard isDarkMode={isDarkMode} />} />
-            <Route
-              path="/history"
-              element={<History isDarkMode={isDarkMode} />}
-            />
-            <Route
-              path="/repositories"
-              element={<Repositories isDarkMode={isDarkMode} />}
-            />
-            <Route
-              path="/report"
-              element={<Report isDarkMode={isDarkMode} />}
-            />
-            <Route path="/home" element={<Home />} />
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<Dashboard isDarkMode={isDarkMode} />} />
+            <Route path="/history" element={<History isDarkMode={isDarkMode} />} />
+            <Route path="/repositories" element={<Repositories isDarkMode={isDarkMode} />} />
+            <Route path="/report" element={<Report isDarkMode={isDarkMode} />} />
+            <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>
         </div>
         <div className="top-buttons">
           <ModeSwitchButton onToggle={toggleDarkMode} isDarkMode={isDarkMode} />
-          <NotificationButton hasNotification={true} notificationCount={3} isDarkMode={isDarkMode}/>
+          <NotificationButton hasNotification={true} notificationCount={3} isDarkMode={isDarkMode} />
         </div>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 
-export default App;
+export default ExtensionApp;

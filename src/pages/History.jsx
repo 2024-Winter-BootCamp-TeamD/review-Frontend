@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import Chart from '../components/Chart/Chart';
-import SearchBar from '../components/SearchBar/SearchBar';
-import Reviews from '../components/Reviews/Reviews';
-import { getPRReviewCategories, getPRReviews } from '../services/prReviewService';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import Chart from "../components/Chart/Chart";
+import SearchBar from "../components/SearchBar/SearchBar";
+import Reviews from "../components/Reviews/Reviews";
+import {
+  getPRReviewCategories,
+  getPRReviews,
+} from "../services/prReviewService";
 
 const HistoryContainer = styled.div`
   position: relative;
@@ -11,16 +14,20 @@ const HistoryContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFFFF')};
+  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF')};
+=======
+  background-color: ${({ isDarkMode }) =>
+    isDarkMode ? "#00000000" : "#FFFFFFFF"};
 `;
 
 const PageName = styled.div`
   position: absolute;
-  top: -10px;
+  top: -30px;
   left: 50px;
-  font-size: 40px;
+  font-size: 50px;
+  font-weight: bold;
   margin: 0;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
 `;
 
 const ContentWrapper = styled.div`
@@ -51,8 +58,9 @@ const ChartBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#FFFFFFFF')};
-  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+  background-color: ${({ isDarkMode }) =>
+    isDarkMode ? "#00000050" : "#FFFFFFFF"};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
 `;
 
 const ReviewListBox = styled.div`
@@ -63,24 +71,26 @@ const ReviewListBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#FFFFFFFF')};
+  background-color: ${({ isDarkMode }) =>
+    isDarkMode ? "#00000050" : "#FFFFFFFF"};
   overflow-y: auto;
-  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
 
   &::-webkit-scrollbar {
     width: 12px;
   }
   &::-webkit-scrollbar-track {
-    background: ${({ isDarkMode }) => (isDarkMode ? '#4A4A4A' : '#D9D9D9')};
+    background: ${({ isDarkMode }) => (isDarkMode ? "#4A4A4A" : "#D9D9D9")};
     border-radius: 10px;
   }
   &::-webkit-scrollbar-thumb {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#777777')};
+    background-color: ${({ isDarkMode }) =>
+      isDarkMode ? "#FFFFFF" : "#777777"};
     border-radius: 10px;
-    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? '#333' : '#f0f0f0')};
+    border: 3px solid ${({ isDarkMode }) => (isDarkMode ? "#333" : "#f0f0f0")};
   }
   &::-webkit-scrollbar-thumb:hover {
-    background-color: ${({ isDarkMode }) => (isDarkMode ? '#c7c7c7' : '#555')};
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#c7c7c7" : "#555")};
   }
 `;
 
@@ -109,15 +119,16 @@ const ReviewDetailsBox = styled.div`
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
-  background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000050' : '#F3F3F3')};
-  border: ${({ isDarkMode }) => (isDarkMode ? '1px solid #FFFFFF' : 'none')};
+  background-color: ${({ isDarkMode }) =>
+    isDarkMode ? "#00000050" : "#F3F3F3"};
+  border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
   overflow: hidden;
 
   pre {
     margin-top: 70px;
     padding: 20px;
     text-align: left;
-    color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+    color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
   }
 `;
 
@@ -127,9 +138,9 @@ const BoxTitle = styled.p`
   left: 20px;
   margin: 0;
   font-size: 25px;
-  font-weight: bold;
+  font-weight: 500;
   z-index: 1000;
-  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
 `;
 
 const ChartLegend = styled.div`
@@ -145,7 +156,8 @@ const LegendContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  opacity: ${({ selectedMode, mode }) => (selectedMode === '' || selectedMode === mode ? 1 : 0.3)};
+  opacity: ${({ selectedMode, mode }) =>
+    selectedMode === "" || selectedMode === mode ? 1 : 0.3};
 `;
 
 const LegendItem = styled.div`
@@ -161,27 +173,32 @@ const LegendItem = styled.div`
   color: #fff;
   text-align: center;
   background-color: ${({ mode }) =>
-    mode === 'BASIC' ? '#FF5722' :
-    mode === 'STUDY' ? '#FFC107' :
-    mode === 'NEWBIE' ? '#70BF73' :
-    mode === 'CLEAN' ? '#4DABF5' :
-    mode === 'OPTIMIZE' ? '#BC6FCD' :
-    '#ccc'};
+    mode === "BASIC"
+      ? "#FF5722"
+      : mode === "STUDY"
+        ? "#FFC107"
+        : mode === "NEWBIE"
+          ? "#70BF73"
+          : mode === "CLEAN"
+            ? "#4DABF5"
+            : mode === "OPTIMIZE"
+              ? "#BC6FCD"
+              : "#ccc"};
   cursor: pointer;
-  opacity: ${({ selectedMode, mode }) => 
+  opacity: ${({ selectedMode, mode }) =>
     selectedMode && selectedMode !== mode ? 0.3 : 1};
 `;
 
 const LegendCount = styled.div`
   font-size: 15px;
-  font-weight: bold;
+  font-weight: 500;
   color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 const History = ({ isDarkMode }) => {
-  const [selectedReview, setSelectedReview] = useState('');
-  const [selectedMode, setSelectedMode] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedReview, setSelectedReview] = useState("");
+  const [selectedMode, setSelectedMode] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [statistics, setStatistics] = useState({
     basic: 0,
     study: 0,
@@ -197,8 +214,7 @@ const History = ({ isDarkMode }) => {
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
-        const user_id = 1;
-        const response = await getPRReviewCategories(user_id);
+        const response = await getPRReviewCategories();
         setStatistics(response.statistics || {});
       } catch (error) {
         console.error("Error fetching statistics:", error);
@@ -212,9 +228,8 @@ const History = ({ isDarkMode }) => {
     const fetchReviews = async () => {
       try {
         setLoading(true);
-        const user_id = 1;
-        const response = await getPRReviews(user_id, currentPage);
-        
+        const response = await getPRReviews(currentPage);
+
         if (response.data) {
           setReviews(response.data);
           setTotalPages(response.totalPages);
@@ -230,11 +245,11 @@ const History = ({ isDarkMode }) => {
   }, [currentPage, selectedMode]);
 
   const handleReviewClick = (review) => {
-    setSelectedReview(review.total_review || '');
+    setSelectedReview(review.total_review || "");
   };
 
   const handleSliceClick = (mode) => {
-    setSelectedMode((prevMode) => (prevMode === mode ? '' : mode));
+    setSelectedMode((prevMode) => (prevMode === mode ? "" : mode));
   };
 
   return (
@@ -247,24 +262,28 @@ const History = ({ isDarkMode }) => {
         <LeftContainer>
           <ChartBox isDarkMode={isDarkMode}>
             <BoxTitle isDarkMode={isDarkMode}>Mode Statistics</BoxTitle>
-            <Chart 
-              onSliceClick={handleSliceClick} 
+            <Chart
+              onSliceClick={handleSliceClick}
               selectedMode={selectedMode}
               isDarkMode={isDarkMode}
             />
             <ChartLegend>
               {[
-                { mode: 'BASIC', count: statistics.basic },
-                { mode: 'STUDY', count: statistics.study },
-                { mode: 'NEWBIE', count: statistics.newbie },
-                { mode: 'CLEAN', count: statistics.clean },
-                { mode: 'OPTIMIZE', count: statistics.optimize }
+                { mode: "BASIC", count: statistics.basic },
+                { mode: "STUDY", count: statistics.study },
+                { mode: "NEWBIE", count: statistics.newbie },
+                { mode: "CLEAN", count: statistics.clean },
+                { mode: "OPTIMIZE", count: statistics.optimize },
               ].map(({ mode, count }) => (
-                <LegendContainer key={mode} selectedMode={selectedMode} mode={mode}>
+                <LegendContainer
+                  key={mode}
+                  selectedMode={selectedMode}
+                  mode={mode}
+                >
                   <LegendItem mode={mode}>
                     <span>{mode}</span>
                   </LegendItem>
-                  <LegendCount isDarkMode={isDarkMode}>……………… {count}</LegendCount>
+                  <LegendCount isDarkMode={isDarkMode}>∙∙∙∙∙∙∙∙ {count}</LegendCount>
                 </LegendContainer>
               ))}
             </ChartLegend>
@@ -273,17 +292,17 @@ const History = ({ isDarkMode }) => {
           <ReviewListBox isDarkMode={isDarkMode}>
             <BoxTitle isDarkMode={isDarkMode}>All reviews</BoxTitle>
             <SearchBarContainer isDarkMode={isDarkMode}>
-              <SearchBar 
-                value={searchTerm} 
-                onChange={(e) => setSearchTerm(e.target.value)} 
-                isDarkMode={isDarkMode} 
+              <SearchBar
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                isDarkMode={isDarkMode}
               />
             </SearchBarContainer>
-            <Reviews 
+            <Reviews
               reviews={reviews}
-              onReviewClick={handleReviewClick} 
-              selectedMode={selectedMode} 
-              searchTerm={searchTerm} 
+              onReviewClick={handleReviewClick}
+              selectedMode={selectedMode}
+              searchTerm={searchTerm}
               isDarkMode={isDarkMode}
               currentPage={currentPage}
               totalPages={totalPages}

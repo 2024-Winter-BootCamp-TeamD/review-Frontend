@@ -1,4 +1,7 @@
-html, body {
+@import url("https://fonts.googleapis.com/css2?family=Passion+One:wght@400;700;900&display=swap");
+
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -9,9 +12,12 @@ html, body {
 }
 
 .sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
+  position: fixed; /* 고정 */
+  top: 0; /* 상단에 */
+  left: 0; /* 왼쪽 끝에 */
+  position: fixed; /* 고정 */
+  top: 0; /* 상단에 */
+  left: 0; /* 왼쪽 끝에 */
   width: 15%;
   min-width: 300px;
   height: 100vh;
@@ -20,7 +26,9 @@ html, body {
   align-items: center;
   padding-top: 5%;
   z-index: 1000;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 .sidebar.sidebar-light-mode {
@@ -38,7 +46,10 @@ html, body {
   ); */
   background-color: #000000;
   color: white;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  z-index: 1000; /* 다른 콘텐츠보다 위에 보이도록 */
 }
 
 .sidebar-rounded-top {
@@ -48,7 +59,16 @@ html, body {
   width: 40px;
   height: 40px;
   background-color: #091904;
-  -webkit-mask: radial-gradient(circle at bottom right, transparent 50%, black 100%);
+  -webkit-mask: radial-gradient(
+    circle at bottom right,
+    transparent 50%,
+    black 100%
+  );
+  -webkit-mask: radial-gradient(
+    circle at bottom right,
+    transparent 50%,
+    black 100%
+  );
   mask: radial-gradient(circle at bottom right, transparent 50%, black 51%);
   -webkit-mask-composite: exclude;
   mask-composite: exclude;
@@ -63,8 +83,9 @@ html, body {
 .sidebar-logo {
   padding-top: 10vh;
   padding-top: 10vh;
-  font-size: calc(min(8vw * 0.3, 60px));
+  font-size: calc(min(8vw * 0.4, 63px));
   margin-bottom: 3vh;
+  font-family: "Passion One", serif;
 }
 
 .app {
@@ -77,4 +98,40 @@ html, body {
   padding: 20px;
   margin-left: 15%; /* Sidebar의 폭과 동일하게 여백 추가 */
   margin-left: 300px;
+}
+
+.passion-one-regular {
+  font-family: "Passion One", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.passion-one-bold {
+  font-family: "Passion One", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.passion-one-black {
+  font-family: "Passion One", serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.passion-one-regular {
+  font-family: "Passion One", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.passion-one-bold {
+  font-family: "Passion One", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.passion-one-black {
+  font-family: "Passion One", serif;
+  font-weight: 900;
+  font-style: normal;
 }

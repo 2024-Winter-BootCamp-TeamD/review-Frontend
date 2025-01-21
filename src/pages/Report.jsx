@@ -366,16 +366,13 @@ const Report = ({ isDarkMode }) => {
   const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
   const [reportTitle, setReportTitle] = useState("");
 
-  // userId 임시 하드코딩
-  const userId = 1;
-
   useEffect(() => {
     loadReports();
   }, []);
 
   const loadReports = async () => {
     try {
-      const response = await getReports(userId);
+      const response = await getReports();
       const formattedReports = response.reports.map((report) => ({
         id: report.report_id,
         image: image,
@@ -438,7 +435,7 @@ const Report = ({ isDarkMode }) => {
 
     try {
       const selectedPrIds = Array.from(selectedItems);
-      const response = await createReport(userId, reportTitle, selectedPrIds);
+      const response = await createReport(reportTitle, selectedPrIds);
 
       setIsLoading(false);
       setIsModalOpen(false);
@@ -456,6 +453,7 @@ const Report = ({ isDarkMode }) => {
       setSelectedReport(newReport);
       setIsDetailModalOpen(true);
       handleReportClick(newReport);
+      loadReports();
     } catch (error) {
       setIsLoading(false);
       console.error("보고서 생성 실패:", error);
@@ -584,7 +582,7 @@ const Report = ({ isDarkMode }) => {
     }
 
     try {
-      const response = await getPrReviews(userId, pageToLoad);
+      const response = await getPrReviews(pageToLoad);
       const formattedItems = response.data.map((item) => ({
         id: item.id,
         mode: item.review_mode,
@@ -660,13 +658,13 @@ const Report = ({ isDarkMode }) => {
           isDarkMode={isDarkMode}
         ></CategoryItem>
         <CategoryItem
-          style={{ width: "125px", justifyContent: "center" }}
+          style={{ width: "125px", justifyContent: "center"}}
           isDarkMode={isDarkMode}
         >
           Report Name
         </CategoryItem>
         <CategoryItem
-          style={{ width: "105px", justifyContent: "center" }}
+          style={{ width: "105px", justifyContent: "center", paddingLeft: "1vw" }}
           isDarkMode={isDarkMode}
         >
           Date
@@ -675,7 +673,7 @@ const Report = ({ isDarkMode }) => {
           style={{
             flex: 1,
             justifyContent: "flex-start",
-            paddingLeft: "3.5vw",
+            paddingLeft: "4.5vw",
           }}
           isDarkMode={isDarkMode}
         >
@@ -685,20 +683,20 @@ const Report = ({ isDarkMode }) => {
           style={{
             flex: 1,
             justifyContent: "flex-start",
-            paddingRight: "1.5vw",
+            paddingLeft: "2.5vw",
           }}
           isDarkMode={isDarkMode}
         >
           Used Review Modes
         </CategoryItem>
         <CategoryItem
-          style={{ width: "110px", justifyContent: "center" }}
+          style={{ width: "110px", justifyContent: "center", paddingLeft: "6vw" }}
           isDarkMode={isDarkMode}
         >
           Download
         </CategoryItem>
         <CategoryItem
-          style={{ width: "100px", justifyContent: "center" }}
+          style={{ width: "100px", justifyContent: "center", paddingLeft: "1.4vw" }}
           isDarkMode={isDarkMode}
         >
           Delete
@@ -998,15 +996,17 @@ const ReportImage = styled.div`
 `;
 
 const CreatedDate = styled.span`
-  width: 100px;
+  width: 110px;
+  margin-right: 20px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
   font-size: 18px;
+  font-weight: 300;
 `;
 
 const ReviewCount = styled.div`
   flex: 1;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
 `;
 
@@ -1031,11 +1031,13 @@ const IconButton = styled.button`
 `;
 
 const DownloadButton = styled(IconButton)`
+  margin-right: -45px;
   width: 100px;
 `;
 
 const DeleteButton = styled(IconButton)`
   width: 100px;
+  margin-right: -15px;
 `;
 
 const ReportItem = styled.div`
@@ -1060,13 +1062,13 @@ const CategoryBar = styled.div`
   display: flex;
   align-items: center;
   width: 87rem;
-  height: auto;
+  height: 45px;
   padding: 0 20px;
-  margin-top: 24px;
+  margin-top: 4px;
   margin-left: 60px;
   margin-bottom: 0px;
   gap: 40px;
-  border-radius: 15px;
+  border-radius: 10px;
   background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#ECECEC")};
   border: ${({ isDarkMode }) =>
     isDarkMode ? "1px solid #FFFFFF" : "1px solid #00000030"};
@@ -1085,9 +1087,10 @@ const CategoryItem = styled.div`
 `;
 
 const ReportTitle = styled.h1`
-  width: 120px;
+  width: 130px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#666666")};
   font-size: 16px;
+  font-weight: 800;
 `;
 
 const ReportList = styled.div`

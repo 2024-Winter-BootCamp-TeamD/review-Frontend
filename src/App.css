@@ -5,6 +5,7 @@ body {
   padding: 0;
   overflow: hidden;
   height: 100%;
+  font-family: 'Poppins', sans-serif;
 }
 
 #root {
@@ -55,4 +56,8 @@ body {
 /* ModeSwitchButton 스타일 */
 .mode-switch-button {
   margin: 0; /* 기존 margin 제거 */
+}
+
+.refactory-logo {
+  font-family: 'Passion One', cursive;
 }

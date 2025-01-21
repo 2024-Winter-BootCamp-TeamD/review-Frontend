@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from 'prop-types';
-import ModeSelectButton from "../components/ModeselectButton/ModeSelectButton.jsx";
+import ModeSelectButton from "../components/ModeselectButton/Modeselectbutton.jsx";
 import "./Dashboard.css";
 import { LineChart, Line, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import api from "../services/api.jsx";
@@ -30,7 +30,7 @@ const valueToGrade = {
   2: 'E',
   1: 'F',
   0: '0'
-};
+}; 
 
 const Username = ({ username }) => {
   const [fontSize, setFontSize] = useState("24px");
@@ -271,6 +271,7 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#FF794E"
           isSelected={selectedMode === "basic mode"}
           onClick={() => handleModeChange("basic mode")}
+          isDarkMode={isDarkMode}
         />
         <ModeSelectButton
           modeName="Study"
@@ -278,6 +279,7 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#FFCD39"
           isSelected={selectedMode === "study mode"}
           onClick={() => handleModeChange("study mode")}
+          isDarkMode={isDarkMode}
         />
         <ModeSelectButton
           modeName="Clean Code"
@@ -285,6 +287,7 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#4DABF5"
           isSelected={selectedMode === "clean mode"}
           onClick={() => handleModeChange("clean mode")}
+          isDarkMode={isDarkMode}
         />
         <ModeSelectButton
           modeName="Optimize"
@@ -292,6 +295,7 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#BC6FCD"
           isSelected={selectedMode === "optimize mode"}
           onClick={() => handleModeChange("optimize mode")}
+          isDarkMode={isDarkMode}
         />
         <ModeSelectButton
           modeName="Newbie"
@@ -299,6 +303,7 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#70BF73"
           isSelected={selectedMode === "new bie mode"}
           onClick={() => handleModeChange("new bie mode")}
+          isDarkMode={isDarkMode}
         />
       </div>
 

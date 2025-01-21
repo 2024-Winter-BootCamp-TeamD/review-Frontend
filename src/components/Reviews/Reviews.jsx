@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { FiLink } from 'react-icons/fi';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css'; // 스타일 추가
 
 const ReviewsContainer = styled.div`
   width: 850px;
@@ -30,6 +33,7 @@ const ReviewsContainer = styled.div`
 const ReviewItem = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: 830px;
   min-height: 57px;
   border: 1px solid #ccc;
@@ -56,7 +60,8 @@ const ReviewSummary = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-top: 12px;
+  height: 45px;
+  margin: 0;
 `;
 
 const ReviewMode = styled.div`
@@ -71,7 +76,7 @@ const ReviewMode = styled.div`
       case 'NEWBIE': return '#70BF73';
       case 'STUDY': return '#FFC107';
       case 'BASIC': return '#FF5722';
-      default: return isDarkMode ? '#FFFFFF' : '#333';
+      default: return props.isDarkMode ? '#FFFFFF' : '#333';
     }
   }};
 `;
@@ -95,6 +100,7 @@ const ReviewArrow = styled.div`
   margin-right: 20px;
   font-size: 18px;
   color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+  cursor: pointer;
 `;
 
 const Reviews = ({ reviews, onReviewClick, selectedMode, searchTerm, isDarkMode, loading }) => {
@@ -114,6 +120,10 @@ const Reviews = ({ reviews, onReviewClick, selectedMode, searchTerm, isDarkMode,
     return matchesMode && matchesSearch;
   });
 
+  const handleArrowClick = (prUrl) => {
+    window.open(prUrl, '_blank');
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -128,7 +138,7 @@ const Reviews = ({ reviews, onReviewClick, selectedMode, searchTerm, isDarkMode,
           onClick={() => handleReviewClick(review)}
         >
           <ReviewSummary>
-            <ReviewMode mode={review.review_mode.toUpperCase()}>
+            <ReviewMode mode={review.review_mode.toUpperCase()} isDarkMode={isDarkMode}>
               {review.review_mode.toUpperCase()}
             </ReviewMode>
             <ReviewLink isDarkMode={isDarkMode}>
@@ -137,9 +147,18 @@ const Reviews = ({ reviews, onReviewClick, selectedMode, searchTerm, isDarkMode,
             <ReviewDate isDarkMode={isDarkMode}>
               {new Date(review.created_at).toLocaleDateString()}
             </ReviewDate>
-            <ReviewArrow isDarkMode={isDarkMode}>
-              →
+            <ReviewArrow 
+              isDarkMode={isDarkMode} 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleArrowClick(review.pr_url);
+              }}
+              data-tooltip-id={`tooltip-${review.id}`}
+              data-tooltip-content="Connect to review URL"
+            >
+              <FiLink />
             </ReviewArrow>
+            <Tooltip id={`tooltip-${review.id}`} />
           </ReviewSummary>
         </ReviewItem>
       ))}

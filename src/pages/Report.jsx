@@ -23,6 +23,7 @@ import 'highcharts/highcharts-more';
 import 'highcharts/modules/exporting';
 import 'highcharts/modules/export-data';
 import 'highcharts/modules/accessibility';
+import ReactMarkdown from 'react-markdown';
 
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
@@ -1464,12 +1465,28 @@ const GraphTitle = styled.h2`
   color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
-const ContentText = styled.p`
+const ContentText = styled(ReactMarkdown)`
+  /* 기존 <p> 태그 대신 ReactMarkdown을 사용하여 스타일 적용 */
   font-size: 14px;
   line-height: 1.6;
   color: #666;
   margin-bottom: 12px;
+
+  /* 필요에 따라 추가 스타일링 가능 */
+  
+  /* 예: 링크 스타일 변경 */
+  a {
+    color: #1e90ff;
+    text-decoration: underline;
+  }
+
+  /* 이미지 스타일 변경 */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
 `;
+
 
 const ReportContentWrapper = styled.div`
   display: flex;

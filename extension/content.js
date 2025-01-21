@@ -295,3 +295,72 @@ function removeFloatingButton() {
     button.remove();
   }
 }
+
+// 드래그 버튼 생성 함수
+function createDragButton() {
+  const button = document.createElement("div");
+  button.className = "drag-review-button";
+  button.innerHTML = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2Z" fill="currentColor"/>
+    </svg>
+  `;
+  button.style.display = "none";
+  document.body.appendChild(button);
+  return button;
+}
+
+// 드래그 이벤트 처리
+function initializeDragHandler() {
+  let dragButton = null;
+  let isButtonVisible = false;
+
+  // selectionchange 이벤트로 텍스트 선택 감지
+  document.addEventListener("selectionchange", () => {
+    const selection = window.getSelection();
+    const selectedText = selection.toString().trim();
+
+    if (selectedText && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+
+      if (!dragButton) {
+        dragButton = createDragButton();
+      }
+
+      // 버튼 위치 설정
+      dragButton.style.position = "fixed";
+      dragButton.style.top = `${rect.top + window.scrollY - 30}px`;
+      dragButton.style.left = `${rect.right + window.scrollX}px`;
+      dragButton.style.display = "flex";
+      isButtonVisible = true;
+
+      // 버튼 클릭 이벤트
+      dragButton.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("Selected code:", selectedText);
+        // 여기에 선택된 코드에 대한 처리 로직 추가
+      };
+    }
+  });
+
+  // mousedown 이벤트에서 버튼 외 영역 클릭 감지
+  document.addEventListener("mousedown", (e) => {
+    if (dragButton && isButtonVisible && !dragButton.contains(e.target)) {
+      // 약간의 지연 시간을 두어 클릭 이벤트가 처리되도록 함
+      setTimeout(() => {
+        const selection = window.getSelection();
+        const selectedText = selection.toString().trim();
+
+        if (!selectedText) {
+          dragButton.style.display = "none";
+          isButtonVisible = false;
+        }
+      }, 200);
+    }
+  });
+}
+
+// 초기화 함수 실행
+initializeDragHandler();

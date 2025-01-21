@@ -339,3 +339,24 @@ floatingbutton-menu-open-button {
   -webkit-transform: translate3d(-0.25084px, -104.9997px, 0);
   transform: translate3d(-0.25084px, -104.9997px, 0);
 }
+.drag-review-button {
+  position: fixed;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #0366d6;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 999999;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  pointer-events: auto;
+}
+
+.drag-review-button:hover {
+  transform: scale(1.1);
+  background-color: #0255b3;
+}

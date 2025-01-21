@@ -142,8 +142,7 @@ const GRAPHS = [
     component: () => {
       const styles = {
         container: { height: '600px' },
-        figure: { minWidth: '320px', maxWidth: '800px', margin: '1em auto', textAlign: 'center' },
-        description: { margin: '0.3rem 10px' }
+        figure: { minWidth: '320px', maxWidth: '800px', margin: '1em auto', textAlign: 'center', marginTop: '100px' },
       };
 
       const options = {
@@ -381,7 +380,6 @@ const Report = ({ isDarkMode }) => {
   const [reportData, setReportData] = useState([]);
   const [modalItems, setModalItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
   const [isLoadingPRs, setIsLoadingPRs] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);

@@ -5,7 +5,6 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PlayfulButton from "../components/PlayfulButton";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchBar from "../components/SearchBar/SearchBar";
-import { ResponsiveRadar } from "@nivo/radar";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 import LoadingIndicator from "../components/LoadingIndicator/LoadingIndicator";
@@ -18,6 +17,13 @@ import {
   getPrReviews,
   getReportById,
 } from "../services/ReportService";
+import Highcharts from 'highcharts';
+import HighchartsReact from 'highcharts-react-official';
+import 'highcharts/highcharts-more';
+import 'highcharts/modules/exporting';
+import 'highcharts/modules/export-data';
+import 'highcharts/modules/accessibility';
+
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
@@ -106,47 +112,106 @@ const radarData = [
   },
 ];
 
+// 그래프 데이터 예시
+const medalData = {
+    categories: [
+        'PR 1',
+        'PR 2',
+        'PR 3',
+        'PR 4',
+        'PR 5',
+        'PR 6',
+        'PR 7',
+        'PR 8',
+        'PR 9',
+        'PR 10',
+    ],
+    // Basic, Study, Clean Code, Optimize, Newbie 순서로 데이터 입력
+    series: [
+        { name: 'Basic', data: [10, 0, 30, 0, 50, 0, 0, 0, 0, 0] },
+        { name: 'Study', data: [0, 0, 0, 0, 0, 0, 50, 0, 0, 0] },
+        { name: 'Clean Code', data: [0, 0, 0, 0, 0, 43, 0, 80, 0, 0] },
+        { name: 'Optimize', data: [0, 0, 0, 80, 0, 0, 0, 0, 30, 0] },
+        { name: 'Newbie', data: [0, 83, 0, 0, 0, 0, 0, 0, 0, 100] }
+    ]
+};
+
 const GRAPHS = [
   {
     title: "PR별 점수 지표",
-    component: (data = radarData) => (
-      <ResponsiveRadar
-        data={data}
-        keys={["Basic", "Study", "Newbie", "Clean Code", "Optimize"]}
-        indexBy="metric"
-        maxValue={100}
-        margin={{ top: 70, right: 80, bottom: 40, left: 80 }}
-        borderColor={{ from: "color" }}
-        gridLabelOffset={36}
-        dotSize={10}
-        dotColor={{ theme: "background" }}
-        dotBorderWidth={2}
-        colors={Object.values(MODE_COLORS).map((color) => color.text)}
-        blendMode="multiply"
-        motionConfig="wobbly"
-        legends={[
-          {
-            anchor: "top-left",
-            direction: "column",
-            translateX: -50,
-            translateY: -40,
-            itemWidth: 100,
-            itemHeight: 20,
-            itemTextColor: "#999",
-            symbolSize: 12,
-            symbolShape: "circle",
-            effects: [
-              {
-                on: "hover",
-                style: {
-                  itemTextColor: "#000",
-                },
-              },
-            ],
+    component: () => {
+      const styles = {
+        container: { height: '600px' },
+        figure: { minWidth: '320px', maxWidth: '800px', margin: '1em auto', textAlign: 'center' },
+        description: { margin: '0.3rem 10px' }
+      };
+
+      const options = {
+        colors: ['#FF794E', '#BC6FCD', '#70BF73', '#4DABF5', '#FFCD39'],
+        chart: {
+          type: 'column',
+          inverted: true,
+          polar: true,
+          backgroundColor: '#ffffff',
+        },
+        title: {
+          text: '',
+          align: 'center',
+          style: {
+            fontSize: '24px',
+            color: '#000000',
           },
-        ]}
-      />
-    ),
+        },
+        tooltip: { outside: false, zIndex: 1000 },
+        pane: { size: '100%', innerSize: '10%', endAngle: 270 },
+        xAxis: {
+          categories: medalData.categories,
+          tickInterval: 1,
+          labels: {
+            align: 'right',
+            useHTML: true,
+            allowOverlap: true,
+            step: 1,
+            y: 3,
+            style: { fontSize: '13px' },
+            formatter: function() {
+              if (typeof this.value === 'string') {
+                return this.value.replace(' ', '&nbsp;');
+              }
+              return String(this.value);
+            }
+          },
+          lineWidth: 0,
+          gridLineWidth: 0,
+        },
+        yAxis: {
+          lineWidth: 0,
+          tickInterval: 25,
+          reversedStacks: false,
+          endOnTick: true,
+          showLastLabel: true,
+          gridLineWidth: 5,
+        },
+        plotOptions: {
+          column: {
+            stacking: 'normal',
+            borderWidth: 0,
+            pointPadding: 0,
+            groupPadding: 0.15,
+            borderRadius: '50%',
+          }
+        },
+        series: medalData.series
+      };
+
+      return (
+        <div style={styles.figure}>
+          <div style={styles.container}>
+            <HighchartsReact highcharts={Highcharts} options={options} />
+          </div>
+        </div>
+      );
+    },
   },
   {
     title: "등급별 분포",
@@ -614,7 +679,7 @@ const Report = ({ isDarkMode }) => {
   }, [currentPage]);
 
   return (
-    <ReportWrapper>
+    <ReportWrapper isDarkMode={isDarkMode}>
       <PageTitle isDarkMode={isDarkMode}>Report</PageTitle>
       <CategoryBar isDarkMode={isDarkMode}>
         <CategoryItem
@@ -926,6 +991,9 @@ const ReportWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
   margin-left: 10px;
+  // background-color: ${({ isDarkMode }) => (isDarkMode ? '#121212' : '#f0f0f0')};
+  background-color: '#f0f0f0';
+  padding: 20px;
 `;
 
 const PageTitle = styled.h1`
@@ -1420,11 +1488,10 @@ const GraphNavButton = styled.button`
   }
 `;
 
-const GraphTitle = styled.h3`
+const GraphTitle = styled.h2`
   text-align: center;
   margin-bottom: 20px;
-  font-size: 18px;
-  color: #333;
+  color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
 `;
 
 const ContentText = styled.p`
@@ -1507,6 +1574,16 @@ const TitleInput = styled.input`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+`;
+
+const GraphSection = styled.div`
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+`;
+
+const GraphWrapper = styled.div`
+  width: 800px;
 `;
 
 export default Report;

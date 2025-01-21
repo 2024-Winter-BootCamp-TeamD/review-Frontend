@@ -316,15 +316,7 @@ function initializeDragHandler() {
   let isButtonVisible = false;
   let dragStartPosition = null;
 
-  // mousedown 이벤트로 드래그 시작 위치 저장
-  document.addEventListener("mousedown", (e) => {
-    dragStartPosition = {
-      x: e.clientX,
-      y: e.clientY,
-    };
-  });
-
-  // selectionchange 이벤트로 텍스트 선택 감지
+  // 텍스트 선택 변경 감지
   document.addEventListener("selectionchange", () => {
     const selection = window.getSelection();
     const selectedText = selection.toString().trim();
@@ -336,23 +328,36 @@ function initializeDragHandler() {
 
       // 버튼 위치를 드래그 시작 위치로 설정
       dragButton.style.position = "fixed";
-      dragButton.style.top = `${dragStartPosition.y - 40}px`; // 커서 위 40px
-      dragButton.style.left = `${dragStartPosition.x - 16}px`; // 커서 중앙 정렬
+      dragButton.style.top = `${dragStartPosition.y - 40}px`;
+      dragButton.style.left = `${dragStartPosition.x - 16}px`;
       dragButton.style.display = "flex";
       isButtonVisible = true;
 
-      // 버튼 클릭 이벤트
+      // 현재 선택된 텍스트를 버튼에 저장
+      dragButton.dataset.selectedText = selectedText;
+
+      // 버튼 클릭 이벤트 수정
       dragButton.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        console.log("Selected code:", selectedText);
-        // 여기에 선택된 코드에 대한 처리 로직 추가
+        const textToReview = dragButton.dataset.selectedText;
+        console.log("Selected text for review:", textToReview); // 디버깅용
+        if (textToReview) {
+          createModal(textToReview);
+          dragButton.style.display = "none";
+          isButtonVisible = false;
+        }
       };
     }
   });
 
-  // mousedown 이벤트에서 버튼 외 영역 클릭 감지
+  // mousedown 이벤트에서 드래그 시작 위치 저장
   document.addEventListener("mousedown", (e) => {
+    dragStartPosition = {
+      x: e.clientX,
+      y: e.clientY,
+    };
+
     if (dragButton && isButtonVisible && !dragButton.contains(e.target)) {
       setTimeout(() => {
         const selection = window.getSelection();
@@ -368,11 +373,173 @@ function initializeDragHandler() {
 
   // mouseup 이벤트로 드래그 종료 감지
   document.addEventListener("mouseup", () => {
-    // 드래그가 끝나면 시작 위치 초기화
     setTimeout(() => {
-      dragStartPosition = null;
+      const selection = window.getSelection();
+      const selectedText = selection.toString().trim();
+
+      if (!selectedText) {
+        if (dragButton) {
+          dragButton.style.display = "none";
+          isButtonVisible = false;
+        }
+      }
     }, 100);
   });
+}
+
+// 모달 생성 함수
+function createModal(selectedText) {
+  console.log("Creating modal with text:", selectedText); // 디버깅용
+
+  const modal = document.createElement("div");
+  modal.className = "code-review-modal";
+  modal.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-columns">
+          <div class="modal-left-column">
+            <h3>원본 코드</h3>
+            <div class="code-container">
+              <pre><code>${selectedText}</code></pre>
+            </div>
+          </div>
+          <div class="modal-right-column">
+            <div class="review-header">
+              <h3>리뷰 내용</h3>
+              <button class="copy-button">
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            <div class="review-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // 모달 닫기 버튼 이벤트
+  const closeButton = modal.querySelector(".modal-close");
+  closeButton.onclick = () => {
+    modal.remove();
+  };
+
+  // 모달 외부 클릭 시 닫기
+  modal.onclick = (e) => {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  };
+
+  // 리뷰 시작 전에 선택된 텍스트 확인
+  if (!selectedText || selectedText.trim() === "") {
+    reviewContent.innerHTML = `<div class="error-message">오류: 선택된 코드가 없습니다.</div>`;
+    return;
+  }
+
+  startReview(selectedText, modal.querySelector(".review-content"));
+}
+
+// 리뷰 시작 함수
+async function startReview(selectedText, reviewContent) {
+  try {
+    // 사용자 정보 가져오기
+    const userInfo = await new Promise((resolve) => {
+      chrome.storage.local.get("userInfo", (result) => {
+        resolve(result.userInfo);
+      });
+    });
+
+    if (!userInfo) {
+      throw new Error("로그인이 필요합니다.");
+    }
+
+    // 초기 로딩 상태 표시
+    reviewContent.innerHTML = "<div>리뷰를 시작합니다...</div>";
+
+    // 요청 데이터 준비
+    const requestData = {
+      userId: userInfo.id,
+      code: selectedText,
+    };
+
+    console.log("Sending request with data:", requestData); // 디버깅용
+
+    // POST 요청 설정
+    const response = await fetch("http://localhost:8000/api/v1/partreviews/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json, text/event-stream",
+      },
+      credentials: "include",
+      body: JSON.stringify(requestData),
+    });
+
+    // 응답 로깅
+    console.log("Response status:", response.status);
+    console.log("Response headers:", Object.fromEntries(response.headers));
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error response:", errorData); // 디버깅용
+      throw new Error(errorData.error || "리뷰 요청에 실패했습니다.");
+    }
+
+    const contentType = response.headers.get("Content-Type");
+
+    if (contentType && contentType.includes("application/json")) {
+      // JSON 응답 처리
+      const jsonResponse = await response.json();
+      reviewContent.innerHTML = `<div class="review-result">${jsonResponse.result || jsonResponse.message}</div>`;
+    } else {
+      // 스트리밍 응답 처리
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (line.trim()) {
+            const newContent = document.createElement("div");
+            const messageText = line.replace("Refactory: ", "");
+            newContent.textContent = messageText;
+
+            if (messageText.includes("Review start")) {
+              newContent.classList.add("review-start");
+            } else if (messageText.includes("Review completed")) {
+              newContent.classList.add("review-completed");
+            } else if (messageText.includes("Review result")) {
+              newContent.classList.add("review-result");
+              newContent.textContent = messageText.replace(
+                "Review result: ",
+                ""
+              );
+            }
+
+            reviewContent.appendChild(newContent);
+            reviewContent.scrollTop = reviewContent.scrollHeight;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    reviewContent.innerHTML = `<div class="error-message">오류: ${error.message}</div>`;
+  }
 }
 
 // 초기화 함수 실행

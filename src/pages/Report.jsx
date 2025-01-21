@@ -69,49 +69,6 @@ const ISSUE_TYPE_COLORS = {
   기타: "#748CAB",
 };
 
-const radarData = [
-  {
-    metric: "PR1",
-    Basic: 80,
-    "Clean Code": 90,
-    Optimize: 70,
-    Newbie: 60,
-    Study: 85,
-  },
-  {
-    metric: "PR2",
-    Basic: 75,
-    "Clean Code": 65,
-    Optimize: 95,
-    Newbie: 55,
-    Study: 70,
-  },
-  {
-    metric: "PR3",
-    Basic: 85,
-    "Clean Code": 80,
-    Optimize: 75,
-    Newbie: 65,
-    Study: 90,
-  },
-  {
-    metric: "PR4",
-    Basic: 70,
-    "Clean Code": 95,
-    Optimize: 65,
-    Newbie: 80,
-    Study: 75,
-  },
-  {
-    metric: "PR5",
-    Basic: 65,
-    "Clean Code": 85,
-    Optimize: 80,
-    Newbie: 70,
-    Study: 60,
-  },
-];
-
 // 그래프 데이터 예시
 const medalData = {
     categories: [
@@ -134,6 +91,167 @@ const medalData = {
         { name: 'Optimize', data: [0, 0, 0, 80, 0, 0, 0, 0, 30, 0] },
         { name: 'Newbie', data: [0, 83, 0, 0, 0, 0, 0, 0, 0, 100] }
     ]
+};
+
+const HighChartBar = () => {
+    const chartOptions = {
+        chart: {
+            type: "bar",
+        },
+        title: {
+            text: "",
+        },
+        xAxis: {
+            categories: ["S", "A", "B", "C", "D"],
+            title: {
+                text: null,
+            },
+            gridLineWidth: 1,
+            lineWidth: 0,
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: "개수",
+                align: "high",
+            },
+            labels: {
+                overflow: "justify",
+            },
+            gridLineWidth: 0,
+        },
+        tooltip: {
+            valueSuffix: " 개",
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: "50%",
+                dataLabels: {
+                    enabled: true,
+                },
+                groupPadding: 0.1,
+            },
+        },
+        legend: {
+            layout: "vertical",
+            align: "right",
+            verticalAlign: "top",
+            x: -40,
+            y: 80,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor: "#FFFFFF",
+            shadow: true,
+        },
+        credits: {
+            enabled: false,
+        },
+        series: [
+            {
+                name: "코드 구조",
+                data: [0, 0, 0, 2, 1],
+            },
+            {
+                name: "성능",
+                data: [0, 1, 0, 0, 0],
+            },
+            {
+                name: "보안",
+                data: [3, 0, 0, 0, 0],
+            },
+            {
+                name: "가독성",
+                data: [0, 0, 0, 0, 1],
+            },
+            {
+                name: "버그 가능성",
+                data: [0, 1, 0, 1, 0],
+            },
+        ],
+    };
+
+    const containerStyle = {
+        minWidth: "310px",
+        maxWidth: "800px",
+        margin: "1em auto",
+    };
+
+    const dataTableStyle = {
+        fontFamily: "Verdana, sans-serif",
+        borderCollapse: "collapse",
+        border: "1px solid #ebebeb",
+        margin: "10px auto",
+        textAlign: "center",
+        width: "100%",
+        maxWidth: "500px",
+    };
+
+    const captionStyle = {
+        padding: "1em 0",
+        fontSize: "1.2em",
+        color: "#555",
+    };
+
+    return (
+        <div style={containerStyle}>
+            <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+            <table style={dataTableStyle}>
+                <caption style={captionStyle}>데이터 테이블</caption>
+                <thead>
+                    <tr>
+                        <th>등급</th>
+                        <th>코드 구조</th>
+                        <th>성능</th>
+                        <th>보안</th>
+                        <th>가독성</th>
+                        <th>버그 가능성</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>S</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>3</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>A</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>B</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>C</td>
+                        <td>2</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>D</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
 const GRAPHS = [
@@ -213,89 +331,8 @@ const GRAPHS = [
     },
   },
   {
-    title: "등급별 분포",
-    component: () => (
-      <ResponsivePie
-        data={[
-          { id: "S", value: 20, color: GRADE_COLORS.S },
-          { id: "A", value: 30, color: GRADE_COLORS.A },
-          { id: "B", value: 25, color: GRADE_COLORS.B },
-          { id: "C", value: 15, color: GRADE_COLORS.C },
-          { id: "D", value: 10, color: GRADE_COLORS.D },
-        ]}
-        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-        innerRadius={0.5}
-        padAngle={0.7}
-        cornerRadius={3}
-        colors={{ datum: "data.color" }}
-        arcLinkLabelsSkipAngle={10}
-        arcLinkLabelsTextColor="#333333"
-        arcLinkLabelsThickness={2}
-        arcLinkLabelsColor={{ from: "color" }}
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor="#ffffff"
-      />
-    ),
-  },
-  {
-    title: "이슈 유형별 분포",
-    component: () => (
-      <ResponsivePie
-        data={[
-          { id: "코드 구조", value: 30, color: ISSUE_TYPE_COLORS["코드 구조"] },
-          { id: "성능", value: 25, color: ISSUE_TYPE_COLORS["성능"] },
-          { id: "보안", value: 15, color: ISSUE_TYPE_COLORS["보안"] },
-          { id: "가독성", value: 20, color: ISSUE_TYPE_COLORS["가독성"] },
-          {
-            id: "버그 가능성",
-            value: 10,
-            color: ISSUE_TYPE_COLORS["버그 가능성"],
-          },
-        ]}
-        margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-        innerRadius={0.5}
-        padAngle={0.7}
-        cornerRadius={3}
-        colors={{ datum: "data.color" }}
-        arcLinkLabelsSkipAngle={10}
-        arcLinkLabelsTextColor="#333333"
-        arcLinkLabelsThickness={2}
-        arcLinkLabelsColor={{ from: "color" }}
-        arcLabelsSkipAngle={10}
-        arcLabelsTextColor="#ffffff"
-      />
-    ),
-  },
-  {
-    title: "시간별 성능 추이",
-    component: () => (
-      <ResponsiveLine
-        data={[
-          {
-            id: "성능 점수",
-            data: [
-              { x: "1월", y: 85 },
-              { x: "2월", y: 78 },
-              { x: "3월", y: 92 },
-              { x: "4월", y: 88 },
-            ],
-          },
-        ]}
-        margin={{ top: 50, right: 60, bottom: 50, left: 80 }}
-        xScale={{ type: "point" }}
-        yScale={{ type: "linear", min: 0, max: 100 }}
-        axisTop={null}
-        axisRight={null}
-        pointSize={10}
-        pointColor={{ theme: "background" }}
-        pointBorderWidth={2}
-        pointBorderColor={{ from: "serieColor" }}
-        enableArea={true}
-        areaOpacity={0.15}
-        useMesh={true}
-        enableGridX={false}
-      />
-    ),
+    title: "등급 및 이슈 유형별 분포",
+    component: () => <HighChartBar />,
   },
 ];
 

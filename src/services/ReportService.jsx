@@ -1,9 +1,33 @@
 import api from "./api";
 
-// 보고서 전체 조회
-export const getReports = async (user_id, page = 1, size = 10) => {
+// 사용자 정보 가져오기
+export const fetchUserInfo = async () => {
   try {
-    const response = await api.get(`/reports/${user_id}`, {
+    const userInfo = await chrome.storage.local.get("userInfo");
+    const user_id = userInfo.userInfo?.id;
+    console.log("로그인 된 사용자 id:", user_id);
+    if (!user_id) {
+      throw new Error("로그인된 사용자 정보를 찾을 수 없습니다.");
+    }
+
+    const response = await api.get(`/users/${user_id}/`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "사용자 정보 가져오기 에러:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+// 보고서 전체 조회
+export const getReports = async (page = 1, size = 10) => {
+  try {
+    const userInfo = await fetchUserInfo();
+    const user_id = userInfo.user_details.id;
+
+    const response = await api.get(`/reports/${user_id}/`, {
       params: {
         page,
         size,
@@ -17,8 +41,11 @@ export const getReports = async (user_id, page = 1, size = 10) => {
 };
 
 // 보고서 작성 요청(생성)
-export const createReport = async (user_id, report_title, pr_ids) => {
+export const createReport = async (report_title, pr_ids) => {
   try {
+    const userInfo = await fetchUserInfo();
+    const user_id = userInfo.user_details.id;
+
     // PR 개수 유효성 검사
     if (pr_ids.length < 5 || pr_ids.length > 10) {
       throw new Error("PR은 5개에서 10개 사이로 선택해야 합니다.");
@@ -91,8 +118,11 @@ export const getReportModes = async (report_id) => {
 };
 
 // PR 리뷰 목록 조회
-export const getPrReviews = async (user_id, page, size = 10) => {
+export const getPrReviews = async (page, size = 10) => {
   try {
+    const userInfo = await fetchUserInfo();
+    const user_id = userInfo.user_details.id;
+
     const response = await api.get("/pr-reviews", {
       params: {
         user_id,

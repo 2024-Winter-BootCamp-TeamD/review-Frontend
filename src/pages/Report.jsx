@@ -328,16 +328,13 @@ const Report = ({ isDarkMode }) => {
   const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
   const [reportTitle, setReportTitle] = useState("");
 
-  // userId 임시 하드코딩
-  const userId = 1;
-
   useEffect(() => {
     loadReports();
   }, []);
 
   const loadReports = async () => {
     try {
-      const response = await getReports(userId);
+      const response = await getReports();
       const formattedReports = response.reports.map((report) => ({
         id: report.report_id,
         image: image,
@@ -400,7 +397,7 @@ const Report = ({ isDarkMode }) => {
 
     try {
       const selectedPrIds = Array.from(selectedItems);
-      const response = await createReport(userId, reportTitle, selectedPrIds);
+      const response = await createReport(reportTitle, selectedPrIds);
 
       setIsLoading(false);
       setIsModalOpen(false);
@@ -546,7 +543,7 @@ const Report = ({ isDarkMode }) => {
     }
 
     try {
-      const response = await getPrReviews(userId, pageToLoad);
+      const response = await getPrReviews(pageToLoad);
       const formattedItems = response.data.map((item) => ({
         id: item.id,
         mode: item.review_mode,

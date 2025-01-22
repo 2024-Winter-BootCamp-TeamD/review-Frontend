@@ -1,12 +1,10 @@
-// src/components/Chart/Chart.jsx
-
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Highcharts from "highcharts";
 import Exporting from "highcharts/modules/exporting";
 import ExportData from "highcharts/modules/export-data";
 import Accessibility from "highcharts/modules/accessibility";
-import { getPRReviewCategories } from "../../services/prReviewService";
+import { fetchUserInfo, getPRReviewCategories } from "../../services/prReviewService"; // 사용자 정보 가져오기 API
 
 const ChartWrapper = styled.div`
   width: 90%;
@@ -41,20 +39,38 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
     optimize: 0,
     clean: 0,
   });
+  const [userId, setUserId] = useState(null);  // 사용자 ID 상태 추가
 
+  // 사용자 정보 가져오기
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const userInfo = await fetchUserInfo();  // 사용자 정보 가져오기
+        setUserId(userInfo.user_details.id);  // 사용자 ID 저장
+      } catch (error) {
+        console.error("사용자 정보 가져오기 실패:", error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  // 사용자 ID가 준비되면 PR 리뷰 데이터 가져오기
   useEffect(() => {
     const fetchChartData = async () => {
+      if (!userId) return;  // userId가 없으면 데이터 로드하지 않음
+
       try {
-        const user_id = 1; // Replace with dynamic user ID if needed
-        const response = await getPRReviewCategories(user_id);
+        // userId를 기반으로 데이터 가져오기
+        const response = await getPRReviewCategories(userId);
         setStatistics(response.statistics || {});
       } catch (error) {
-        console.error("Error fetching chart data:", error);
+        console.error("Chart 데이터 가져오기 에러:", error);
       }
     };
 
     fetchChartData();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const originalAnimate = Highcharts.seriesTypes.pie.prototype.animate;
@@ -224,7 +240,7 @@ const Chart = ({ onSliceClick, selectedMode, isDarkMode }) => {
     return () => {
       chart.destroy();
     };
-  }, [statistics, isDarkMode]);
+  }, [statistics, isDarkMode, userId]);  // userId를 의존성에 추가
 
   return (
     <ChartWrapper>

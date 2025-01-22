@@ -144,13 +144,19 @@ const NotificationButton = ({ hasNotification, isDarkMode }) => {
               id: pr.id,
               avatar: pr.user.avatar_url,
               name: pr.user.login,
-              message: `requested your Review on Pull Request: "${pr.title}"`,
+              message: `requested your Review on Pull Request`,
               url: pr.html_url,
+              createdAt: pr.created_at, // PR 요청 시간을 가져옴
             }));
           })
         );
 
-        setNotifications(allNotifications.flat());
+        // 최신 알림 순으로 정렬
+        const sortedNotifications = allNotifications
+          .flat()
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // createdAt 기준으로 최신순 정렬
+
+        setNotifications(sortedNotifications);
       } catch (error) {
         console.error("Error fetching pull requests:", error.message);
       }

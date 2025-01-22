@@ -24,7 +24,7 @@ async function handleGitHubLogin() {
     // OAuth 창을 새 창으로 열기
     chrome.windows.create(
       {
-        url: "https://github.com/login/oauth/authorize?client_id=Ov23liTHrg74CjBEbO5R&redirect_uri=http://127.0.0.1:8000/api/v1/oauth/login/github/callback/&scope=repo,read:org,public_repo,write:discussion",
+        url: "https://github.com/login/oauth/authorize?client_id=Ov23lioiY7MQPQZhROPm&redirect_uri=http://refactory.store:8000/api/v1/oauth/login/github/callback/&scope=repo,read:org,public_repo,write:discussion",
         type: "popup",
         width: 800,
         height: 600,

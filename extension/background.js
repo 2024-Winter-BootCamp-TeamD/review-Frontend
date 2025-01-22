@@ -110,7 +110,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     try {
       // 백엔드에서 사용자 정보 가져오기
       const response = await fetch(
-        "http://localhost:8000/api/v1/oauth/login/",
+        "http://refactory.store:8000/api/v1/oauth/login/",
         {
           method: "GET",
           headers: {

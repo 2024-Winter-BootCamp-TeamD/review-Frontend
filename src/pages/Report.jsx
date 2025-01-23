@@ -26,6 +26,7 @@ import 'highcharts/modules/accessibility';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkGfm from 'remark-gfm';
 
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
@@ -561,7 +562,7 @@ const Report = ({ isDarkMode }) => {
 
     console.log("📄 변환 전 content (문자열 형태):", contentString);
 
-    // 🛠 1️⃣ JSON 내 큰따옴표(`"`)를 ✅ 같은 잘 쓰이지 않는 문자로 변환
+    // 🛠 1️⃣ 큰따옴표(`"`)를 ✅ 같은 잘 쓰이지 않는 문자로 변환
     contentString = contentString.replace(/"/g, "✅");
 
     console.log("🔵 큰따옴표 변환 완료 (✅로 대체):", contentString);
@@ -588,31 +589,30 @@ const Report = ({ isDarkMode }) => {
     markdown += `**작성자:** ${author}\n\n`;
     markdown += `**작성일자:** ${createdDate}\n\n---\n\n`;
 
-    // 🛠 6️⃣ PR 리뷰 테이블 추출
+    // 🛠 6️⃣ PR 리뷰 테이블 추출 (HTML 변환 대신 마크다운 표 유지)
     let reviewTableMatch = contentString.match(/"review_table"\s*:\s*\[(.*?)\]/s);
     if (reviewTableMatch) {
         let reviewTableContent = reviewTableMatch[1];
 
-        // 개별 PR 리뷰 항목 추출
+        // 테이블 헤더
+        markdown += `## 1. PR 리뷰 테이블\n\n`;
+        markdown += `| ID | 제목 | 평균 등급 | 리뷰 모드 | 문제 유형 | 작성일자 |\n`;
+        markdown += `|----|------|-----------|-----------|-----------|----------|\n`;
+
+        // 개별 PR 리뷰 항목 추출 (마크다운 표 유지)
         let reviews = [...reviewTableContent.matchAll(/\{([^}]+)\}/g)];
-        if (reviews.length > 0) {
-            markdown += `## 1. PR 리뷰 테이블\n\n`;
-            markdown += `| ID | 제목 | 평균 등급 | 리뷰 모드 | 문제 유형 | 작성일자 |\n`;
-            markdown += `|----|------|-----------|-----------|-----------|----------|\n`;
+        reviews.forEach((review) => {
+            let id = review[1].match(/"id"\s*:\s*(\d+)/)?.[1] || "N/A";
+            let title = review[1].match(/"title"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let grade = review[1].match(/"aver_grade"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let mode = review[1].match(/"review_mode"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let problem = review[1].match(/"problem_type"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let date = review[1].match(/"created_at"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
 
-            reviews.forEach((review) => {
-                let id = review[1].match(/"id"\s*:\s*(\d+)/)?.[1] || "N/A";
-                let title = review[1].match(/"title"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
-                let grade = review[1].match(/"aver_grade"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
-                let mode = review[1].match(/"review_mode"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
-                let problem = review[1].match(/"problem_type"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
-                let date = review[1].match(/"created_at"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            markdown += `| ${id} | ${title} | ${grade} | ${mode} | ${problem} | ${date} |\n`;
+        });
 
-                markdown += `| ${id} | ${title} | ${grade} | ${mode} | ${problem} | ${date} |\n`;
-            });
-
-            markdown += `\n---\n\n`;
-        }
+        markdown += `\n---\n\n`;
     } else {
         markdown += `\n**PR 리뷰 데이터가 없습니다.**\n\n`;
     }
@@ -632,7 +632,6 @@ const Report = ({ isDarkMode }) => {
     console.log("✅ 변환된 마크다운 (최종):", markdown);
     return markdown;
 };
-
   // 상세 모달 닫기 핸들러
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);

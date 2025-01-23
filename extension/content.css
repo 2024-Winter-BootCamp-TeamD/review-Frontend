@@ -414,6 +414,7 @@ floatingbutton-menu-open-button {
   border-radius: 8px;
   overflow-y: auto;
   color: #fff;
+  animation: slideUpFadeIn 0.6s ease-out forwards;
 }
 
 .modal-header {
@@ -636,8 +637,8 @@ h3 {
   display: inline-flex;
   align-items: center;
   transition: all 0.2s;
-  margin-left: 570px; /* 필요 시 조정 */
-  gap: 6px;         /* 아이콘과 텍스트 간격 */
+  margin-left: 570px; 
+  gap: 6px;        
 }
 
 .copy-button:hover {
@@ -650,14 +651,24 @@ h3 {
   fill: #fff;
 }
 
-/* 복사 전/후 텍스트 */
 .copy-text {
   font-size: 14px;
   color: #fff;
-  display: inline; /* 복사 전 표시 */
+  display: inline; 
 }
 .copied-text {
   font-size: 14px;
-  color: #4caf50; /* 체크 표시 색상 */
-  display: none;  /* 초기엔 숨김 */
+  color: #4caf50; 
+  display: none;  
+}
+
+@keyframes slideUpFadeIn {
+  0% {
+    transform: translateY(60px); /* 시작 위치 설정 */
+    opacity: 0;                  
+  }
+  100% {
+    transform: translateY(0);   
+    opacity: 1;                
+  }
 }

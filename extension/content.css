@@ -440,9 +440,15 @@ floatingbutton-menu-open-button {
   height: 100%;
 }
 
-.modal-left-column,
-.modal-right-column {
+.modal-left-column{
   flex: 1;
+  padding: 4px 16px 4px 16px;
+  overflow-y: auto;
+}
+
+.modal-right-column {
+  position: relative;
+  flex: 2;
   padding: 4px 16px 4px 16px;
   overflow-y: auto;
 }
@@ -475,18 +481,6 @@ floatingbutton-menu-open-button {
   margin-bottom: 16px;
 }
 
-.copy-button {
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  padding: 2px;
-  display: inline-flex; /* inline-flex로 변경 */
-  align-items: center;
-  transition: all 0.2s;
-  gap: 6px;
-  margin-left: 12px; /* 왼쪽 마진 추가 */
-}
 
 .review-content {
   background-color: #2d2d2d;
@@ -628,17 +622,21 @@ h3 {
   background: #3f3e3e;
 }
 
-/* [추가] 복사 버튼 스타일 */
+/* 복사 버튼 스타일 */
 .copy-button {
+
+  position: absolute;
+  top: 12px;
+
   background: none;
   border: none;
   color: #fff;
   cursor: pointer;
   padding: 2px;
-  display: inline-flex; /* inline-flex */
+  display: inline-flex;
   align-items: center;
   transition: all 0.2s;
-  margin-left: 8px; /* 필요 시 조정 */
+  margin-left: 570px; /* 필요 시 조정 */
   gap: 6px;         /* 아이콘과 텍스트 간격 */
 }
 

@@ -444,10 +444,8 @@ function createModal(selectedText) {
 }
 
 // 리뷰 시작 함수
-// 리뷰 시작 함수
 async function startReview(selectedText, reviewContent) {
   try {
-    // 사용자 정보 가져오기
     const userInfo = await new Promise((resolve) => {
       chrome.storage.local.get("userInfo", (result) => {
         resolve(result.userInfo);
@@ -458,18 +456,13 @@ async function startReview(selectedText, reviewContent) {
       throw new Error("로그인이 필요합니다.");
     }
 
-    // 초기 로딩 상태 표시
     reviewContent.innerHTML = "<div>리뷰를 시작합니다...</div>";
 
-    // 요청 데이터 준비
     const requestData = {
       userId: userInfo.id,
       code: selectedText,
     };
 
-    console.log("Sending request with data:", requestData); // 디버깅용
-
-    // POST 요청 설정
     const response = await fetch("http://localhost:8000/api/v1/partreviews/", {
       method: "POST",
       headers: {
@@ -480,17 +473,11 @@ async function startReview(selectedText, reviewContent) {
       body: JSON.stringify(requestData),
     });
 
-    // 응답 로깅
-    console.log("Response status:", response.status);
-    console.log("Response headers:", Object.fromEntries(response.headers));
-
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Error response:", errorData); // 디버깅용
       throw new Error(errorData.error || "리뷰 요청에 실패했습니다.");
     }
 
-    // 스트리밍 응답 처리
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     let buffer = "";
@@ -501,31 +488,29 @@ async function startReview(selectedText, reviewContent) {
 
       buffer += decoder.decode(value, { stream: true });
 
-      // 버퍼에서 이벤트 데이터 추출
-      const events = buffer.split("\n\n");
-      buffer = events.pop() || ""; // 남은 데이터는 버퍼에 보관
+      // 개별 SSE 메시지 처리
+      const lines = buffer.split("\n");
+      buffer = "";
 
-      for (const event of events) {
-        if (event.trim()) {
-          const eventData = event.replace(/^data: /, "").trim();
-          if (eventData) {
-            try {
-              const parsedData = JSON.parse(eventData);
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          try {
+            const jsonData = line.slice(6); // 'data: ' 제거
+            const parsedData = JSON.parse(jsonData);
 
-              // AI의 스트리밍된 응답 처리
-              if (parsedData.choices && parsedData.choices[0].delta.content) {
-                // 텍스트를 한 글자씩 추가하여 스트리밍 효과 강조
-                const content = parsedData.choices[0].delta.content;
-                for (let i = 0; i < content.length; i++) {
-                  reviewContent.textContent += content[i];
-                  await new Promise((resolve) => setTimeout(resolve, 10)); // 50ms 딜레이 추가
-                }
-                reviewContent.scrollTop = reviewContent.scrollHeight;
-              }
-            } catch (error) {
-              console.error("JSON 파싱 오류:", error);
+            // AI 응답 처리
+            if (parsedData.choices && parsedData.choices[0].delta.content) {
+              const content = parsedData.choices[0].delta.content;
+              reviewContent.textContent += content;
+              reviewContent.scrollTop = reviewContent.scrollHeight;
             }
+          } catch (error) {
+            console.error("데이터 파싱 오류:", error, "원본 데이터:", line);
+            continue; // 파싱 오류가 발생해도 계속 진행
           }
+        } else if (line.trim() && !line.startsWith(":")) {
+          // 버퍼에 추가
+          buffer += line + "\n";
         }
       }
     }

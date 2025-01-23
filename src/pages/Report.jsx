@@ -5,8 +5,6 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PlayfulButton from "../components/PlayfulButton";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchBar from "../components/SearchBar/SearchBar";
-import { ResponsivePie } from "@nivo/pie";
-import { ResponsiveLine } from "@nivo/line";
 import LoadingIndicator from "../components/LoadingIndicator/LoadingIndicator";
 import {
   getReports,
@@ -608,15 +606,35 @@ const Report = ({ isDarkMode }) => {
 `;
 
 const MarkdownRenderer = ({ markdown, isDarkMode }) => {
-    return (
-        <MarkdownContainer isDarkMode={isDarkMode}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {markdown}
-            </ReactMarkdown>
-        </MarkdownContainer>
-    );
+  return (
+      <MarkdownContainer isDarkMode={isDarkMode}>
+          <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                  code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      return !inline && match ? (
+                          <SyntaxHighlighter
+                              style={dark}
+                              language={match[1]}
+                              PreTag="div"
+                              {...props}
+                          >
+                              {String(children).replace(/\n$/, "")}
+                          </SyntaxHighlighter>
+                      ) : (
+                          <code className={className} {...props}>
+                              {children}
+                          </code>
+                      );
+                  },
+              }}
+          >
+              {markdown}
+          </ReactMarkdown>
+      </MarkdownContainer>
+  );
 };
-
   // 보고서 상세 보기 핸들러
   const handleReportClick = async (report) => {
     setIsDetailModalOpen(true);

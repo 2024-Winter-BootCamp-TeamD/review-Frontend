@@ -275,16 +275,12 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#FF794E"
           isSelected={selectedMode === "basic"}
           onClick={() => handleModeChange("basic")}
-          isSelected={selectedMode === "basic"}
-          onClick={() => handleModeChange("basic")}
           isDarkMode={isDarkMode}
         />
         <ModeSelectButton
           modeName="Study"
           description="Hint Only."
           modeColor="#FFCD39"
-          isSelected={selectedMode === "study"}
-          onClick={() => handleModeChange("study")}
           isSelected={selectedMode === "study"}
           onClick={() => handleModeChange("study")}
           isDarkMode={isDarkMode}
@@ -295,8 +291,6 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#4DABF5"
           isSelected={selectedMode === "clean"}
           onClick={() => handleModeChange("clean")}
-          isSelected={selectedMode === "clean"}
-          onClick={() => handleModeChange("clean")}
           isDarkMode={isDarkMode}
         />
         <ModeSelectButton
@@ -305,16 +299,14 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#BC6FCD"
           isSelected={selectedMode === "optimize"}
           onClick={() => handleModeChange("optimize")}
-          isSelected={selectedMode === "optimize"}
-          onClick={() => handleModeChange("optimize")}
           isDarkMode={isDarkMode}
         />
         <ModeSelectButton
           modeName="Newbie"
           description="Study Together."
           modeColor="#70BF73"
-          isSelected={selectedMode === "new bie"}
-          onClick={() => handleModeChange("new bie")}
+          isSelected={selectedMode === "newbie"}
+          onClick={() => handleModeChange("newbie")}
           isDarkMode={isDarkMode}
         />
       </div>

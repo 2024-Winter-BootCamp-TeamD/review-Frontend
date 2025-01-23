@@ -129,6 +129,9 @@ const ReviewDetailsBox = styled.div`
     padding: 20px;
     text-align: left;
     color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
+    overflow: auto; /* 추가 */
+    white-space: pre-wrap; /* 추가 */
+    font-size: 15px;
   }
 `;
 

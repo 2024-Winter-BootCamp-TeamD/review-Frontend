@@ -9,9 +9,6 @@ import {
   toggleRepoStatus,
 } from "../services/repositoryService";
 import PublicIcon from "@mui/icons-material/Public";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import AccountTreeIcon from "@mui/icons-material/AccountTree";
-import BugReportIcon from "@mui/icons-material/BugReport";
 
 const RepositoryContainer = styled.div`
   width: 46%;
@@ -158,6 +155,7 @@ const RepoDescription = styled.p`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-height: 20px;
 `;
 
 const RepoStats = styled.div`

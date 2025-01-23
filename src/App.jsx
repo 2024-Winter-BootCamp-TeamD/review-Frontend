@@ -44,7 +44,6 @@ function App() {
               path="/report"
               element={<Report isDarkMode={isDarkMode} />}
             />
-            <Route path="/home" element={<Home />} />
           </Routes>
         </div>
         <div className="top-buttons">

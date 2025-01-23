@@ -537,6 +537,86 @@ const Report = ({ isDarkMode }) => {
     setSearchQuery("");
   };
 
+  const MarkdownContainer = styled.div`
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.6;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#333333")};
+
+  h1, h2, h3 {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#333333" : "#f2f2f2")};
+  }
+
+  tr:nth-child(even) {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#222222" : "#f9f9f9")};
+  }
+
+  code {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#444" : "#f5f5f5")};
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+
+  pre {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#222222" : "#f5f5f5")};
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+  }
+
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 12px;
+  text-align: left;
+
+  /* 필요에 따라 추가 스타일링 가능 */
+  
+  /* 예: 링크 스타일 변경 */
+  a {
+    color: #1e90ff;
+    text-decoration: underline;
+  }
+
+  /* 이미지 스타일 변경 */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+`;
+
+const MarkdownRenderer = ({ markdown, isDarkMode }) => {
+    return (
+        <MarkdownContainer isDarkMode={isDarkMode}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {markdown}
+            </ReactMarkdown>
+        </MarkdownContainer>
+    );
+};
+
   // 보고서 상세 보기 핸들러
   const handleReportClick = async (report) => {
     setIsDetailModalOpen(true);
@@ -546,8 +626,7 @@ const Report = ({ isDarkMode }) => {
     try {
       const detail = await getReportById(report.id);
       console.log("📄 API 응답 데이터:", detail);
-      const reportcontent = detail.content
-      const detailreport = generateMarkdownReport(reportcontent); 
+      const detailreport = generateMarkdownReport(detail.content); 
       setReportDetail(detailreport);
     } catch (error) {
       console.error("보고서 상세 정보 로드 실패:", error);
@@ -562,7 +641,7 @@ const Report = ({ isDarkMode }) => {
 
     console.log("📄 변환 전 content (문자열 형태):", contentString);
 
-    // 🛠 1️⃣ 큰따옴표(`"`)를 ✅ 같은 잘 쓰이지 않는 문자로 변환
+    // 🛠 1️⃣ JSON 내 큰따옴표(`"`)를 ✅ 같은 잘 쓰이지 않는 문자로 변환
     contentString = contentString.replace(/"/g, "✅");
 
     console.log("🔵 큰따옴표 변환 완료 (✅로 대체):", contentString);
@@ -585,16 +664,15 @@ const Report = ({ isDarkMode }) => {
     const createdDate = dateMatch ? dateMatch[1] : "N/A";
 
     let markdown = `# ${title}\n\n`;
-
     markdown += `**작성자:** ${author}\n\n`;
     markdown += `**작성일자:** ${createdDate}\n\n---\n\n`;
 
-    // 🛠 6️⃣ PR 리뷰 테이블 추출 (HTML 변환 대신 마크다운 표 유지)
+    // 🛠 6️⃣ PR 리뷰 테이블 추출 (마크다운 표 유지)
     let reviewTableMatch = contentString.match(/"review_table"\s*:\s*\[(.*?)\]/s);
     if (reviewTableMatch) {
         let reviewTableContent = reviewTableMatch[1];
 
-        // 테이블 헤더
+        // 테이블 헤더 추가
         markdown += `## 1. PR 리뷰 테이블\n\n`;
         markdown += `| ID | 제목 | 평균 등급 | 리뷰 모드 | 문제 유형 | 작성일자 |\n`;
         markdown += `|----|------|-----------|-----------|-----------|----------|\n`;
@@ -632,6 +710,8 @@ const Report = ({ isDarkMode }) => {
     console.log("✅ 변환된 마크다운 (최종):", markdown);
     return markdown;
 };
+
+
   // 상세 모달 닫기 핸들러
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);
@@ -957,8 +1037,8 @@ const Report = ({ isDarkMode }) => {
               ) : reportDetail ? (
                 <>
                   <ReportContent>
-                    <ContentTitle>AI 코드리뷰 익스텐션 보고서</ContentTitle>
-                    <ContentText>{reportDetail}</ContentText>
+                    <ContentTitle>AI 코드리뷰 보고서</ContentTitle>
+                    <MarkdownRenderer markdown={reportDetail} />
                   </ReportContent>
 
                   <ReportGraph>

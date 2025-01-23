@@ -555,24 +555,31 @@ const Report = ({ isDarkMode }) => {
       setIsLoadingDetail(false);
     }
   };
-
+  
   const generateMarkdownReport = (contentString) => {
     if (!contentString) return "🚨 데이터 로드 실패: content 필드가 없습니다.";
 
     console.log("📄 변환 전 content (문자열 형태):", contentString);
 
-    // 🛠 작은따옴표를 큰따옴표로 변환하여 정규식 매칭 가능하도록 수정
+    // 🛠 1️⃣ JSON 내 큰따옴표(`"`)를 ✅ 같은 잘 쓰이지 않는 문자로 변환
+    contentString = contentString.replace(/"/g, "✅");
+
+    console.log("🔵 큰따옴표 변환 완료 (✅로 대체):", contentString);
+
+    // 🛠 2️⃣ 작은따옴표(`'`)를 큰따옴표(`"`)로 변환하여 정규식 매칭 가능하도록 수정
     contentString = contentString.replace(/'/g, '"');
 
-    // 🛠 제목 추출
+    console.log("🔵 작은따옴표 → 큰따옴표 변환 완료:", contentString);
+
+    // 🛠 3️⃣ 제목 추출
     const titleMatch = contentString.match(/"title"\s*:\s*"([^"]+)"/);
     const title = titleMatch ? titleMatch[1] : "프로젝트 리뷰 보고서";
 
-    // 🛠 작성자 추출
+    // 🛠 4️⃣ 작성자 추출
     const authorMatch = contentString.match(/"author"\s*:\s*"([^"]+)"/);
     const author = authorMatch ? authorMatch[1] : "Unknown";
 
-    // 🛠 작성일자 추출
+    // 🛠 5️⃣ 작성일자 추출
     const dateMatch = contentString.match(/"created_date"\s*:\s*"([^"]+)"/);
     const createdDate = dateMatch ? dateMatch[1] : "N/A";
 
@@ -581,7 +588,7 @@ const Report = ({ isDarkMode }) => {
     markdown += `**작성자:** ${author}\n\n`;
     markdown += `**작성일자:** ${createdDate}\n\n---\n\n`;
 
-    // 🛠 PR 리뷰 테이블 추출
+    // 🛠 6️⃣ PR 리뷰 테이블 추출
     let reviewTableMatch = contentString.match(/"review_table"\s*:\s*\[(.*?)\]/s);
     if (reviewTableMatch) {
         let reviewTableContent = reviewTableMatch[1];
@@ -610,7 +617,7 @@ const Report = ({ isDarkMode }) => {
         markdown += `\n**PR 리뷰 데이터가 없습니다.**\n\n`;
     }
 
-    // 🛠 분석 결과 추출
+    // 🛠 7️⃣ 분석 결과 추출
     const analysisMatch = contentString.match(/"analysis"\s*:\s*"([\s\S]+?)"/);
     if (analysisMatch) {
         markdown += `## 2. 분석 결과\n\n`;
@@ -619,10 +626,12 @@ const Report = ({ isDarkMode }) => {
         markdown += `\n**분석 결과가 없습니다.**\n\n`;
     }
 
-    console.log("✅ 변환된 마크다운:", markdown);
+    // 🛠 8️⃣ ✅를 다시 큰따옴표(`"`)로 복원
+    markdown = markdown.replace(/✅/g, '"');
+
+    console.log("✅ 변환된 마크다운 (최종):", markdown);
     return markdown;
 };
-
 
   // 상세 모달 닫기 핸들러
   const handleCloseDetailModal = () => {

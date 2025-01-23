@@ -32,5 +32,18 @@
   "background": {
     "service_worker": "background.js",
     "type": "module"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/basic.png",
+        "icons/optimize.png",
+        "icons/clean.png",
+        "icons/dashboard.png",
+        "icons/study.png",
+        "icons/newbie.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

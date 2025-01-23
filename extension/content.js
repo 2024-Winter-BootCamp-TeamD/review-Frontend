@@ -289,6 +289,33 @@ function injectFloatingButton() {
     .addEventListener("click", () => handleButtonClick("newbie", "#4DABF5"));
 }
 
+//리뷰 내용을 복사하고 버튼 상태를 업데이트하는 함수
+function copyReviewContent(reviewContent, copyButton) {
+  const textToCopy = reviewContent.innerText;
+  if (!textToCopy) return;
+
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    // 복사 성공 시 UI 업데이트
+    const copyText = copyButton.querySelector(".copy-text");
+    const copiedText = copyButton.querySelector(".copied-text");
+
+    if (copyText && copiedText) {
+      copyText.style.display = "none";
+      copiedText.style.display = "inline";
+    }
+
+    // 일정 시간 후 원래 상태로 복귀 (2초)
+    setTimeout(() => {
+      if (copyText && copiedText) {
+        copyText.style.display = "inline";
+        copiedText.style.display = "none";
+      }
+    }, 2000);
+  }).catch((err) => {
+    console.error("복사 실패:", err);
+  });
+}
+
 function removeFloatingButton() {
   const button = document.getElementById("code-review-assistant");
   if (button) {
@@ -408,11 +435,15 @@ function createModal(selectedText) {
           </div>
           <div class="modal-right-column">
               <h3>리뷰 내용</h3>
-              <button class="copy-button">
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>
-                </svg>
-              </button>
+           <button class="copy-button">
+             <svg width="16" height="16" viewBox="0 0 24 24">
+               <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 
+                1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" 
+                fill="currentColor"/>
+             </svg>
+             <span class="copy-text">복사</span>
+             <span class="copied-text" style="display: none;">✔ 복사됨</span>
+           </button>
             <div class="review-content"></div>
           </div>
         </div>
@@ -434,6 +465,8 @@ function createModal(selectedText) {
     }
   };
 
+  const reviewContent = modal.querySelector(".review-content");
+
   // 리뷰 시작 전에 선택된 텍스트 확인
   if (!selectedText || selectedText.trim() === "") {
     reviewContent.innerHTML = `<div class="error-message">오류: 선택된 코드가 없습니다.</div>`;
@@ -441,6 +474,13 @@ function createModal(selectedText) {
   }
 
   startReview(selectedText, modal.querySelector(".review-content"));
+
+
+ //복사 버튼 이벤트 리스너
+ const copyButton = modal.querySelector(".copy-button");
+ copyButton.addEventListener("click", () => {
+   copyReviewContent(reviewContent, copyButton);
+ });
 }
 
 // 리뷰 시작 함수

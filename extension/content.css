@@ -627,3 +627,39 @@ h3 {
 .code-container pre::-webkit-scrollbar-thumb:hover {
   background: #3f3e3e;
 }
+
+/* [추가] 복사 버튼 스타일 */
+.copy-button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex; /* inline-flex */
+  align-items: center;
+  transition: all 0.2s;
+  margin-left: 8px; /* 필요 시 조정 */
+  gap: 6px;         /* 아이콘과 텍스트 간격 */
+}
+
+.copy-button:hover {
+  opacity: 0.8;
+}
+
+.copy-button svg {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+
+/* 복사 전/후 텍스트 */
+.copy-text {
+  font-size: 14px;
+  color: #fff;
+  display: inline; /* 복사 전 표시 */
+}
+.copied-text {
+  font-size: 14px;
+  color: #4caf50; /* 체크 표시 색상 */
+  display: none;  /* 초기엔 숨김 */
+}

@@ -5,8 +5,6 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PlayfulButton from "../components/PlayfulButton";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchBar from "../components/SearchBar/SearchBar";
-import { ResponsivePie } from "@nivo/pie";
-import { ResponsiveLine } from "@nivo/line";
 import LoadingIndicator from "../components/LoadingIndicator/LoadingIndicator";
 import {
   getReports,
@@ -26,6 +24,7 @@ import 'highcharts/modules/accessibility';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkGfm from 'remark-gfm';
 
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
@@ -536,6 +535,106 @@ const Report = ({ isDarkMode }) => {
     setSearchQuery("");
   };
 
+  const MarkdownContainer = styled.div`
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.6;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#333333")};
+
+  h1, h2, h3 {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#333333" : "#f2f2f2")};
+  }
+
+  tr:nth-child(even) {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#222222" : "#f9f9f9")};
+  }
+
+  code {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#444" : "#f5f5f5")};
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+
+  pre {
+    background-color: ${({ isDarkMode }) => (isDarkMode ? "#222222" : "#f5f5f5")};
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+  }
+
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 12px;
+  text-align: left;
+
+  /* 필요에 따라 추가 스타일링 가능 */
+  
+  /* 예: 링크 스타일 변경 */
+  a {
+    color: #1e90ff;
+    text-decoration: underline;
+  }
+
+  /* 이미지 스타일 변경 */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+`;
+
+const MarkdownRenderer = ({ markdown, isDarkMode }) => {
+  return (
+      <MarkdownContainer isDarkMode={isDarkMode}>
+          <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                  code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      return !inline && match ? (
+                          <SyntaxHighlighter
+                              style={dark}
+                              language={match[1]}
+                              PreTag="div"
+                              {...props}
+                          >
+                              {String(children).replace(/\n$/, "")}
+                          </SyntaxHighlighter>
+                      ) : (
+                          <code className={className} {...props}>
+                              {children}
+                          </code>
+                      );
+                  },
+              }}
+          >
+              {markdown}
+          </ReactMarkdown>
+      </MarkdownContainer>
+  );
+};
   // 보고서 상세 보기 핸들러
   const handleReportClick = async (report) => {
     setIsDetailModalOpen(true);
@@ -544,7 +643,9 @@ const Report = ({ isDarkMode }) => {
 
     try {
       const detail = await getReportById(report.id);
-      setReportDetail(detail);
+      console.log("📄 API 응답 데이터:", detail);
+      const detailreport = generateMarkdownReport(detail.content); 
+      setReportDetail(detailreport);
     } catch (error) {
       console.error("보고서 상세 정보 로드 실패:", error);
       alert("보고서 상세 정보를 불러오는데 실패했습니다.");
@@ -552,6 +653,82 @@ const Report = ({ isDarkMode }) => {
       setIsLoadingDetail(false);
     }
   };
+  
+  const generateMarkdownReport = (contentString) => {
+    if (!contentString) return "🚨 데이터 로드 실패: content 필드가 없습니다.";
+
+    console.log("📄 변환 전 content (문자열 형태):", contentString);
+
+    // 🛠 1️⃣ JSON 내 큰따옴표(`"`)를 ✅ 같은 잘 쓰이지 않는 문자로 변환
+    contentString = contentString.replace(/"/g, "✅");
+
+    console.log("🔵 큰따옴표 변환 완료 (✅로 대체):", contentString);
+
+    // 🛠 2️⃣ 작은따옴표(`'`)를 큰따옴표(`"`)로 변환하여 정규식 매칭 가능하도록 수정
+    contentString = contentString.replace(/'/g, '"');
+
+    console.log("🔵 작은따옴표 → 큰따옴표 변환 완료:", contentString);
+
+    // 🛠 3️⃣ 제목 추출
+    const titleMatch = contentString.match(/"title"\s*:\s*"([^"]+)"/);
+    const title = titleMatch ? titleMatch[1] : "프로젝트 리뷰 보고서";
+
+    // 🛠 4️⃣ 작성자 추출
+    const authorMatch = contentString.match(/"author"\s*:\s*"([^"]+)"/);
+    const author = authorMatch ? authorMatch[1] : "Unknown";
+
+    // 🛠 5️⃣ 작성일자 추출
+    const dateMatch = contentString.match(/"created_date"\s*:\s*"([^"]+)"/);
+    const createdDate = dateMatch ? dateMatch[1] : "N/A";
+
+    let markdown = `# ${title}\n\n`;
+    markdown += `**작성자:** ${author}\n\n`;
+    markdown += `**작성일자:** ${createdDate}\n\n---\n\n`;
+
+    // 🛠 6️⃣ PR 리뷰 테이블 추출 (마크다운 표 유지)
+    let reviewTableMatch = contentString.match(/"review_table"\s*:\s*\[(.*?)\]/s);
+    if (reviewTableMatch) {
+        let reviewTableContent = reviewTableMatch[1];
+
+        // 테이블 헤더 추가
+        markdown += `## 1. PR 리뷰 테이블\n\n`;
+        markdown += `| ID | 제목 | 평균 등급 | 리뷰 모드 | 문제 유형 | 작성일자 |\n`;
+        markdown += `|----|------|-----------|-----------|-----------|----------|\n`;
+
+        // 개별 PR 리뷰 항목 추출 (마크다운 표 유지)
+        let reviews = [...reviewTableContent.matchAll(/\{([^}]+)\}/g)];
+        reviews.forEach((review) => {
+            let id = review[1].match(/"id"\s*:\s*(\d+)/)?.[1] || "N/A";
+            let title = review[1].match(/"title"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let grade = review[1].match(/"aver_grade"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let mode = review[1].match(/"review_mode"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let problem = review[1].match(/"problem_type"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let date = review[1].match(/"created_at"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+
+            markdown += `| ${id} | ${title} | ${grade} | ${mode} | ${problem} | ${date} |\n`;
+        });
+
+        markdown += `\n---\n\n`;
+    } else {
+        markdown += `\n**PR 리뷰 데이터가 없습니다.**\n\n`;
+    }
+
+    // 🛠 7️⃣ 분석 결과 추출
+    const analysisMatch = contentString.match(/"analysis"\s*:\s*"([\s\S]+?)"/);
+    if (analysisMatch) {
+        markdown += `## 2. 분석 결과\n\n`;
+        markdown += `${analysisMatch[1].replace(/\\n/g, "\n")}\n\n---\n\n`;
+    } else {
+        markdown += `\n**분석 결과가 없습니다.**\n\n`;
+    }
+
+    // 🛠 8️⃣ ✅를 다시 큰따옴표(`"`)로 복원
+    markdown = markdown.replace(/✅/g, '"');
+
+    console.log("✅ 변환된 마크다운 (최종):", markdown);
+    return markdown;
+};
+
 
   // 상세 모달 닫기 핸들러
   const handleCloseDetailModal = () => {
@@ -648,6 +825,9 @@ const Report = ({ isDarkMode }) => {
       loadPrReviews(currentPage);
     }
   }, [currentPage]);
+
+// 원본 데이터(json)입니다.
+//const content = {'title': 'qqq', 'author': 'DeepSeek API', 'created_date': '2025-01-23', 'summary': {'total_prs': 5, 'clean_mode_count': 0, 'optimize_mode_count': 0, 'study_mode_count': 0, 'newbie_mode_count': 0, 'basic_mode_count': 0}, 'review_table': [{'id': 1, 'title': 'ddd', 'aver_grade': 'a', 'problem_type': '재사용성', 'review_mode': 'Basic', 'created_at': '2025-01-22 17:24:35'}, {'id': 2, 'title': 'dddw', 'aver_grade': 'a', 'problem_type': '재사용성', 'review_mode': 'Basic', 'created_at': '2025-01-22 17:24:35'}, {'id': 3, 'title': 'dddsf', 'aver_grade': 'a', 'problem_type': '재사용성', 'review_mode': 'Basic', 'created_at': '2025-01-22 17:24:35'}, {'id': 4, 'title': 'ddddfs', 'aver_grade': 'a', 'problem_type': '재사용성', 'review_mode': 'Basic', 'created_at': '2025-01-22 17:24:35'}, {'id': 5, 'title': 'dddaeghsgs', 'aver_grade': 'a', 'problem_type': '재사용성', 'review_mode': 'Basic', 'created_at': '2025-01-22 17:24:35'}], 'analysis': '### 2-1. 리뷰 결과 통계\n\n- **분석된 PR 수**: 5\n- **Clean 모드**: 0개의 리뷰\n- **Optimize 모드**: 0개의 리뷰\n- **Study 모드**: 0개의 리뷰\n- **newbie 모드**: 0개의 리뷰\n- **basic 모드**: 0개의 리뷰\n\n---\n\n### 2-2. 주요 취약점 및 개선 우선순위\n\n**취약한 유형 통계 및 개선 방향**:\n\n1. **취약점 유형 문제점**: 코드 가독성 부족\n   - **개선 방향**: 변수명과 함수명을 명확하게 정의하고, 주석을 적절히 추가하여 코드의 의도를 명확히 전달해야 합니다.\n   - **안좋은 예시**: `int a = 10;`\n   - **좋은 예시**: `int userAge = 10;`\n\n2. **취약점 유형 문제점**: 중복 코드\n   - **개선 방향**: 중복된 코드를 함수로 추출하여 재사용성을 높이고, 유지보수를 용이하게 해야 합니다.\n   - **안좋은 예시**: \n     ```python\n     print("Hello, World!")\n     print("Hello, World!")\n     ```\n   - **좋은 예시**: \n     ```python\n     def greet():\n         print("Hello, World!")\n     \n     greet()\n     greet()\n     ```\n\n3. **취약점 유형 문제점**: 예외 처리 부재\n   - **개선 방향**: 예외 상황을 고려하여 적절한 예외 처리를 추가해야 합니다.\n   - **안좋은 예시**: \n     ```python\n     result = 10 / 0\n     ```\n   - **좋은 예시**: \n     ```python\n     try:\n         result = 10 / 0\n     except ZeroDivisionError:\n         print("Cannot divide by zero")\n     ```\n\n---\n\n### 2-3. 개인화된 피드백 및 권장사항\n\n**사용자 맞춤 개선 방향**:\n\n- **가장 낮은 점수를 받은 평가 기준**: 코드 가독성\n  - **개선 방안**: 변수명과 함수명을 명확하게 정의하고, 주석을 적절히 추가하여 코드의 의도를 명확히 전달하세요. 또한, 코드를 모듈화하여 각 함수가 하나의 역할만 수행하도록 설계하세요.\n\n- **추천 학습 자료**:\n  - [Clean Code by Robert C. Martin](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)\n  - [Refactoring: Improving the Design of Existing Code by Martin Fowler](https://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672)\n\n- **관련 예시 코드**:\n  ```python\n  # 안좋은 예시\n  def process_data(data):\n      a = data[0]\n      b = data[1]\n      c = a + b\n      return c\n\n  # 좋은 예시\n  def calculate_sum(data):\n      first_number = data[0]\n      second_number = data[1]\n      total_sum = first_number + second_number\n      return total_sum\n  ```\n\n---\n\n### 2-4. 종합 결론\n\n**총평**:\n\n- **강점**:\n  1. 코드의 기본 구조가 잘 잡혀 있어 확장성이 좋습니다.\n  2. 프로젝트의 목표가 명확하게 정의되어 있습니다.\n  3. 팀원 간의 협업이 원활하게 이루어지고 있습니다.\n\n- **약점**:\n  1. 코드 가독성이 떨어져 유지보수가 어렵습니다.\n  2. 중복 코드가 많아 코드의 재사용성이 낮습니다.\n  3. 예외 처리가 부족하여 안정성이 떨어집니다.\n\n- **향후 권장 사항**:\n  - **Study 모드**를 사용하여 코드 리팩토링과 예외 처리에 대한 학습을 강화하세요.\n  - 코드 리뷰를 통해 팀원 간의 코드 품질을 지속적으로 개선해 나가세요.\n  - 코드 가독성과 재사용성을 높이기 위해 Clean Code 원칙을 적용하세요.\n\n---\n\n### 첨부 자료\n\n- **추천 학습 자료**:\n  - [Clean Code by Robert C. Martin](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)\n  - [Refactoring: Improving the Design of Existing Code by Martin Fowler](https://www.amazon.com/Refactoring-Improving-Design-Existing-Code/dp/0201485672)\n\n- **관련 예시 코드**:\n  ```python\n  # 안좋은 예시\n  def process_data(data):\n      a = data[0]\n      b = data[1]\n      c = a + b\n      return c\n\n  # 좋은 예시\n  def calculate_sum(data):\n      first_number = data[0]\n      second_number = data[1]\n      total_sum = first_number + second_number\n      return total_sum\n  ```\n\n이 보고서를 통해 프로젝트의 강점과 약점을 명확히 이해하고, 개선 방향을 설정하여 더 나은 코드 품질을 달성할 수 있기를 바랍니다.'}
 
   return (
     <ReportWrapper isDarkMode={isDarkMode}>
@@ -875,8 +1055,8 @@ const Report = ({ isDarkMode }) => {
               ) : reportDetail ? (
                 <>
                   <ReportContent>
-                    <ContentTitle>AI 코드리뷰 익스텐션 보고서</ContentTitle>
-                    <ContentText>{reportDetail.content}</ContentText>
+                    <ContentTitle>AI 코드리뷰 보고서</ContentTitle>
+                    <MarkdownRenderer markdown={reportDetail} />
                   </ReportContent>
 
                   <ReportGraph>

@@ -98,6 +98,9 @@ function handleButtonClick(mode, backgroundColor) {
           alt="Newbie Mode Icon" />`,
   };
 
+   // ** 드래그 하이라이트 색상도 함께 세팅! **
+   setSelectionColor(backgroundColor);
+
   window.floatingButtonState.selectedButton = {
     text: svgIcons[mode],
     backgroundColor,
@@ -448,6 +451,27 @@ function createModal(selectedText) {
  copyButton.addEventListener("click", () => {
    copyReviewContent(reviewContent, copyButton);
  });
+}
+
+function setSelectionColor(color) {
+  // style 태그가 이미 있는지 확인
+  let styleTag = document.getElementById("mode-selection-style");
+  if (!styleTag) {
+    styleTag = document.createElement("style");
+    styleTag.id = "mode-selection-style";
+    document.head.appendChild(styleTag);
+  }
+
+  styleTag.textContent = `
+    ::selection {
+      background: ${color} !important;
+      color: #ffffff !important;
+    }
+    ::-moz-selection {
+      background: ${color} !important;
+      color: #ffffff !important;
+    }
+  `;
 }
 
 // 리뷰 시작 함수

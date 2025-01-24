@@ -600,7 +600,7 @@ h3 {
 .review-content::-webkit-scrollbar-track,
 .code-container::-webkit-scrollbar-track,
 .code-container pre::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #777777;
   border-radius: 4px;
 }
 
@@ -610,7 +610,7 @@ h3 {
 .review-content::-webkit-scrollbar-thumb,
 .code-container::-webkit-scrollbar-thumb,
 .code-container pre::-webkit-scrollbar-thumb {
-  background: #777777;
+  background: #f1f1f1;
   border-radius: 4px;
 }
 
@@ -671,4 +671,11 @@ h3 {
     transform: translateY(0);   
     opacity: 1;                
   }
+}
+
+.blob-code-inner {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
 }

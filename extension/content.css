@@ -459,21 +459,56 @@ floatingbutton-menu-open-button {
   border-right: 1px solid #333;
 }
 
-.code-container {
-  background-color: #2d2d2d;
-  padding: 16px;
-  border-radius: 4px;
-  margin-top: 8px;
-  height: calc(100% - 60px);
-  overflow-y: auto;
+code-container pre,
+.review-content pre {
+  background: #1e1e1e; /* 다크 테마 배경 */
+  color: #f8f8f2; /* 코드 텍스트 색상 */
+  border-radius: 6px; /* 부드러운 곡선 테두리 */
+  padding: 12px; /* 내부 패딩 */
+  font-family: "Fira Code", "Consolas", "Courier New", monospace; /* 프로그래밍 폰트 */
+  font-size: 14px; /* 가독성을 높인 글자 크기 */
+  line-height: 1.5; /* 줄 간격 조정 */
+  border: 1px solid #444; /* 코드 블록 테두리 */
+  white-space: pre-wrap; /* 줄바꿈 유지 */
+  overflow-x: auto; /* 가로 스크롤 허용 */
+  position: relative;
 }
 
-.code-container pre {
-  margin: 0;
-  white-space: pre-wrap;
-  font-family: "Consolas", monospace;
-  color: #d4d4d4;
-  overflow-y: auto;
+/* 🎨 코드 블록 내 텍스트 강조 (Syntax Highlighting) */
+.code-container pre span.keyword {
+  color: #ff79c6; /* 키워드 */
+}
+.code-container pre span.string {
+  color: #f1fa8c; /* 문자열 */
+}
+.code-container pre span.comment {
+  color: #6272a4; /* 주석 */
+}
+.code-container pre span.function {
+  color: #50fa7b; /* 함수 */
+}
+
+/* ✨ 코드 블록 내부 스크롤바 스타일 */
+.code-container pre::-webkit-scrollbar,
+.review-content pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.code-container pre::-webkit-scrollbar-track,
+.review-content pre::-webkit-scrollbar-track {
+  background: #222; /* 스크롤바 트랙 */
+  border-radius: 4px;
+}
+
+.code-container pre::-webkit-scrollbar-thumb,
+.review-content pre::-webkit-scrollbar-thumb {
+  background: #666; /* 스크롤바 색상 */
+  border-radius: 4px;
+}
+
+.code-container pre::-webkit-scrollbar-thumb:hover,
+.review-content pre::-webkit-scrollbar-thumb:hover {
+  background: #888; /* 호버 시 색상 변경 */
 }
 
 .review-header {

@@ -295,6 +295,8 @@ function removeFloatingButton() {
   }
 }
 
+
+
 // 드래그 버튼 생성 함수
 function createDragButton() {
   const button = document.createElement("div");
@@ -393,6 +395,30 @@ function initializeDragHandler() {
       }
     }, 100);
   });
+}
+
+// 마크다운 변환 함수
+function parseMarkdown(text) {
+  if (!text) return "";
+  // 코드 블록 변환 (```...```)
+  text = text.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>');
+  // 인라인 코드 변환 (`...`)
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // 제목 변환 (#, ##, ### 등)
+  text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  text = text.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  // 볼드 변환 (**텍스트**)
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // 이탤릭 변환 (*텍스트*)
+  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  // 인용구 변환 (> 텍스트)
+  text = text.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+  // 리스트 변환 (- 항목)
+  text = text.replace(/^- (.+)$/gm, '<ul><li>$1</li></ul>');
+  // 줄바꿈 변환 (각 줄을 <p>로 감싸기)
+  text = text.replace(/\n/g, '<br>');
+  return text;
 }
 
 // 모달 생성 함수
@@ -498,7 +524,7 @@ async function startReview(selectedText, reviewContent) {
       throw new Error("로그인이 필요합니다.");
     }
 
-    reviewContent.innerHTML = "<div>리뷰를 시작합니다...</div>";
+    reviewContent.innerHTML = "<div>리뷰를 시작하겠습니다!<br>조금만 기다려주세요!<br><br>최대 30초 정도 소요될 수 있습니다...</div>";
 
     const requestData = {
       userId: userInfo.id,
@@ -522,17 +548,14 @@ async function startReview(selectedText, reviewContent) {
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
-    let buffer = "";
+    let bufferText = ""; // 전체 응답 저장 버퍼
 
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
 
-      buffer += decoder.decode(value, { stream: true });
-
-      // 개별 SSE 메시지 처리
-      const lines = buffer.split("\n");
-      buffer = "";
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n");
 
       for (const line of lines) {
         if (line.startsWith("data: ")) {
@@ -540,19 +563,20 @@ async function startReview(selectedText, reviewContent) {
             const jsonData = line.slice(6); // 'data: ' 제거
             const parsedData = JSON.parse(jsonData);
 
-            // AI 응답 처리
             if (parsedData.choices && parsedData.choices[0].delta.content) {
               const content = parsedData.choices[0].delta.content;
-              reviewContent.textContent += content;
+              bufferText += content; // 전체 응답 저장
+
+              // ✅ **마크다운 변환을 한 번만 실행하여 깨지지 않도록 적용**
+              reviewContent.innerHTML = parseMarkdown(bufferText);
+
+              // ✅ **스크롤 자동 이동 (ChatGPT 스타일)**
               reviewContent.scrollTop = reviewContent.scrollHeight;
             }
           } catch (error) {
             console.error("데이터 파싱 오류:", error, "원본 데이터:", line);
             continue; // 파싱 오류가 발생해도 계속 진행
           }
-        } else if (line.trim() && !line.startsWith(":")) {
-          // 버퍼에 추가
-          buffer += line + "\n";
         }
       }
     }

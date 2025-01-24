@@ -354,6 +354,26 @@ function initializeDragHandler() {
   });
 }
 
+// 🎯 코드 복사 버튼 이벤트 리스너 추가
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".code-container pre").forEach((preBlock) => {
+    const copyButton = document.createElement("button");
+    copyButton.className = "code-copy-button";
+    copyButton.innerText = "📋 복사";
+    
+    preBlock.parentElement.appendChild(copyButton);
+
+    copyButton.addEventListener("click", () => {
+      const codeText = preBlock.innerText;
+      navigator.clipboard.writeText(codeText).then(() => {
+        copyButton.innerText = "✅ 복사됨!";
+        setTimeout(() => (copyButton.innerText = "📋 복사"), 2000);
+      });
+    });
+  });
+});
+
+
 // 마크다운 파싱 함수
 function parseMarkdown(text) {
   if (!text) return "";
@@ -387,6 +407,37 @@ function parseMarkdown(text) {
   return text;
 }
 
+// ✅ "전체 리뷰 내용 복사" 버튼 이벤트 리스너 등록
+function attachCopyButtonListener() {
+  document.querySelectorAll(".copy-button").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const reviewContent = button.parentElement.querySelector(".review-content");
+      
+      if (!reviewContent) {
+        console.error("❌ 리뷰 내용 영역을 찾을 수 없습니다.");
+        return;
+      }
+
+      const textToCopy = reviewContent.innerText.trim();
+
+      if (!textToCopy) {
+        alert("⚠️ 복사할 리뷰 내용이 없습니다.");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        button.innerText = "✅ 복사됨!";
+        setTimeout(() => (button.innerText = "📋 전체 복사"), 2000);
+      } catch (error) {
+        console.error("❌ 클립보드 복사 실패:", error);
+        alert("❌ 클립보드 복사에 실패했습니다. 수동으로 복사해주세요.");
+      }
+    });
+  });
+}
+
+
 // 모달 생성 함수
 function createModal(selectedText) {
   console.log("Creating modal with text:", selectedText); // 디버깅용
@@ -409,17 +460,19 @@ function createModal(selectedText) {
           <div class="modal-right-column">
               <h3>리뷰 내용</h3>
               <button class="copy-button">
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>
-                </svg>
+                📋 전체 복사
               </button>
-            <div class="review-content"></div>
+              <div class="review-content"></div>
           </div>
         </div>
       </div>
     </div>
   `;
+
   document.body.appendChild(modal);
+
+  // ✅ 모달이 생성될 때 이벤트 리스너 추가
+  attachCopyButtonListener();
 
   // 모달 닫기 버튼 이벤트
   const closeButton = modal.querySelector(".modal-close");
@@ -436,12 +489,13 @@ function createModal(selectedText) {
 
   // 리뷰 시작 전에 선택된 텍스트 확인
   if (!selectedText || selectedText.trim() === "") {
-    reviewContent.innerHTML = `<div class="error-message">오류: 선택된 코드가 없습니다.</div>`;
+    document.querySelector(".review-content").innerHTML = `<div class="error-message">오류: 선택된 코드가 없습니다.</div>`;
     return;
   }
 
   startReview(selectedText, modal.querySelector(".review-content"));
 }
+
 
 // 리뷰 시작 함수
 async function startReview(selectedText, reviewContent) {
@@ -456,7 +510,7 @@ async function startReview(selectedText, reviewContent) {
       throw new Error("로그인이 필요합니다.");
     }
 
-    reviewContent.innerHTML = "<div>리뷰를 시작하겠습니다!<br>조금만 기다려주세요!<br></div>";
+    reviewContent.innerHTML = "<div>리뷰를 시작하겠습니다!<br>조금만 기다려주세요!<br><br>최대 30초 정도 소요될 수 있습니다...</div>";
 
     const requestData = {
       userId: userInfo.id,

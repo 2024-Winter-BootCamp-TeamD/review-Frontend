@@ -52,13 +52,13 @@ a {
   cursor: pointer !important;
 }
 .floatingbutton-clean-code {
-  background-color: #bc6fcd !important;
+  background-color: #4dabf5!important;
   box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
   color: #ffffff;
 }
 .floatingbutton-clean-code:hover {
-  background-color: #752e84 !important;
+  background-color: #086691 !important;
   cursor: pointer !important;
 }
 .floatingbutton-basic {
@@ -72,13 +72,13 @@ a {
   cursor: pointer !important;
 }
 .floatingbutton-optimize {
-  background-color: #70bf73 !important;
+  background-color: #bc6fcd !important;
   box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
   color: #ffffff;
 }
 .floatingbutton-optimize:hover {
-  background-color: #2f6a32 !important;
+  background-color: #752e84 !important;
   cursor: pointer !important;
 }
 .floatingbutton-study {
@@ -92,13 +92,13 @@ a {
   cursor: pointer !important;
 }
 .floatingbutton-newbie {
-  background-color: #4dabf5 !important;
+  background-color: #70bf73 !important;
   box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
   color: #ffffff;
 }
 .floatingbutton-newbie:hover {
-  background-color: #086691 !important;
+  background-color: #2f6a32 !important;
   cursor: pointer !important;
 }
 /* 툴팁 스타일 */

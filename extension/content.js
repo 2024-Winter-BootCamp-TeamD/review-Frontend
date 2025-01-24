@@ -241,19 +241,19 @@ function injectFloatingButton() {
 
   document
     .querySelector(".floatingbutton-clean-code")
-    .addEventListener("click", () => handleButtonClick("clean", "#BC6FCD"));
+    .addEventListener("click", () => handleButtonClick("clean", "#4DABF5"));
   document
     .querySelector(".floatingbutton-basic")
     .addEventListener("click", () => handleButtonClick("basic", "#FF794E"));
   document
     .querySelector(".floatingbutton-optimize")
-    .addEventListener("click", () => handleButtonClick("optimize", "#70BF73"));
+    .addEventListener("click", () => handleButtonClick("optimize", "#BC6FCD"));
   document
     .querySelector(".floatingbutton-study")
     .addEventListener("click", () => handleButtonClick("study", "#FFCD39"));
   document
     .querySelector(".floatingbutton-newbie")
-    .addEventListener("click", () => handleButtonClick("newbie", "#4DABF5"));
+    .addEventListener("click", () => handleButtonClick("newbie", "#70BF73"));
 }
 
 //리뷰 내용을 복사하고 버튼 상태를 업데이트하는 함수

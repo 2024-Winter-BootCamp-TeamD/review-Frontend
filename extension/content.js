@@ -98,6 +98,11 @@ function handleButtonClick(mode, backgroundColor) {
           alt="Newbie Mode Icon" />`,
   };
 
+   // ** 드래그 하이라이트 색상 **
+   setSelectionColor(backgroundColor);
+
+   setDragButtonColor(backgroundColor);
+
   window.floatingButtonState.selectedButton = {
     text: svgIcons[mode],
     backgroundColor,
@@ -167,7 +172,7 @@ function injectFloatingButton() {
           <img src="${chrome.runtime.getURL("icons/dashboard.png")}" 
           height="32" 
           width="32" 
-          style="margin-top: 14px;"
+          style="margin-top: 14px ;"
           alt="Dashboard Icon" />
         </span>
       </div>
@@ -241,19 +246,46 @@ function injectFloatingButton() {
 
   document
     .querySelector(".floatingbutton-clean-code")
-    .addEventListener("click", () => handleButtonClick("clean", "#BC6FCD"));
+    .addEventListener("click", () => handleButtonClick("clean", "#4DABF5"));
   document
     .querySelector(".floatingbutton-basic")
     .addEventListener("click", () => handleButtonClick("basic", "#FF794E"));
   document
     .querySelector(".floatingbutton-optimize")
-    .addEventListener("click", () => handleButtonClick("optimize", "#70BF73"));
+    .addEventListener("click", () => handleButtonClick("optimize", "#BC6FCD"));
   document
     .querySelector(".floatingbutton-study")
     .addEventListener("click", () => handleButtonClick("study", "#FFCD39"));
   document
     .querySelector(".floatingbutton-newbie")
-    .addEventListener("click", () => handleButtonClick("newbie", "#4DABF5"));
+    .addEventListener("click", () => handleButtonClick("newbie", "#70BF73"));
+}
+
+//리뷰 내용을 복사하고 버튼 상태를 업데이트하는 함수
+function copyReviewContent(reviewContent, copyButton) {
+  const textToCopy = reviewContent.innerText;
+  if (!textToCopy) return;
+
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    // 복사 성공 시 UI 업데이트
+    const copyText = copyButton.querySelector(".copy-text");
+    const copiedText = copyButton.querySelector(".copied-text");
+
+    if (copyText && copiedText) {
+      copyText.style.display = "none";
+      copiedText.style.display = "inline";
+    }
+
+    // 일정 시간 후 원래 상태로 복귀 (2초)
+    setTimeout(() => {
+      if (copyText && copiedText) {
+        copyText.style.display = "inline";
+        copiedText.style.display = "none";
+      }
+    }, 2000);
+  }).catch((err) => {
+    console.error("복사 실패:", err);
+  });
 }
 
 function removeFloatingButton() {
@@ -276,6 +308,15 @@ function createDragButton() {
   document.body.appendChild(button);
   return button;
 }
+
+//드래그 버튼 색상 설정 함수
+function setDragButtonColor(color) {
+  const dragButton = document.querySelector(".drag-review-button");
+  if (dragButton) {
+    dragButton.style.background = color;
+  }
+}
+
 
 // 드래그 이벤트 처리
 function initializeDragHandler() {
@@ -375,11 +416,15 @@ function createModal(selectedText) {
           </div>
           <div class="modal-right-column">
               <h3>리뷰 내용</h3>
-              <button class="copy-button">
-                <svg width="16" height="16" viewBox="0 0 24 24">
-                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>
-                </svg>
-              </button>
+           <button class="copy-button">
+             <svg width="16" height="16" viewBox="0 0 24 24">
+               <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 
+                1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" 
+                fill="currentColor"/>
+             </svg>
+             <span class="copy-text">복사</span>
+             <span class="copied-text" style="display: none;">✔ 복사됨</span>
+           </button>
             <div class="review-content"></div>
           </div>
         </div>
@@ -401,6 +446,8 @@ function createModal(selectedText) {
     }
   };
 
+  const reviewContent = modal.querySelector(".review-content");
+
   // 리뷰 시작 전에 선택된 텍스트 확인
   if (!selectedText || selectedText.trim() === "") {
     reviewContent.innerHTML = `<div class="error-message">오류: 선택된 코드가 없습니다.</div>`;
@@ -408,6 +455,34 @@ function createModal(selectedText) {
   }
 
   startReview(selectedText, modal.querySelector(".review-content"));
+
+
+ //복사 버튼 이벤트 리스너
+ const copyButton = modal.querySelector(".copy-button");
+ copyButton.addEventListener("click", () => {
+   copyReviewContent(reviewContent, copyButton);
+ });
+}
+
+function setSelectionColor(color) {
+  // style 태그가 이미 있는지 확인
+  let styleTag = document.getElementById("mode-selection-style");
+  if (!styleTag) {
+    styleTag = document.createElement("style");
+    styleTag.id = "mode-selection-style";
+    document.head.appendChild(styleTag);
+  }
+
+  styleTag.textContent = `
+    ::selection {
+      background: ${color} !important;
+      color: #ffffff !important;
+    }
+    ::-moz-selection {
+      background: ${color} !important;
+      color: #ffffff !important;
+    }
+  `;
 }
 
 // 리뷰 시작 함수

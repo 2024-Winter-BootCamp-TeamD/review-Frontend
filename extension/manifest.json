@@ -41,7 +41,8 @@
         "icons/clean.png",
         "icons/dashboard.png",
         "icons/study.png",
-        "icons/newbie.png"
+        "icons/newbie.png",
+        "icons/logout.png"
       ],
       "matches": ["<all_urls>"]
     }

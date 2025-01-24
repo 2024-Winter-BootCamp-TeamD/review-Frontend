@@ -102,11 +102,13 @@ function showLoggedInUI(userInfo, message = null) {
   container.innerHTML = `
     <h1 class="title">Refactory</h1>
     ${message ? `<p class="login-message">${message}</p>` : ""}
-    <div class="user-info">
-      <img src="${userInfo.profile_image}" alt="Profile" style="width: 50px; height: 50px; border-radius: 50%;" />
-      <p>GitHub Username: ${userInfo.github_username}</p>
-      <button class="logout-button" id="logout">로그아웃</button>
-    </div>
+   <div class="user-info-container">
+     <div class="user-info">
+      <img src="${userInfo.profile_image}" alt="Profile" />
+       <p>${userInfo.github_username}</p>
+     </div>
+     <button class="logout-button" id="logout">로그아웃</button>
+   </div>
   `;
 
   // 로그아웃 버튼에 이벤트 리스너 추가

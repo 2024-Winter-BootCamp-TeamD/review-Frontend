@@ -354,6 +354,39 @@ function initializeDragHandler() {
   });
 }
 
+// 마크다운 파싱 함수
+function parseMarkdown(text) {
+  if (!text) return "";
+
+  // 코드 블록 변환 (```...```)
+  text = text.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>');
+
+  // 인라인 코드 변환 (`...`)
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // 제목 변환 (#, ##, ### 등)
+  text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  text = text.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+  // 볼드 변환 (**텍스트**)
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  // 이탤릭 변환 (*텍스트*)
+  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+  // 인용구 변환 (> 텍스트)
+  text = text.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+
+  // 리스트 변환 (- 항목)
+  text = text.replace(/^- (.+)$/gm, '<ul><li>$1</li></ul>');
+
+  // 줄바꿈 변환 (각 줄을 <p>로 감싸기)
+  text = text.replace(/\n/g, '<br>');
+
+  return text;
+}
+
 // 모달 생성 함수
 function createModal(selectedText) {
   console.log("Creating modal with text:", selectedText); // 디버깅용
@@ -468,7 +501,8 @@ async function startReview(selectedText, reviewContent) {
             // AI 응답 처리
             if (parsedData.choices && parsedData.choices[0].delta.content) {
               const content = parsedData.choices[0].delta.content;
-              reviewContent.textContent += content;
+              // reviewContent.textContent += content;
+              reviewContent.innerHTML += parseMarkdown(content);
               reviewContent.scrollTop = reviewContent.scrollHeight;
             }
           } catch (error) {

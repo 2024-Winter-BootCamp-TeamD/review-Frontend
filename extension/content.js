@@ -98,8 +98,10 @@ function handleButtonClick(mode, backgroundColor) {
           alt="Newbie Mode Icon" />`,
   };
 
-   // ** 드래그 하이라이트 색상도 함께 세팅! **
+   // ** 드래그 하이라이트 색상 **
    setSelectionColor(backgroundColor);
+
+   setDragButtonColor(backgroundColor);
 
   window.floatingButtonState.selectedButton = {
     text: svgIcons[mode],
@@ -170,7 +172,7 @@ function injectFloatingButton() {
           <img src="${chrome.runtime.getURL("icons/dashboard.png")}" 
           height="32" 
           width="32" 
-          style="margin-top: 14px;"
+          style="margin-top: 14px ;"
           alt="Dashboard Icon" />
         </span>
       </div>
@@ -306,6 +308,15 @@ function createDragButton() {
   document.body.appendChild(button);
   return button;
 }
+
+//드래그 버튼 색상 설정 함수
+function setDragButtonColor(color) {
+  const dragButton = document.querySelector(".drag-review-button");
+  if (dragButton) {
+    dragButton.style.background = color;
+  }
+}
+
 
 // 드래그 이벤트 처리
 function initializeDragHandler() {

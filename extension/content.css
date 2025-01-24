@@ -346,7 +346,7 @@ floatingbutton-menu-open-button {
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  /* background: linear-gradient(135deg, #6366f1, #4f46e5); */
   border-radius: 12px;
   cursor: pointer;
   z-index: 999999;
@@ -361,12 +361,13 @@ floatingbutton-menu-open-button {
 .drag-review-button:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
-  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  filter: brightness(0.95);
 }
 
 .drag-review-button:active {
   transform: translateY(1px) scale(0.95);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  filter: brightness(0.9);
 }
 
 /* 버튼 내부 아이콘 스타일 */

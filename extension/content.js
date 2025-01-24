@@ -423,7 +423,7 @@ async function startReview(selectedText, reviewContent) {
       throw new Error("로그인이 필요합니다.");
     }
 
-    reviewContent.innerHTML = "<div>리뷰를 시작합니다...</div>";
+    reviewContent.innerHTML = "<div>리뷰를 시작하겠습니다!<br>조금만 기다려주세요!<br></div>";
 
     const requestData = {
       userId: userInfo.id,

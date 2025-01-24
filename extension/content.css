@@ -52,13 +52,13 @@ a {
   cursor: pointer !important;
 }
 .floatingbutton-clean-code {
-  background-color: #bc6fcd !important;
+  background-color: #4dabf5!important;
   box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
   color: #ffffff;
 }
 .floatingbutton-clean-code:hover {
-  background-color: #752e84 !important;
+  background-color: #086691 !important;
   cursor: pointer !important;
 }
 .floatingbutton-basic {
@@ -72,13 +72,13 @@ a {
   cursor: pointer !important;
 }
 .floatingbutton-optimize {
-  background-color: #70bf73 !important;
+  background-color: #bc6fcd !important;
   box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
   color: #ffffff;
 }
 .floatingbutton-optimize:hover {
-  background-color: #2f6a32 !important;
+  background-color: #752e84 !important;
   cursor: pointer !important;
 }
 .floatingbutton-study {
@@ -92,13 +92,13 @@ a {
   cursor: pointer !important;
 }
 .floatingbutton-newbie {
-  background-color: #4dabf5 !important;
+  background-color: #70bf73 !important;
   box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.14);
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.12);
   color: #ffffff;
 }
 .floatingbutton-newbie:hover {
-  background-color: #086691 !important;
+  background-color: #2f6a32 !important;
   cursor: pointer !important;
 }
 /* 툴팁 스타일 */
@@ -346,7 +346,7 @@ floatingbutton-menu-open-button {
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  /* background: linear-gradient(135deg, #6366f1, #4f46e5); */
   border-radius: 12px;
   cursor: pointer;
   z-index: 999999;
@@ -361,12 +361,13 @@ floatingbutton-menu-open-button {
 .drag-review-button:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
-  background: linear-gradient(135deg, #4f46e5, #4338ca);
+  filter: brightness(0.95);
 }
 
 .drag-review-button:active {
   transform: translateY(1px) scale(0.95);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  filter: brightness(0.9);
 }
 
 /* 버튼 내부 아이콘 스타일 */
@@ -414,6 +415,7 @@ floatingbutton-menu-open-button {
   border-radius: 8px;
   overflow-y: auto;
   color: #fff;
+  animation: slideUpFadeIn 0.6s ease-out forwards;
 }
 
 .modal-header {
@@ -440,9 +442,15 @@ floatingbutton-menu-open-button {
   height: 100%;
 }
 
-.modal-left-column,
-.modal-right-column {
+.modal-left-column{
   flex: 1;
+  padding: 4px 16px 4px 16px;
+  overflow-y: auto;
+}
+
+.modal-right-column {
+  position: relative;
+  flex: 2;
   padding: 4px 16px 4px 16px;
   overflow-y: auto;
 }
@@ -545,18 +553,6 @@ floatingbutton-menu-open-button {
   margin-bottom: 16px;
 }
 
-.copy-button {
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  padding: 2px;
-  display: inline-flex; /* inline-flex로 변경 */
-  align-items: center;
-  transition: all 0.2s;
-  gap: 6px;
-  margin-left: 12px; /* 왼쪽 마진 추가 */
-}
 
 .review-content {
   background-color: #2d2d2d;
@@ -675,7 +671,7 @@ h3 {
 .review-content::-webkit-scrollbar-track,
 .code-container::-webkit-scrollbar-track,
 .code-container pre::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #777777;
   border-radius: 4px;
 }
 
@@ -685,7 +681,7 @@ h3 {
 .review-content::-webkit-scrollbar-thumb,
 .code-container::-webkit-scrollbar-thumb,
 .code-container pre::-webkit-scrollbar-thumb {
-  background: #777777;
+  background: #f1f1f1;
   border-radius: 4px;
 }
 
@@ -696,4 +692,61 @@ h3 {
 .code-container::-webkit-scrollbar-thumb:hover,
 .code-container pre::-webkit-scrollbar-thumb:hover {
   background: #3f3e3e;
+}
+
+/* 복사 버튼 스타일 */
+.copy-button {
+
+  position: absolute;
+  top: 12px;
+
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s;
+  margin-left: 570px; 
+  gap: 6px;        
+}
+
+.copy-button:hover {
+  opacity: 0.8;
+}
+
+.copy-button svg {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+
+.copy-text {
+  font-size: 14px;
+  color: #fff;
+  display: inline; 
+}
+.copied-text {
+  font-size: 14px;
+  color: #4caf50; 
+  display: none;  
+}
+
+@keyframes slideUpFadeIn {
+  0% {
+    transform: translateY(60px); /* 시작 위치 설정 */
+    opacity: 0;                  
+  }
+  100% {
+    transform: translateY(0);   
+    opacity: 1;                
+  }
+}
+
+.blob-code-inner {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
 }

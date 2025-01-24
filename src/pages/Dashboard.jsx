@@ -91,8 +91,11 @@ const CustomTooltip = ({ active, payload, label, isDarkMode }) => {
 const categoryDisplayNames = {
   optimize: "Optimize",
   clean: "Clean Code",
-  // 필요에 따라 추가 매핑
+  newbie: "Newbie",
+  study: "Study",
+  basic: "Basic",
 };
+
 
 const PieCustomTooltip = ({ active, payload, isDarkMode }) => {
   if (active && payload && payload.length) {
@@ -158,8 +161,7 @@ const Dashboard = ({ isDarkMode }) => {
           average_grade: gradeToValue[item.average_grade] || 0,
         }));
         setChartData(averageGradeData);
-        console.log("Chart Data:", averageGradeData); // 데이터 확인
-
+        console.log("recentReviewData.data:", recentReviewData.data);
         // 최근 리뷰 데이터 그룹화 및 파이 차트 데이터 설정
         const groupedData = recentReviewData.data.reduce((acc, item) => {
           if (!acc[item.category]) {
@@ -177,6 +179,8 @@ const Dashboard = ({ isDarkMode }) => {
           return acc;
         }, {});
         const pieData = Object.values(groupedData);
+
+        console.log("Pie Data:", pieData);
         setPieChartData(pieData);
       } catch (error) {
         console.error("데이터를 가져오는 중 오류 발생:", error);
@@ -271,16 +275,12 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#FF794E"
           isSelected={selectedMode === "basic"}
           onClick={() => handleModeChange("basic")}
-          isSelected={selectedMode === "basic"}
-          onClick={() => handleModeChange("basic")}
           isDarkMode={isDarkMode}
         />
         <ModeSelectButton
           modeName="Study"
           description="Hint Only."
           modeColor="#FFCD39"
-          isSelected={selectedMode === "study"}
-          onClick={() => handleModeChange("study")}
           isSelected={selectedMode === "study"}
           onClick={() => handleModeChange("study")}
           isDarkMode={isDarkMode}
@@ -291,8 +291,6 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#4DABF5"
           isSelected={selectedMode === "clean"}
           onClick={() => handleModeChange("clean")}
-          isSelected={selectedMode === "clean"}
-          onClick={() => handleModeChange("clean")}
           isDarkMode={isDarkMode}
         />
         <ModeSelectButton
@@ -301,16 +299,14 @@ const Dashboard = ({ isDarkMode }) => {
           modeColor="#BC6FCD"
           isSelected={selectedMode === "optimize"}
           onClick={() => handleModeChange("optimize")}
-          isSelected={selectedMode === "optimize"}
-          onClick={() => handleModeChange("optimize")}
           isDarkMode={isDarkMode}
         />
         <ModeSelectButton
           modeName="Newbie"
           description="Study Together."
           modeColor="#70BF73"
-          isSelected={selectedMode === "new bie"}
-          onClick={() => handleModeChange("new bie")}
+          isSelected={selectedMode === "newbie"}
+          onClick={() => handleModeChange("newbie")}
           isDarkMode={isDarkMode}
         />
       </div>

@@ -480,17 +480,14 @@ async function startReview(selectedText, reviewContent) {
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
-    let buffer = "";
+    let bufferText = ""; // 전체 응답 저장 버퍼
 
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
 
-      buffer += decoder.decode(value, { stream: true });
-
-      // 개별 SSE 메시지 처리
-      const lines = buffer.split("\n");
-      buffer = "";
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n");
 
       for (const line of lines) {
         if (line.startsWith("data: ")) {
@@ -498,20 +495,20 @@ async function startReview(selectedText, reviewContent) {
             const jsonData = line.slice(6); // 'data: ' 제거
             const parsedData = JSON.parse(jsonData);
 
-            // AI 응답 처리
             if (parsedData.choices && parsedData.choices[0].delta.content) {
               const content = parsedData.choices[0].delta.content;
-              // reviewContent.textContent += content;
-              reviewContent.innerHTML += parseMarkdown(content);
+              bufferText += content; // 전체 응답 저장
+
+              // ✅ **마크다운 변환을 한 번만 실행하여 깨지지 않도록 적용**
+              reviewContent.innerHTML = parseMarkdown(bufferText);
+
+              // ✅ **스크롤 자동 이동 (ChatGPT 스타일)**
               reviewContent.scrollTop = reviewContent.scrollHeight;
             }
           } catch (error) {
             console.error("데이터 파싱 오류:", error, "원본 데이터:", line);
             continue; // 파싱 오류가 발생해도 계속 진행
           }
-        } else if (line.trim() && !line.startsWith(":")) {
-          // 버퍼에 추가
-          buffer += line + "\n";
         }
       }
     }
@@ -520,6 +517,8 @@ async function startReview(selectedText, reviewContent) {
     reviewContent.innerHTML = `<div class="error-message">오류: ${error.message}</div>`;
   }
 }
+
+
 
 // 초기화 함수 실행
 initializeDragHandler();

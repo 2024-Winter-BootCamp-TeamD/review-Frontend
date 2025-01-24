@@ -409,8 +409,8 @@ floatingbutton-menu-open-button {
 
 .modal-content {
   background-color: #1e1e1e;
-  width: 90%;
-  max-width: 1200px;
+  width: 98%;
+  max-width: 1800px;
   height: 90vh;
   border-radius: 8px;
   overflow-y: auto;
@@ -450,7 +450,7 @@ floatingbutton-menu-open-button {
 
 .modal-right-column {
   position: relative;
-  flex: 2;
+  flex: 1;
   padding: 4px 16px 4px 16px;
   overflow-y: auto;
 }
@@ -459,7 +459,17 @@ floatingbutton-menu-open-button {
   border-right: 1px solid #333;
 }
 
-code-container pre,
+.code-container {
+  background-color: #2d2d2d;
+  padding: 16px;
+  border-radius: 4px;
+  margin-top: 8px;
+  height: calc(100% - 60px);
+  overflow-y: auto;
+}
+
+/* 🎨 코드 블록 스타일 */
+.code-container pre,
 .review-content pre {
   background: #1e1e1e; /* 다크 테마 배경 */
   color: #f8f8f2; /* 코드 텍스트 색상 */
@@ -671,9 +681,11 @@ h3 {
   cursor: pointer;
   padding: 2px;
   display: inline-flex;
+  justify-content: right;
   align-items: center;
+  margin-left: 30px;
   transition: all 0.2s;
-  margin-left: 570px; 
+  /* margin-left: 570px;  */
   gap: 6px;        
 }
 

@@ -5,10 +5,10 @@ if (typeof window.floatingButtonState === "undefined") {
     const userInfo = result.userInfo;
     const modeColors = {
       BASIC: "#FF794E",
-      CLEAN: "#BC6FCD",
-      OPTIMIZE: "#70BF73",
+      CLEAN: "#4DABF5",
+      OPTIMIZE: "#BC6FCD",
       STUDY: "#FFCD39",
-      NEWBIE: "#4DABF5",
+      NEWBIE: "#70BF73",
     };
 
     const mode = userInfo?.reviewMode?.toUpperCase() || "BASIC";
@@ -40,22 +40,68 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === "toggleFloatingButton") {
-    if (request.show) {
-      // show가 true면 무조건 표시
-      if (!window.floatingButtonState.isFloatingButtonVisible) {
-        injectFloatingButton();
-        window.floatingButtonState.isFloatingButtonVisible = true;
+    // 사용자 정보와 현재 모드를 API로 조회
+    chrome.storage.local.get("userInfo", async (result) => {
+      const userInfo = result.userInfo;
+
+      if (userInfo) {
+        try {
+          const response = await fetch(
+            `http://refactory.store/api/v1/users/${userInfo.id}/`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log("API Response:", data); // 디버깅용
+
+            const currentMode = data.review_mode?.toLowerCase() || "basic";
+            console.log("Current Mode:", currentMode); // 디버깅용
+
+            const modeColors = {
+              basic: "#FF794E",
+              clean: "#4DABF5",
+              optimize: "#BC6FCD",
+              study: "#FFCD39",
+              newbie: "#70BF73",
+            };
+
+            window.floatingButtonState.selectedButton = {
+              text: `<img src="${chrome.runtime.getURL(`icons/${currentMode}.png`)}" 
+                    height="40" 
+                    width="40" 
+                    style="margin-top: 14px;"
+                    alt="${currentMode} Mode Icon" />`,
+              backgroundColor: modeColors[currentMode],
+            };
+          }
+        } catch (error) {
+          console.error("Failed to fetch current mode:", error);
+        }
       }
-    } else {
-      // show가 false거나 없으면 토글
-      if (!window.floatingButtonState.isFloatingButtonVisible) {
-        injectFloatingButton();
+
+      // 버튼 표시 로직
+      if (request.show) {
+        if (!window.floatingButtonState.isFloatingButtonVisible) {
+          injectFloatingButton();
+          window.floatingButtonState.isFloatingButtonVisible = true;
+        }
       } else {
-        removeFloatingButton();
+        if (!window.floatingButtonState.isFloatingButtonVisible) {
+          injectFloatingButton();
+        } else {
+          removeFloatingButton();
+        }
+        window.floatingButtonState.isFloatingButtonVisible =
+          !window.floatingButtonState.isFloatingButtonVisible;
       }
-      window.floatingButtonState.isFloatingButtonVisible =
-        !window.floatingButtonState.isFloatingButtonVisible;
-    }
+    });
   }
 });
 
@@ -98,10 +144,10 @@ function handleButtonClick(mode, backgroundColor) {
           alt="Newbie Mode Icon" />`,
   };
 
-   // ** 드래그 하이라이트 색상 **
-   setSelectionColor(backgroundColor);
+  // ** 드래그 하이라이트 색상 **
+  setSelectionColor(backgroundColor);
 
-   setDragButtonColor(backgroundColor);
+  setDragButtonColor(backgroundColor);
 
   window.floatingButtonState.selectedButton = {
     text: svgIcons[mode],
@@ -266,26 +312,29 @@ function copyReviewContent(reviewContent, copyButton) {
   const textToCopy = reviewContent.innerText;
   if (!textToCopy) return;
 
-  navigator.clipboard.writeText(textToCopy).then(() => {
-    // 복사 성공 시 UI 업데이트
-    const copyText = copyButton.querySelector(".copy-text");
-    const copiedText = copyButton.querySelector(".copied-text");
+  navigator.clipboard
+    .writeText(textToCopy)
+    .then(() => {
+      // 복사 성공 시 UI 업데이트
+      const copyText = copyButton.querySelector(".copy-text");
+      const copiedText = copyButton.querySelector(".copied-text");
 
-    if (copyText && copiedText) {
-      copyText.style.display = "none";
-      copiedText.style.display = "inline";
-    }
-
-    // 일정 시간 후 원래 상태로 복귀 (2초)
-    setTimeout(() => {
       if (copyText && copiedText) {
-        copyText.style.display = "inline";
-        copiedText.style.display = "none";
+        copyText.style.display = "none";
+        copiedText.style.display = "inline";
       }
-    }, 2000);
-  }).catch((err) => {
-    console.error("복사 실패:", err);
-  });
+
+      // 일정 시간 후 원래 상태로 복귀 (2초)
+      setTimeout(() => {
+        if (copyText && copiedText) {
+          copyText.style.display = "inline";
+          copiedText.style.display = "none";
+        }
+      }, 2000);
+    })
+    .catch((err) => {
+      console.error("복사 실패:", err);
+    });
 }
 
 function removeFloatingButton() {
@@ -294,8 +343,6 @@ function removeFloatingButton() {
     button.remove();
   }
 }
-
-
 
 // 드래그 버튼 생성 함수
 function createDragButton() {
@@ -318,7 +365,6 @@ function setDragButtonColor(color) {
     dragButton.style.background = color;
   }
 }
-
 
 // 드래그 이벤트 처리
 function initializeDragHandler() {
@@ -401,23 +447,23 @@ function initializeDragHandler() {
 function parseMarkdown(text) {
   if (!text) return "";
   // 코드 블록 변환 (```...```)
-  text = text.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>');
+  text = text.replace(/```([\s\S]+?)```/g, "<pre><code>$1</code></pre>");
   // 인라인 코드 변환 (`...`)
-  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
   // 제목 변환 (#, ##, ### 등)
-  text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-  text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-  text = text.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  text = text.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+  text = text.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+  text = text.replace(/^# (.+)$/gm, "<h1>$1</h1>");
   // 볼드 변환 (**텍스트**)
-  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
   // 이탤릭 변환 (*텍스트*)
-  text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  text = text.replace(/\*(.*?)\*/g, "<em>$1</em>");
   // 인용구 변환 (> 텍스트)
-  text = text.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+  text = text.replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>");
   // 리스트 변환 (- 항목)
-  text = text.replace(/^- (.+)$/gm, '<ul><li>$1</li></ul>');
+  text = text.replace(/^- (.+)$/gm, "<ul><li>$1</li></ul>");
   // 줄바꿈 변환 (각 줄을 <p>로 감싸기)
-  text = text.replace(/\n/g, '<br>');
+  text = text.replace(/\n/g, "<br>");
   return text;
 }
 
@@ -480,14 +526,13 @@ function createModal(selectedText) {
     return;
   }
 
-  startReview(selectedText, modal.querySelector(".review-content"));
+  startReview(selectedText, modal.querySelector(".review-text"));
 
-
- //복사 버튼 이벤트 리스너
- const copyButton = modal.querySelector(".copy-button");
- copyButton.addEventListener("click", () => {
-   copyReviewContent(reviewContent, copyButton);
- });
+  //복사 버튼 이벤트 리스너
+  const copyButton = modal.querySelector(".copy-button");
+  copyButton.addEventListener("click", () => {
+    copyReviewContent(reviewContent, copyButton);
+  });
 }
 
 function setSelectionColor(color) {
@@ -524,7 +569,8 @@ async function startReview(selectedText, reviewContent) {
       throw new Error("로그인이 필요합니다.");
     }
 
-    reviewContent.innerHTML = "<div>리뷰를 시작하겠습니다!<br>조금만 기다려주세요!<br><br>최대 30초 정도 소요될 수 있습니다...</div>";
+    reviewContent.innerHTML =
+      "<div>리뷰를 시작하겠습니다!<br>조금만 기다려주세요!<br><br>최대 30초 정도 소요될 수 있습니다...</div>";
 
     const requestData = {
       userId: userInfo.id,

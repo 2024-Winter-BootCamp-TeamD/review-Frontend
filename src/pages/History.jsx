@@ -1,3 +1,5 @@
+// src/pages/History.jsx
+
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Chart from "../components/Chart/Chart";
@@ -8,6 +10,7 @@ import {
   getPRReviews,
 } from "../services/prReviewService";
 
+// 기존 스타일 컴포넌트 유지
 const HistoryContainer = styled.div`
   position: relative;
   width: 100%;
@@ -15,9 +18,6 @@ const HistoryContainer = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${({ isDarkMode }) => (isDarkMode ? '#00000000' : '#FFFFFF')};
-=======
-  background-color: ${({ isDarkMode }) =>
-    isDarkMode ? "#00000000" : "#FFFFFFFF"};
 `;
 
 const PageName = styled.div`
@@ -115,7 +115,7 @@ const ReviewDetailsBox = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
-  padding: 10px;
+  padding: 40px 10px 10px 10px; /* 상단 패딩 추가 */
   box-sizing: border-box;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
@@ -123,18 +123,11 @@ const ReviewDetailsBox = styled.div`
     isDarkMode ? "#00000050" : "#F3F3F3"};
   border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
   overflow: hidden;
-
-  pre {
-    margin-top: 70px;
-    padding: 20px;
-    text-align: left;
-    color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
-  }
 `;
 
 const BoxTitle = styled.p`
   position: absolute;
-  top: 20px;
+  top: 10px; /* 상단 패딩과 일치 */
   left: 20px;
   margin: 0;
   font-size: 25px;
@@ -176,14 +169,14 @@ const LegendItem = styled.div`
     mode === "BASIC"
       ? "#FF5722"
       : mode === "STUDY"
-        ? "#FFC107"
-        : mode === "NEWBIE"
-          ? "#70BF73"
-          : mode === "CLEAN"
-            ? "#4DABF5"
-            : mode === "OPTIMIZE"
-              ? "#BC6FCD"
-              : "#ccc"};
+      ? "#FFC107"
+      : mode === "NEWBIE"
+      ? "#70BF73"
+      : mode === "CLEAN"
+      ? "#4DABF5"
+      : mode === "OPTIMIZE"
+      ? "#BC6FCD"
+      : "#ccc"};
   cursor: pointer;
   opacity: ${({ selectedMode, mode }) =>
     selectedMode && selectedMode !== mode ? 0.3 : 1};
@@ -193,6 +186,32 @@ const LegendCount = styled.div`
   font-size: 15px;
   font-weight: 500;
   color: ${({ isDarkMode }) => (isDarkMode ? '#FFFFFF' : '#000000')};
+`;
+
+// 내부 제목과 내용용 스타일 컴포넌트 추가
+const DetailSection = styled.div`
+  margin-bottom: 20px; /* 섹션 간 간격 */
+`;
+
+const DetailTitle = styled.div`
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+  margin-bottom: 5px; /* 제목과 내용 간 간격 */
+  margin-top: 30px;
+  margin-left: 10px;
+`;
+
+const DetailContent = styled.pre`
+  margin: 0;
+  padding: 0 0 10px 0; /* 내용 하단 간격 */
+  text-align: left;
+  color: ${({ isDarkMode }) => (isDarkMode ? "#FFFFFF" : "#000000")};
+  overflow: auto;
+  white-space: pre-wrap;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-left: 10px;
 `;
 
 const History = ({ isDarkMode }) => {
@@ -210,6 +229,11 @@ const History = ({ isDarkMode }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+
+  // 추가된 상태
+  const [selectedProblemType, setSelectedProblemType] = useState("");
+  const [selectedAverGrade, setSelectedAverGrade] = useState("");
+  const [selectedReviewMode, setSelectedReviewMode] = useState("");
 
   useEffect(() => {
     const fetchStatistics = async () => {
@@ -244,8 +268,12 @@ const History = ({ isDarkMode }) => {
     fetchReviews();
   }, [currentPage, selectedMode]);
 
+  // 클릭 시 총평, 문제 유형, 등급, 모드 모두 저장
   const handleReviewClick = (review) => {
     setSelectedReview(review.total_review || "");
+    setSelectedProblemType(review.problem_type || "");
+    setSelectedAverGrade(review.aver_grade || "");
+    setSelectedReviewMode(review.review_mode || "");
   };
 
   const handleSliceClick = (mode) => {
@@ -315,7 +343,37 @@ const History = ({ isDarkMode }) => {
         <RightContainer>
           <ReviewDetailsBox isDarkMode={isDarkMode}>
             <BoxTitle isDarkMode={isDarkMode}>Review</BoxTitle>
-            <pre>{selectedReview}</pre>
+
+            {/* 리뷰가 선택되었을 때만 아래 내용 표시 */}
+            {selectedReview && (
+              <>
+                <DetailSection>
+                  {/* 🔍 총평 */}
+                  <DetailTitle>🔍 총평</DetailTitle>
+                  <DetailContent isDarkMode={isDarkMode}>
+                    {selectedReview}
+                  </DetailContent>
+                </DetailSection>
+
+                <DetailSection>
+                  {/* 🚩 주요 문제 유형 */}
+                  <DetailTitle>🚩 주요 문제 유형</DetailTitle>
+                  <DetailContent isDarkMode={isDarkMode}>
+                    * {selectedProblemType}
+                  </DetailContent>
+                </DetailSection>
+
+                <DetailSection>
+                  {/* 📊 모드 및 평균 등급 */}
+                  <DetailTitle>📊 모드 및 평균 등급</DetailTitle>
+                  <DetailContent isDarkMode={isDarkMode}>
+                    * 리뷰 모드: {selectedReviewMode}
+                    {"\n"}
+                    * 평균 등급: {selectedAverGrade}
+                  </DetailContent>
+                </DetailSection>
+              </>
+            )}
           </ReviewDetailsBox>
         </RightContainer>
       </ContentWrapper>

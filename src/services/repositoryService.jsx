@@ -21,6 +21,26 @@ export const fetchUserInfo = async () => {
   }
 };
 
+// 레포지토리 전체 조회
+export const getAllRepositories = async () => {
+  try {
+    const userInfo = await fetchUserInfo();
+    const user_id = userInfo.user_details.id;
+
+    const response = await api.get("/repositories/", {
+      params: { user_id }, // 쿼리 파라미터로 user_id 전달
+    });
+
+    return response.data.repositories;
+  } catch (error) {
+    console.error(
+      "레포지토리 전체 조회 에러:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
 // 특정 레포지토리 가져오기 (쿼리 파라미터 사용)
 export const getActiveReposById = async () => {
   try {

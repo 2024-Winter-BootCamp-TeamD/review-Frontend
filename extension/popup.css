@@ -1,38 +1,54 @@
 @import url("https://fonts.googleapis.com/css2?family=Passion+One:wght@400;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap");
 
+/* 팝업 전체 크기 */
 body {
-  width: 200px;
-  padding: 10px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  width: 280px;
+  height: 140px;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: #ffffff;
   border-radius: 40px;
+  overflow: hidden;
+  /* background: 
+  linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)),
+  url("icons/popup_background\ copy.webp") no-repeat center center;
+ background-size: cover; 
+ background-blend-mode: lighten; */
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
+/* Refactory 제목 */
 .title {
-  color: #091a04;
+  margin: 0; 
   text-align: center;
+  margin-top: 8px; 
+  color: #091a04;
   -webkit-text-stroke-width: 1;
   -webkit-text-stroke-color: rgba(185, 255, 102, 0.8);
   font-family: "Passion One";
   font-size: 40px;
   font-style: normal;
   font-weight: 700;
-  line-height: 30px; /* 50% */
+  line-height: 30px;
 }
 
+/* 로그인 전: 깃허브 계정 연동 버튼 */
 .login-button {
   display: flex;
   align-items: center;
   gap: 8px;
+  /* 버튼 너비 확장 (텍스트가 한 줄로 보이도록) */
+  width: 220px; 
   padding: 8px 16px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
   background-color: #24292e;
   color: white;
   border: none;
@@ -40,6 +56,11 @@ body {
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.2s;
+  /* 절대 배치 → 가운데 정렬 */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 65px;
 }
 
 .login-button:hover {
@@ -51,33 +72,11 @@ body {
   height: 20px;
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-}
-
-.logout-button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.logout-button:hover {
-  background-color: #c82333;
-}
-
+/* 로그인 후: 메시지(초록) */
 .login-message {
-  margin: 10px 0;
-  padding: 8px;
+  margin: 6px auto;
+  padding: 4px;
+  width: 80%; 
   border-radius: 4px;
   background-color: #28a745;
   color: white;
@@ -85,18 +84,93 @@ body {
   font-size: 14px;
 }
 
+.user-info-container {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 15px;
+  /* 높이를 어느 정도 확보 (예: 60px ~ 70px 정도) */
+  height: 60px; 
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column; /* 세로로 2줄 */
+  justify-content: space-between; /* 위쪽(유저)와 아래쪽(버튼) 간격 벌림 */
+  align-items: flex-start; 
+}
+
+/* 유저 정보 (이미지 + 유저네임) */
+.user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px; /* 이미지와 텍스트 간격 */
+  margin-left: 20px;
+  margin-top: -20px;
+}
+
+/* 깃허브 프로필 이미지: 크기 확대 */
+.user-info img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  
+}
+
+/* 유저네임 텍스트 */
+.user-info p {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+  text-align: left;
+  /* Poppins Semibold 사용 */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600; /* 세미볼드 */
+  font-style: normal;
+
+}
+
+/* 로그아웃 버튼: 오른쪽 아래 */
+.logout-button {
+  align-self: flex-end;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+  margin-top: -5px;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}
+
+/* 로그아웃 버튼 아이콘 */
+.logout-button::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: url("icons/logout.png") no-repeat center center;
+  background-size: contain;
+}
+/* 선택: Passion One 폰트 미리 선언 */
 .passion-one-regular {
   font-family: "Passion One", serif;
   font-weight: 400;
   font-style: normal;
 }
-
 .passion-one-bold {
   font-family: "Passion One", serif;
   font-weight: 700;
   font-style: normal;
 }
-
 .passion-one-black {
   font-family: "Passion One", serif;
   font-weight: 900;

@@ -42,7 +42,8 @@
         "icons/dashboard.png",
         "icons/study.png",
         "icons/newbie.png",
-        "icons/logout.png"
+        "icons/logout.png",
+        "icons/popup_background.jpeg"
       ],
       "matches": ["<all_urls>"]
     }

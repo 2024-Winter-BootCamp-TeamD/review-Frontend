@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './ModeSwitchButton.css';
+import GalaxyBackground from "../GalaxyBackground/GalaxyBackground.jsx";
 
 const DarkMode = ({ onToggle, isDarkMode }) => {
   const handleToggle = () => {

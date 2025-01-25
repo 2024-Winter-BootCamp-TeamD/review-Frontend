@@ -26,7 +26,6 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from 'remark-gfm';
 
-
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
 const ALL_MODES = ["basic", "study", "newbie", "clean", "optimize"];

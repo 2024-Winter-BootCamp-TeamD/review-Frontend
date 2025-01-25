@@ -526,7 +526,7 @@ function createModal(selectedText) {
     return;
   }
 
-  startReview(selectedText, modal.querySelector(".review-text"));
+  startReview(selectedText, modal.querySelector(".review-content"));
 
   //복사 버튼 이벤트 리스너
   const copyButton = modal.querySelector(".copy-button");

@@ -1,42 +1,82 @@
-//src/components/ModeSwitchButton/ModeSwitchButton.jsx
+// import React from "react";
+// import PropTypes from "prop-types";
+// import "./ModeSwitchButton.css";
+// import GalaxyBackground from "../GalaxyBackground/galaxyBackgroundAlt.jsx";
 
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import './ModeSwitchButton.css';
-import GalaxyBackground from "../GalaxyBackground/GalaxyBackground.jsx";
+// const DarkMode = ({ onToggle, isDarkMode }) => {
+//   const handleToggle = () => {
+//     onToggle(!isDarkMode);
+//   };
+
+//   return (
+//     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+//       {/* 다크 모드일 때만 GalaxyBackground 표시 */}
+//       {isDarkMode && <GalaxyBackground isVisible={isDarkMode} />}
+      
+//       <div className="wrapper">
+//         <div className="toggle">
+//           <input
+//             className="toggle-input"
+//             type="checkbox"
+//             checked={isDarkMode}
+//             onChange={handleToggle}
+//           />
+//           <div className="toggle-bg"></div>
+//           <div className="toggle-switch">
+//             <div className="toggle-switch-figure"></div>
+//             <div className="toggle-switch-figureAlt"></div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// DarkMode.propTypes = {
+//   onToggle: PropTypes.func.isRequired,
+//   isDarkMode: PropTypes.bool.isRequired,
+// };
+
+// export default DarkMode;
+
+
+
+
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import "./ModeSwitchButton.css";
+import WarpScreen from "../GalaxyBackground/WarpScreen.jsx";
+import GalaxyBackground from "../GalaxyBackground/galaxyBackground.jsx";
 
 const DarkMode = ({ onToggle, isDarkMode }) => {
-  const handleToggle = () => {
-    const newState = !isDarkMode;
-    onToggle(newState);
+  const [showWarp, setShowWarp] = useState(true); // 처음에는 WarpScreen을 보여줌
 
-    if (newState) {
-      // 다크 모드일 때 배경색과 이미지 설정
-      document.body.style.background = `
-        linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
-        url('https://4kwallpapers.com/images/wallpapers/milky-way-starry-sky-night-mountains-lake-reflection-cold-5k-3840x2160-287.jpg')
-      `;
-      document.body.style.backgroundSize = "cover";
-      document.body.style.backgroundPosition = "center";
-    } else {
-      // 라이트 모드일 때 배경 초기화
-      document.body.style.background = '';
+  useEffect(() => {
+    if (isDarkMode) {
+      setShowWarp(true);
+      setTimeout(() => {
+        setShowWarp(false); // 3초 후 GalaxyBackground로 전환
+      }, 3000);
     }
-  };
+  }, [isDarkMode]);
 
   return (
-    <div className="wrapper">
-      <div className="toggle">
-        <input
-          className="toggle-input"
-          type="checkbox"
-          checked={isDarkMode}
-          onChange={handleToggle}
-        />
-        <div className="toggle-bg"></div>
-        <div className="toggle-switch">
-          <div className="toggle-switch-figure"></div>
-          <div className="toggle-switch-figureAlt"></div>
+    <div className="darkmode-container">
+      {isDarkMode && (showWarp ? <WarpScreen /> : <GalaxyBackground />)}
+      
+      <div className="wrapper">
+        <div className="toggle">
+          <input
+            className="toggle-input"
+            type="checkbox"
+            checked={isDarkMode}
+            onChange={() => onToggle(!isDarkMode)}
+          />
+          <div className="toggle-bg"></div>
+          <div className="toggle-switch">
+            <div className="toggle-switch-figure"></div>
+            <div className="toggle-switch-figureAlt"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -45,7 +85,7 @@ const DarkMode = ({ onToggle, isDarkMode }) => {
 
 DarkMode.propTypes = {
   onToggle: PropTypes.func.isRequired,
-  isDarkMode: PropTypes.bool.isRequired
+  isDarkMode: PropTypes.bool.isRequired,
 };
 
 export default DarkMode;

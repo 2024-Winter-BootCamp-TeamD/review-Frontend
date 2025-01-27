@@ -37,6 +37,16 @@ const ChartWrapper = styled.div`
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+  /* 연결선 텍스트 숨기기 */
+  textPath {
+    display: none !important;
+  }
+
+  /* 추가적으로 textPath 내부의 tspan 숨기기 (필요 시) */
+  tspan.highcharts-text-outline {
+    display: none !important;
+  }
 `;
 
 const TreegraphChart = () => {
@@ -129,7 +139,14 @@ const TreegraphChart = () => {
   const chartOptions = {
     chart: {
       type: "treegraph",
-      backgroundColor: "#ffffff", // 배경색 설정
+      backgroundColor: "#ffffff",
+      events: {
+        render: function () {
+          const chart = this;
+          // 모든 textPath 요소 제거
+          chart.container.querySelectorAll("textPath").forEach((el) => el.remove());
+        },
+      },
     },
     title: {
       text: "Treegraph with Box Layout",
@@ -137,23 +154,41 @@ const TreegraphChart = () => {
         color: "#000000",
       },
     },
+    tooltip: {
+      formatter: function () {
+        // 호버된 포인트의 속성 출력 (디버깅용)
+        console.log("Hovered point:", this.point);
+
+        // 연결선 포인트 식별 조건
+        // 'from'과 'to' 속성이 있는 경우 툴팁을 표시하지 않음
+        if (this.point && this.point.from && this.point.to) {
+          return null; // 연결선 툴팁 숨김
+        }
+
+        return this.point.name; // 노드 툴팁 표시
+      },
+      useHTML: true,
+      style: {
+        pointerEvents: "none", // 툴팁이 마우스 이벤트를 받지 않도록 설정
+      },
+    },
     series: [
       {
         type: "treegraph",
         data: chartData,
-        tooltip: {
-          pointFormat: "{point.name}",
-        },
         marker: {
           symbol: "rect",
           width: "25%",
         },
         borderRadius: 10,
         dataLabels: {
-          format: "{point.name}", // pointFormat 대신 format 사용
+          format: "{point.name}",
           style: {
             whiteSpace: "nowrap",
           },
+        },
+        linkLabels: {
+          enabled: false, // 연결선 레이블 비활성화
         },
         levels: [
           {

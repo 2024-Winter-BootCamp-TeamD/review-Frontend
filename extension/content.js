@@ -47,7 +47,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (userInfo) {
         try {
           const response = await fetch(
-            `http://localhost:8000/api/v1/users/${userInfo.id}/`,
+            `https://refactory.store/api/v1/users/${userInfo.id}/`,
             {
               method: "GET",
               headers: {
@@ -577,15 +577,18 @@ async function startReview(selectedText, reviewContent) {
       code: selectedText,
     };
 
-    const response = await fetch("http://localhost:8000/api/v1/partreviews/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json, text/event-stream",
-      },
-      credentials: "include",
-      body: JSON.stringify(requestData),
-    });
+    const response = await fetch(
+      "https://refactory.store/api/v1/partreviews/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json, text/event-stream",
+        },
+        credentials: "include",
+        body: JSON.stringify(requestData),
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();

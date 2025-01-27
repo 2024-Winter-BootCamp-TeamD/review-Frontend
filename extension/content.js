@@ -47,7 +47,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (userInfo) {
         try {
           const response = await fetch(
-            `http://refactory.store/api/v1/users/${userInfo.id}/`,
+            `http://localhost:8000/api/v1/users/${userInfo.id}/`,
             {
               method: "GET",
               headers: {
@@ -526,7 +526,7 @@ function createModal(selectedText) {
     return;
   }
 
-  startReview(selectedText, modal.querySelector(".review-text"));
+  startReview(selectedText, modal.querySelector(".review-content"));
 
   //복사 버튼 이벤트 리스너
   const copyButton = modal.querySelector(".copy-button");

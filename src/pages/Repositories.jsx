@@ -13,6 +13,7 @@ import {
   toggleRepoStatus,
 } from "../services/repositoryService";
 import TreegraphChart from "../components/TreegraphChart/TreegraphChart"; // TreegraphChart 임포트
+import WordcloudChart from "../components/WordcloudChart/WordcloudChart"; // WordcloudChart 임포트
 import LoadingIndicator from "../components/LoadingIndicator/LoadingIndicator"; // 로딩 인디케이터 임포트
 
 // 스타일 컴포넌트 정의 (변경 없음)
@@ -235,7 +236,10 @@ const Repositories = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const [showChart, setShowChart] = useState(false); // 오버레이 표시 여부 상태 추가
+  const [showChart, setShowChart] = useState(false); // 트리그래프 오버레이 상태
+  const [showWordCloudChart, setShowWordCloudChart] = useState(false); // 워드 클라우드 오버레이 상태
+
+  const [selectedPRIds, setSelectedPRIds] = useState([1, 2, 3, 4, 5, 6]); // 고정된 PR IDs
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -271,6 +275,10 @@ const Repositories = () => {
     console.log("showChart 상태:", showChart);
   }, [showChart]);
 
+  useEffect(() => {
+    console.log("showWordCloudChart 상태:", showWordCloudChart);
+  }, [showWordCloudChart]);
+
   const filteredUnselectedRepos = unselectedRepos.filter((repo) =>
     repo.name.toLowerCase().includes(searchTermUnselected.toLowerCase())
   );
@@ -284,7 +292,8 @@ const Repositories = () => {
       await toggleRepoStatus([repo.id], true);
       setUnselectedRepos(unselectedRepos.filter((r) => r.id !== repo.id));
       setSelectedRepos([...selectedRepos, repo]);
-      // 기존에 있던 per-repo 오버레이 호출 제거
+      // 선택된 PR IDs 업데이트 (예시: PR ID를 워드 클라우드에 추가)
+      setSelectedPRIds((prevIds) => [...prevIds, repo.id]);
       console.log("레포지토리 선택됨");
     } catch (error) {
       console.error("레포지토리 선택 실패:", error);
@@ -296,6 +305,8 @@ const Repositories = () => {
       await toggleRepoStatus([repo.id], false);
       setSelectedRepos(selectedRepos.filter((r) => r.id !== repo.id));
       setUnselectedRepos([...unselectedRepos, repo]);
+      // 선택된 PR IDs 업데이트 (예시: PR ID를 워드 클라우드에서 제거)
+      setSelectedPRIds((prevIds) => prevIds.filter((id) => id !== repo.id));
       console.log("레포지토리 선택 해제됨");
     } catch (error) {
       console.error("레포지토리 선택 해제 실패:", error);
@@ -317,8 +328,13 @@ const Repositories = () => {
     setShowChart(true);
   };
 
+  const handleShowWordCloudChart = () => {
+    setShowWordCloudChart(true);
+  };
+
   return (
     <RepositoriesWrapper>
+      {/* Unselected Repositories */}
       <RepositoryContainer>
         <RepositoryTitle>Unselected</RepositoryTitle>
         <SearchBarWrapper>
@@ -364,6 +380,7 @@ const Repositories = () => {
         </RepositoryWrapper>
       </RepositoryContainer>
 
+      {/* Selected Repositories */}
       <RepositoryContainer>
         <RepositoryTitle>Selected</RepositoryTitle>
         <SearchBarWrapper>
@@ -419,7 +436,17 @@ const Repositories = () => {
         트리그래프 보기
       </Button>
 
-      {/* 오버레이로 TreegraphChart 표시 */}
+      {/* 워드 클라우드 보기 버튼 추가 */}
+      <Button
+        variant="contained"
+        color="secondary" // 다른 색상으로 구분
+        onClick={handleShowWordCloudChart}
+        style={{ marginTop: "20px", alignSelf: "center", marginLeft: "10px" }}
+      >
+        워드 클라우드 보기
+      </Button>
+
+      {/* 트리그래프 오버레이 */}
       {showChart && (
         <Overlay>
           <TreegraphChart />
@@ -427,6 +454,20 @@ const Repositories = () => {
           <IconWrapper
             style={{ top: "20px", right: "20px", width: "30px", height: "30px" }}
             onClick={() => setShowChart(false)}
+          >
+            <CloseIcon sx={{ fontSize: 24 }} />
+          </IconWrapper>
+        </Overlay>
+      )}
+
+      {/* 워드 클라우드 오버레이 */}
+      {showWordCloudChart && (
+        <Overlay>
+          <WordcloudChart />
+          {/* 오버레이를 닫을 수 있는 버튼 추가 */}
+          <IconWrapper
+            style={{ top: "20px", right: "20px", width: "30px", height: "30px" }}
+            onClick={() => setShowWordCloudChart(false)}
           >
             <CloseIcon sx={{ fontSize: 24 }} />
           </IconWrapper>

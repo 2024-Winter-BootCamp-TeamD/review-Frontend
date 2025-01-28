@@ -23,6 +23,8 @@ import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from 'remark-gfm';
 import WordcloudChart from "../components/WordcloudChart/WordcloudChart.jsx";
 import TreegraphChart from "../components/Treegraphchart/TreegraphChart.jsx";
+// import RadialBarCharts from "../components/ReportCharts/RadialBarCharts.jsx";
+// import BasicBarChart from "../components/ReportCharts/BasicBarChart.jsx";
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
@@ -160,7 +162,15 @@ const Report = ({ isDarkMode }) => {
     {
       title: "Treegraph",
       component: <TreegraphChart selectedPrIds={selectedPrIds} />,
-    }
+    },
+    // {
+    //   title: "PR별 점수 지표",
+    //   component: () => <RadialBarCharts selectedPrIds={selectedPrIds} />,
+    // },
+    // {
+    //   title: "등급 및 이슈 유형별 분포",
+    //   component: () => <BasicBarChart selectedPrIds={selectedPrIds} />,
+    // },
   ];
 
   const graphTypes = GRAPHS.map((graph) => graph.title);

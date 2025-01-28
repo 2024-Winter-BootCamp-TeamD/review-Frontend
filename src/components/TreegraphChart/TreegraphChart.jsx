@@ -26,7 +26,16 @@ if (AccessibilityModule && typeof AccessibilityModule === "function") {
 }
 
 // prreviewIds를 컴포넌트 외부에 정의
-const PRREVIEW_IDS = [1, 2, 3, 4, 5, 6];
+const PRREVIEW_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+// 카테고리별 색상 매핑 추가
+const categoryColorMap = {
+  clean: "#4DABF5",
+  optimize: "#BC6FCD",
+  basic: "#FF794E",
+  newbie: "#70BF73",
+  study: "#FFCD39",
+};
 
 // 차트 컨테이너 스타일링
 const ChartWrapper = styled.div`
@@ -90,7 +99,8 @@ const TreegraphChart = () => {
       {
         id: "0.0",
         parent: "",
-        name: "demo", // 보고서 이름
+        name: "Report Name", // 보고서 이름
+        // color: 설정 후 추가
       },
     ];
 
@@ -110,14 +120,19 @@ const TreegraphChart = () => {
       }
     });
 
+    // Collect child node colors
+    const childColors = [];
+
     // Assign unique IDs for categories and problem types
     let categoryIndex = 1;
     Object.keys(categoryMap).forEach((category) => {
       const categoryId = `1.${categoryIndex}`;
+      const categoryColor = categoryColorMap[category.toLowerCase()] || undefined;
       data.push({
         id: categoryId,
         parent: "0.0",
         name: category,
+        color: categoryColor,
       });
 
       categoryMap[category].forEach((problemType, pIndex) => {
@@ -126,11 +141,41 @@ const TreegraphChart = () => {
           id: problemId,
           parent: categoryId,
           name: problemType,
+          color: categoryColor, // 자식 노드에도 부모 카테고리 색상 할당
         });
+        if (categoryColor) {
+          childColors.push(categoryColor);
+        }
       });
 
       categoryIndex++;
     });
+
+    // Create gradient color based on childColors
+    if (childColors.length > 0) {
+      // Remove duplicates
+      const uniqueColors = [...new Set(childColors)];
+      let gradient;
+      if (uniqueColors.length === 1) {
+        // Single color, use it directly
+        gradient = uniqueColors[0];
+      } else {
+        // Multiple colors, create a linear gradient
+        gradient = {
+          linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 },
+          stops: uniqueColors.map((color, index) => [
+            index / (uniqueColors.length - 1),
+            color,
+          ]),
+        };
+      }
+
+      // Update root node's color with gradient
+      const rootNode = data.find((node) => node.id === "0.0");
+      if (rootNode) {
+        rootNode.color = gradient;
+      }
+    }
 
     return data;
   };
@@ -149,10 +194,7 @@ const TreegraphChart = () => {
       },
     },
     title: {
-      text: "Treegraph with Box Layout",
-      style: {
-        color: "#000000",
-      },
+      text: "",
     },
     tooltip: {
       formatter: function () {

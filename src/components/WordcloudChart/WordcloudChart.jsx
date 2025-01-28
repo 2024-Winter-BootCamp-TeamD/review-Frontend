@@ -30,7 +30,16 @@ if (AccessibilityModule && typeof AccessibilityModule === "function") {
 }
 
 // PRREVIEW_IDS를 컴포넌트 외부에 정의
-const PRREVIEW_IDS = [1, 2, 3, 4, 5, 6];
+const PRREVIEW_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+// 카테고리별 색상 매핑 추가
+const categoryColorMap = {
+  clean: "#4DABF5",
+  optimize: "#BC6FCD",
+  basic: "#FF794E",
+  newbie: "#70BF73",
+  study: "#FFCD39",
+};
 
 // 차트 컨테이너 스타일링
 const ChartWrapper = styled.div`
@@ -63,14 +72,13 @@ const WordcloudChart = () => {
           return;
         }
 
-        // 데이터 처리: aver_grade, problem_type, category, created_at를 텍스트로 변환
+        // 데이터 처리: aver_grade, problem_type, category를 텍스트로 변환 (created_at 제외)
         const textArray = prReviews.flatMap((pr) => [
           pr.aver_grade,
           pr.problem_type,
           pr.category,
-          new Date(pr.created_at).toLocaleDateString("en-US"), // 날짜를 읽기 쉬운 형식으로 변환
+          // created_at은 제외
         ]);
-
         const text = textArray.join(" ");
 
         console.log("Combined Text:", text);
@@ -87,6 +95,8 @@ const WordcloudChart = () => {
             obj = {
               name: lowerWord,
               weight: 1,
+              // 카테고리에 해당하는 단어인지 확인하여 색상 할당
+              color: categoryColorMap[lowerWord] || undefined,
             };
             arr.push(obj);
           }
@@ -111,28 +121,21 @@ const WordcloudChart = () => {
               type: "wordcloud",
               data,
               name: "Occurrences",
+              // 추가적인 워드클라우드 설정 가능
             },
           ],
           title: {
-            text: "Wordcloud of Selected PR Reviews",
-            align: "left",
-            style: {
-              color: "#000000",
-            },
+            text: "",
           },
           subtitle: {
-            text: "Based on aver_grade, problem_type, category, created_at",
-            align: "left",
-            style: {
-              color: "#000000",
-            },
+            text: "",
           },
           tooltip: {
             headerFormat:
               '<span style="font-size: 16px"><b>{point.name}</b></span><br>',
           },
           exporting: {
-            enabled: true, // 내보내기 기능 활성화
+            enabled: false, // 내보내기 기능 비활성화
           },
           credits: {
             enabled: false,

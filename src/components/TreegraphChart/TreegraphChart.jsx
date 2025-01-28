@@ -8,8 +8,9 @@ import ExportingModule from "highcharts/modules/exporting";
 import AccessibilityModule from "highcharts/modules/accessibility";
 import HighchartsReact from "highcharts-react-official";
 import styled from "styled-components";
-import LoadingIndicator from "../LoadingIndicator/LoadingIndicator"; // 로딩 인디케이터 컴포넌트 임포트
-import { getSelectedPRReviews } from "../../services/prReviewService"; // PR 리뷰 데이터를 가져오는 함수 임포트
+import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
+import { getSelectedPRReviews } from "../../services/prReviewService";
+import PropTypes from "prop-types";
 
 // Highcharts 모듈 초기화
 if (TreemapModule && typeof TreemapModule === "function") {
@@ -25,10 +26,7 @@ if (AccessibilityModule && typeof AccessibilityModule === "function") {
   AccessibilityModule(Highcharts);
 }
 
-// prreviewIds를 컴포넌트 외부에 정의
-const PRREVIEW_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-// 카테고리별 색상 매핑 추가
+// 카테고리별 색상 매핑 (소문자 키 사용)
 const categoryColorMap = {
   clean: "#4DABF5",
   optimize: "#BC6FCD",
@@ -42,34 +40,40 @@ const ChartWrapper = styled.div`
   width: 800px;
   max-width: 100%;
   height: 600px;
-  background-color: #ffffff; /* 다크 모드 제거 */
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-
-  /* 연결선 텍스트 숨기기 */
+  
   textPath {
     display: none !important;
   }
 
-  /* 추가적으로 textPath 내부의 tspan 숨기기 (필요 시) */
   tspan.highcharts-text-outline {
     display: none !important;
   }
 `;
 
-const TreegraphChart = () => {
+const TreegraphChart = ({ selectedPrIds }) => {
   const [chartData, setChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log("🔄 TreegraphChart: selectedPrIds 변경됨:", selectedPrIds);
+
+    if (!selectedPrIds || selectedPrIds.length === 0) {
+      setChartData([]);
+      setIsLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await getSelectedPRReviews(PRREVIEW_IDS);
-        console.log("API Response:", response);
+        const response = await getSelectedPRReviews(selectedPrIds);
+        console.log("📊 TreegraphChart API Response:", response);
         const prReviews = response.data;
 
         if (!prReviews || prReviews.length === 0) {
@@ -79,10 +83,10 @@ const TreegraphChart = () => {
 
         // 데이터 변환 로직
         const transformedData = transformData(prReviews);
-        console.log("Transformed Data:", transformedData);
+        console.log("📊 TreegraphChart Transformed Data:", transformedData);
         setChartData(transformedData);
       } catch (err) {
-        console.error("Error fetching selected PR reviews:", err);
+        console.error("📊 TreegraphChart Error fetching selected PR reviews:", err);
         setError("PR 리뷰 데이터를 불러오는 데 실패했습니다.");
       } finally {
         setIsLoading(false);
@@ -90,7 +94,7 @@ const TreegraphChart = () => {
     };
 
     fetchData();
-  }, []); // 의존성 배열을 빈 배열로 설정하여 컴포넌트 마운트 시 한 번만 호출
+  }, [selectedPrIds]);
 
   // 데이터 변환 함수
   const transformData = (prReviews) => {
@@ -99,15 +103,14 @@ const TreegraphChart = () => {
       {
         id: "0.0",
         parent: "",
-        name: "Report Name", // 보고서 이름
-        // color: 설정 후 추가
+        name: "Report Name", // 보고서 이름 (동적으로 설정 가능)
       },
     ];
 
     // Group PR reviews by category (mode)
     const categoryMap = {};
     prReviews.forEach((pr) => {
-      const category = pr.category || "Unknown Category";
+      const category = pr.category.toLowerCase() || "unknown category"; // 소문자로 변환
       if (!categoryMap[category]) {
         categoryMap[category] = [];
       }
@@ -127,11 +130,11 @@ const TreegraphChart = () => {
     let categoryIndex = 1;
     Object.keys(categoryMap).forEach((category) => {
       const categoryId = `1.${categoryIndex}`;
-      const categoryColor = categoryColorMap[category.toLowerCase()] || undefined;
+      const categoryColor = categoryColorMap[category] || "#CCCCCC"; // 기본 색상 할당
       data.push({
         id: categoryId,
         parent: "0.0",
-        name: category,
+        name: category.charAt(0).toUpperCase() + category.slice(1), // 첫 글자 대문자
         color: categoryColor,
       });
 
@@ -143,9 +146,7 @@ const TreegraphChart = () => {
           name: problemType,
           color: categoryColor, // 자식 노드에도 부모 카테고리 색상 할당
         });
-        if (categoryColor) {
-          childColors.push(categoryColor);
-        }
+        childColors.push(categoryColor);
       });
 
       categoryIndex++;
@@ -287,6 +288,10 @@ const TreegraphChart = () => {
       )}
     </ChartWrapper>
   );
+};
+
+TreegraphChart.propTypes = {
+  selectedPrIds: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default TreegraphChart;

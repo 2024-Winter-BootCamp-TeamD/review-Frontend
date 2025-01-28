@@ -8,8 +8,9 @@ import ExportDataModule from "highcharts/modules/export-data";
 import AccessibilityModule from "highcharts/modules/accessibility";
 import HighchartsReact from "highcharts-react-official";
 import styled from "styled-components";
-import LoadingIndicator from "../LoadingIndicator/LoadingIndicator"; // 로딩 인디케이터 컴포넌트 임포트
-import { getSelectedPRReviews } from "../../services/prReviewService"; // PR 리뷰 데이터를 가져오는 함수 임포트
+import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
+import { getSelectedPRReviews } from "../../services/prReviewService";
+import PropTypes from "prop-types";
 
 // Highcharts 모듈 초기화
 if (WordcloudModule && typeof WordcloudModule === "function") {
@@ -29,10 +30,7 @@ if (AccessibilityModule && typeof AccessibilityModule === "function") {
   console.log("AccessibilityModule initialized");
 }
 
-// PRREVIEW_IDS를 컴포넌트 외부에 정의
-const PRREVIEW_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-// 카테고리별 색상 매핑 추가
+// 카테고리별 색상 매핑 (소문자 키 사용)
 const categoryColorMap = {
   clean: "#4DABF5",
   optimize: "#BC6FCD",
@@ -52,18 +50,27 @@ const ChartWrapper = styled.div`
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
-const WordcloudChart = () => {
+const WordcloudChart = ({ selectedPrIds }) => {
   const [chartOptions, setChartOptions] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log("🔄 WordcloudChart: selectedPrIds 변경됨:", selectedPrIds);
+
+    if (!selectedPrIds || selectedPrIds.length === 0) {
+      setChartOptions({});
+      setIsLoading(false);
+      return;
+    }
+
     const fetchPRReviews = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
         // PR 리뷰 데이터 가져오기
-        const response = await getSelectedPRReviews(PRREVIEW_IDS);
-        console.log("API Response:", response);
-
+        const response = await getSelectedPRReviews(selectedPrIds);
+        console.log("📊 WordcloudChart API Response:", response);
         const prReviews = response.data;
 
         if (!prReviews || prReviews.length === 0) {
@@ -76,12 +83,12 @@ const WordcloudChart = () => {
         const textArray = prReviews.flatMap((pr) => [
           pr.aver_grade,
           pr.problem_type,
-          pr.category,
+          pr.category.toLowerCase(), // 소문자로 변환
           // created_at은 제외
         ]);
         const text = textArray.join(" ");
 
-        console.log("Combined Text:", text);
+        console.log("📊 WordcloudChart Combined Text:", text);
 
         // 단어 분리 및 빈도 계산
         const words = text.replace(/[():'?0-9]+/g, "").split(/[,\. ]+/g);
@@ -103,7 +110,7 @@ const WordcloudChart = () => {
           return arr;
         }, []);
 
-        console.log("Word Frequencies:", data);
+        console.log("📊 WordcloudChart Word Frequencies:", data);
 
         // Highcharts 옵션 설정
         const options = {
@@ -144,16 +151,16 @@ const WordcloudChart = () => {
 
         // 옵션 설정 후 상태 업데이트
         setChartOptions(options);
-        setIsLoading(false);
       } catch (err) {
-        console.error("Word Cloud 차트 로딩 실패:", err);
+        console.error("📊 WordcloudChart Error fetching PR reviews:", err);
         setError("Word Cloud 차트를 불러오는 데 실패했습니다.");
+      } finally {
         setIsLoading(false);
       }
     };
 
     fetchPRReviews();
-  }, []); // 의존성 배열을 빈 배열로 설정하여 컴포넌트 마운트 시 한 번만 호출
+  }, [selectedPrIds]);
 
   return (
     <ChartWrapper>
@@ -168,6 +175,10 @@ const WordcloudChart = () => {
       )}
     </ChartWrapper>
   );
+};
+
+WordcloudChart.propTypes = {
+  selectedPrIds: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default WordcloudChart;

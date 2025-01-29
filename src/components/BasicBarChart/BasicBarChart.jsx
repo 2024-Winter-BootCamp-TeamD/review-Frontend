@@ -85,11 +85,11 @@ const BasicBarChart = ({ selectedPrIds }) => {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await getSelectedPRReviews(selectedPrIds); // 인자 수정
-        console.log("📊 BasicBarChart API Response:", response);
-        const prReviews = response.data; // response.data가 Array(8)임
+        const prReviews = await getSelectedPRReviews(selectedPrIds); // getSelectedPRReviews가 배열을 반환하도록 수정
 
-        if (!prReviews || prReviews.length === 0) {
+        console.log("📊 BasicBarChart API Response:", prReviews);
+
+        if (!Array.isArray(prReviews) || prReviews.length === 0) {
           throw new Error("No PR data available");
         }
 

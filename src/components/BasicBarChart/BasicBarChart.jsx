@@ -246,3 +246,4 @@ BasicBarChart.propTypes = {
 };
 
 export default BasicBarChart;
+

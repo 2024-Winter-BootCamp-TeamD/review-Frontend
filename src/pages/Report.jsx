@@ -1,4 +1,4 @@
-//src/pages/Report.jsx
+// src/pages/Report.jsx
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,7 +20,7 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from 'remark-gfm';
-import RadialBarCharts from "../components/RadialBarChart/RadialBarChart.jsx";
+import RadialBarChart from "../components/RadialBarChart/RadialBarChart.jsx";
 import BasicBarChart from "../components/BasicBarChart/BasicBarChart.jsx";
 // 새로운 차트 컴포넌트 추가
 import TreegraphChart from "../components/Treegraphchart/TreegraphChart.jsx";
@@ -152,16 +152,20 @@ const Report = ({ isDarkMode }) => {
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
   const [reportTitle, setReportTitle] = useState("");
-  const [selectedPrIds, setSelectedPrIds] = useState([]);
   
+  // 더미 PR ID 정의
+  const dummyPrIds = [1, 2, 3, 4, 5, 6, 7];
+
+  const [selectedPrIds, setSelectedPrIds] = useState([]);
+
   // GRAPHS 배열에 모든 차트 컴포넌트 추가
   const GRAPHS = [
     {
       title: "Category별 점수 지표",
-      component: <RadialBarCharts selectedPrIds={selectedPrIds} />,
+      component: <RadialBarChart selectedPrIds={selectedPrIds} />,
     },
     {
-      title: "등급 및 이슈 유형별 분포",
+      title: "PR별 점수 지표",
       component: <BasicBarChart selectedPrIds={selectedPrIds} />,
     },
     {
@@ -244,9 +248,8 @@ const Report = ({ isDarkMode }) => {
     setIsTitleModalOpen(false);
 
     try {
-      // 더미 PR ID 설정
-      const dummyPrIds = [1, 2, 3, 4, 5, 6, 7, 8];
-      setSelectedPrIds(dummyPrIds);
+      // 더미 PR ID 설정 (여기서 숫자만 변경하면 됩니다)
+      setSelectedPrIds(dummyPrIds); 
 
       // 실제 선택된 PR IDs 대신 더미 데이터 사용
       const response = await createReport(reportTitle, dummyPrIds);
@@ -464,7 +467,7 @@ const Report = ({ isDarkMode }) => {
       setReportDetail(detailreport);
 
       // 더미 PR ID 설정 (보고서를 클릭할 때도 동일하게 적용)
-      setSelectedPrIds([1, 2, 3, 4, 5, 6, 7, 8]);
+      setSelectedPrIds(dummyPrIds); // 여기도 더미데이터 사용
     } catch (error) {
       console.error("보고서 상세 정보 로드 실패:", error);
       alert("보고서 상세 정보를 불러오는데 실패했습니다.");
@@ -1246,9 +1249,8 @@ const PRTitle = styled.div`
 
 const PRDate = styled.div`
   width: 100px;
-  color: #666;
-  font-size: 14px;
   color: ${({ isDarkMode }) => (isDarkMode ? "#D6D6D6" : "#333333")};
+  font-size: 14px;
 `;
 
 const Grade = styled.div`

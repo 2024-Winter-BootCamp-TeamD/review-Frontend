@@ -209,7 +209,7 @@ const RadialBarChart = ({ selectedPrIds }) => {
               dataLabels: {
                 enabled: false, // 데이터 레이블 비활성화
               },
-              borderRadius: 25, // 막대의 모서리를 둥글게 설정 (원하는 값으로 조정 가능)
+              borderRadius: 9, // 막대의 모서리를 둥글게 설정 (원하는 값으로 조정 가능)
             },
             column: {
               colorByPoint: true,
@@ -287,3 +287,4 @@ RadialBarChart.propTypes = {
 };
 
 export default RadialBarChart;
+

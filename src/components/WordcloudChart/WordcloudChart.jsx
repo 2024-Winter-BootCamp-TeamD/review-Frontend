@@ -187,3 +187,4 @@ WordcloudChart.propTypes = {
 };
 
 export default WordcloudChart;
+

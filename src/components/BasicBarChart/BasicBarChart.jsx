@@ -1,13 +1,45 @@
 // src/components/BasicBarChart/BasicBarChart.jsx
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Highcharts from "highcharts";
+import HighchartsMore from "highcharts/highcharts-more"; // highcharts-more 모듈 추가
+import ExportingModule from "highcharts/modules/exporting";
+import ExportDataModule from "highcharts/modules/export-data";
+import AccessibilityModule from "highcharts/modules/accessibility";
 import HighchartsReact from "highcharts-react-official";
 import styled from "styled-components";
-import { getSelectedPRReviews } from "../../services/prReviewService";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
+import { getSelectedPRReviews, fetchUserInfo } from "../../services/prReviewService";
 
+// Highcharts 모듈 초기화
+if (HighchartsMore && typeof HighchartsMore === "function") {
+  HighchartsMore(Highcharts);
+  console.log("HighchartsMore module initialized");
+}
+if (ExportingModule && typeof ExportingModule === "function") {
+  ExportingModule(Highcharts);
+  console.log("ExportingModule initialized");
+}
+if (ExportDataModule && typeof ExportDataModule === "function") {
+  ExportDataModule(Highcharts);
+  console.log("ExportDataModule initialized");
+}
+if (AccessibilityModule && typeof AccessibilityModule === "function") {
+  AccessibilityModule(Highcharts);
+  console.log("AccessibilityModule initialized");
+}
+
+// 카테고리별 색상 매핑
+const categoryColorMap = {
+  basic: "#FF794E",
+  optimize: "#BC6FCD",
+  newbie: "#70BF73",
+  clean: "#4DABF5",
+  study: "#FFCD39",
+};
+
+// 차트 컨테이너 스타일링
 const ChartContainer = styled.div`
   min-width: 310px;
   max-width: 800px;
@@ -16,80 +48,67 @@ const ChartContainer = styled.div`
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: visible; /* 레이블이 잘리지 않도록 설정 */
 `;
 
 const BasicBarChart = ({ selectedPrIds }) => {
-  const [chartData, setChartData] = useState({ 
-    categories: ["S", "A", "B", "C", "D"], 
-    series: [] 
+  const [chartData, setChartData] = useState({
+    categories: [],
+    series: [],
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // 데이터 변환 함수
+  // aver_grade를 숫자로 매핑하는 객체
+  const gradeToScore = { S: 100, A: 80, B: 60, C: 40, D: 20 };
+
+  // 데이터 변환 함수: 각 카테고리별로 시리즈를 생성
   const transformData = (apiData) => {
-    const gradeOrder = { S: 0, A: 1, B: 2, C: 3, D: 4 };
-    const issueTypes = [
-      "코드 구조", "성능", "보안", 
-      "가독성", "버그 가능성",
-      "기타 유형" // 추가
-    ];
+    const categories = apiData.map((pr) => `PR ${pr.id}`);
+    const modes = Object.keys(categoryColorMap);
 
-    const initializeData = () => 
-      Object.fromEntries(issueTypes.map(type => [type, [0, 0, 0, 0, 0]]));
+    // 시리즈 초기화
+    const series = modes.map((mode) => ({
+      name: mode.charAt(0).toUpperCase() + mode.slice(1), // 첫 글자 대문자
+      data: apiData.map((pr) =>
+        pr.category.toLowerCase() === mode.toLowerCase()
+          ? gradeToScore[pr.aver_grade.toUpperCase()] || 0
+          : null
+      ),
+      color: categoryColorMap[mode],
+      showInLegend: true,
+      stacking: "normal",
+    }));
 
-    const issueData = initializeData();
-    
-    apiData?.forEach(({ aver_grade, problem_type }) => {
-      if (!aver_grade || !problem_type) {
-        console.warn("PR review missing aver_grade or problem_type:", { aver_grade, problem_type });
-        return;
-      }
-      
-      const gradeIdx = gradeOrder[aver_grade.toUpperCase()];
-      if (gradeIdx === undefined) {
-        console.warn("Invalid aver_grade:", aver_grade);
-        return;
-      }
-      
-      const type = issueTypes.includes(problem_type) 
-        ? problem_type 
-        : "기타 유형";
-        
-      if (issueData[type]) { 
-        issueData[type][gradeIdx] += 1;
-      }
-    });
-
-    console.log("Issue Data:", issueData);
-
-    const transformedData = {
-      categories: Object.keys(gradeOrder),
-      series: Object.entries(issueData)
-        .filter(([_, data]) => data.some(v => v > 0))
-        .map(([name, data]) => ({ name, data }))
+    return {
+      categories,
+      series,
     };
-
-    console.log("Transformed Chart Data:", transformedData);
-
-    return transformedData;
   };
 
   useEffect(() => {
     const fetchData = async () => {
       if (!selectedPrIds?.length) {
-        setChartData({ categories: ["S", "A", "B", "C", "D"], series: [] });
+        setChartData({ categories: [], series: [] });
         setIsLoading(false);
         return;
       }
       try {
         setIsLoading(true);
         setError(null);
-        const prReviews = await getSelectedPRReviews(selectedPrIds); // getSelectedPRReviews가 배열을 반환하도록 수정
+        const response = await getSelectedPRReviews(selectedPrIds); // API 호출
+        console.log("📊 BasicBarChart API Response:", response);
+        const prReviews = response.data; // Array of PR reviews
 
-        console.log("📊 BasicBarChart API Response:", prReviews);
+        if (!Array.isArray(prReviews)) {
+          console.error(
+            "Expected prReviews to be an array, but got:",
+            typeof prReviews
+          );
+          throw new Error("잘못된 데이터 형식");
+        }
 
-        if (!Array.isArray(prReviews) || prReviews.length === 0) {
+        if (!prReviews.length) {
           throw new Error("No PR data available");
         }
 
@@ -107,44 +126,102 @@ const BasicBarChart = ({ selectedPrIds }) => {
 
   const chartOptions = {
     chart: {
-      type: "bar", // 'bar'로 변경
+      type: "column", // 'column'으로 설정
+      inverted: true, // 'inverted' 옵션 추가
+      polar: true, // 'polar' 옵션 추가
       height: 600,
-      backgroundColor: "#FFFFFF"
+      backgroundColor: "#FFFFFF",
     },
-    title: { text: "" },
+    title: {
+      text: "",
+    },
+    subtitle: {
+      text: "",
+      useHTML: true,
+    },
+    tooltip: {
+      outside: true,
+      shared: true,
+      valueSuffix: " 점",
+      formatter: function () {
+        let tooltip = `<b>${this.x}</b><br/>`;
+        this.points.forEach((point) => {
+          if (point.y !== null) {
+            tooltip += `<span style="color:${point.color}">\u25CF</span> ${point.series.name}: ${point.y} 점<br/>`;
+          }
+        });
+        return tooltip;
+      },
+    },
+    pane: {
+      size: "85%",
+      innerSize: "20%",
+      endAngle: 270,
+    },
     xAxis: {
       categories: chartData.categories,
-      title: { text: "등급" },
-      gridLineWidth: 5,
-      lineWidth: 1
+      title: { text: "" },
+      tickInterval: 1,
+      labels: {
+        align: "right",
+        useHTML: false, // HTML 사용 안함
+        allowOverlap: false, // 겹침 허용하지 않음
+        step: 1,
+        y: 3,
+        x: -20, // 레이블을 왼쪽으로 약간 이동
+        style: {
+          fontSize: "13px",
+        },
+      },
+      lineWidth: 0,
+      gridLineWidth: 0,
     },
     yAxis: {
       min: 0,
-      title: { text: "개수", align: "high" },
-      labels: { overflow: "justify" },
-      gridLineWidth: 0,
-      lineWidth: 1
+      max: 100, // y축 최대값 설정
+      tickInterval: 25, // y축 레이블 간격을 25점으로 설정
+      title: { text: "", align: "high" },
+      labels: { format: "{value} 점" },
+      gridLineWidth: 5,
+      lineWidth: 1,
     },
-    tooltip: { valueSuffix: " 개" },
     plotOptions: {
-      bar: {
+      column: {
+        stacking: "normal",
+        borderWidth: 0,
+        pointPadding: 0,
+        groupPadding: 0.15,
         borderRadius: 10, // 숫자로 수정
-        dataLabels: { enabled: true },
-        groupPadding: 0.2
-      }
-    },
-    legend: {
-      layout: "vertical",
-      align: "right",
-      verticalAlign: "top",
-      floating: true,
-      backgroundColor: "#FFFFFF",
-      shadow: true
+        dataLabels: {
+          enabled: false, // 데이터 레이블 비활성화
+        },
+      },
     },
     series: chartData.series,
-    accessibility: { enabled: true },
-    exporting: { enabled: false },
-    credits: { enabled: false }
+    legend: {
+      layout: "horizontal",
+      align: "center",
+      verticalAlign: "bottom",
+      floating: false,
+      backgroundColor: "#FFFFFF",
+      shadow: true,
+      itemStyle: {
+        fontSize: "13px",
+      },
+      symbolRadius: 6, // 범례 심볼을 원으로 만들기 위해 사용
+      symbolHeight: 12,
+      symbolWidth: 12,
+      symbolPadding: 10,
+    },
+    accessibility: {
+      enabled: true,
+    },
+    exporting: {
+      enabled: false,
+    },
+    credits: {
+      enabled: false,
+    },
   };
 
   return (
@@ -157,7 +234,7 @@ const BasicBarChart = ({ selectedPrIds }) => {
         <div className="no-data">📭 표시할 데이터가 없습니다</div>
       ) : (
         <HighchartsReact highcharts={Highcharts} options={chartOptions} />
-      )}    
+      )}
     </ChartContainer>
   );
 };

@@ -83,3 +83,33 @@ export const getPRReviewCategories = async () => {
     throw error;
   }
 };
+
+// 선택된 PR 리뷰 정보 반환
+export const getSelectedPRReviews = async (prreviewIds) => {
+  try {
+    const userInfo = await fetchUserInfo();
+    const user_id = userInfo.user_details.id;
+
+    if (!prreviewIds || prreviewIds.length === 0) {
+      throw new Error("PRReview ID를 하나 이상 입력해주세요.");
+    }
+
+    const response = await api.get("/pr-reviews/select", {
+      params: {
+        user_id,
+        prreview_ids: prreviewIds.join(","),
+      },
+    });
+
+    console.log("📌 getSelectedPRReviews API Response:", response);
+
+    // API 응답이 { data: Array } 형태라면, 아래와 같이 반환
+    return response.data; // Array
+
+    // 만약 API 응답이 { data: { data: Array } } 형태라면, 아래와 같이 반환
+    // return response.data.data;
+  } catch (error) {
+    console.error("Error fetching selected PR reviews:", error);
+    throw error;
+  }
+};

@@ -101,7 +101,13 @@ export const getSelectedPRReviews = async (prreviewIds) => {
       },
     });
 
-    return response.data;
+    console.log("📌 getSelectedPRReviews API Response:", response);
+
+    // API 응답이 { data: Array } 형태라면, 아래와 같이 반환
+    return response.data; // Array
+
+    // 만약 API 응답이 { data: { data: Array } } 형태라면, 아래와 같이 반환
+    // return response.data.data;
   } catch (error) {
     console.error("Error fetching selected PR reviews:", error);
     throw error;

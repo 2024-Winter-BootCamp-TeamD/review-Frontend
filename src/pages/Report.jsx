@@ -1,5 +1,4 @@
-// src/pages/Report.jsx
-
+//src/pages/Report.jsx
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,10 +20,11 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from 'remark-gfm';
-import WordcloudChart from "../components/WordcloudChart/WordcloudChart.jsx";
+import RadialBarCharts from "../components/RadialBarChart/RadialBarChart.jsx";
+import BasicBarChart from "../components/BasicBarChart/BasicBarChart.jsx";
+// 새로운 차트 컴포넌트 추가
 import TreegraphChart from "../components/Treegraphchart/TreegraphChart.jsx";
-// import RadialBarCharts from "../components/ReportCharts/RadialBarCharts.jsx";
-// import BasicBarChart from "../components/ReportCharts/BasicBarChart.jsx";
+import WordcloudChart from "../components/WordcloudChart/WordcloudChart.jsx";
 
 const image = "https://avatars.githubusercontent.com/u/192951892?s=48&v=4";
 
@@ -153,27 +153,26 @@ const Report = ({ isDarkMode }) => {
   const [isTitleModalOpen, setIsTitleModalOpen] = useState(false);
   const [reportTitle, setReportTitle] = useState("");
   const [selectedPrIds, setSelectedPrIds] = useState([]);
-
+  
+  // GRAPHS 배열에 모든 차트 컴포넌트 추가
   const GRAPHS = [
     {
-      title: "Wordcloud",
+      title: "PR별 점수 지표",
+      component: <RadialBarCharts selectedPrIds={selectedPrIds} />,
+    },
+    {
+      title: "등급 및 이슈 유형별 분포",
+      component: <BasicBarChart selectedPrIds={selectedPrIds} />,
+    },
+    {
+      title: "Word Cloud",
       component: <WordcloudChart selectedPrIds={selectedPrIds} />,
     },
     {
-      title: "Treegraph",
+      title: "Tree Graph",
       component: <TreegraphChart selectedPrIds={selectedPrIds} />,
     },
-    // {
-    //   title: "PR별 점수 지표",
-    //   component: () => <RadialBarCharts selectedPrIds={selectedPrIds} />,
-    // },
-    // {
-    //   title: "등급 및 이슈 유형별 분포",
-    //   component: () => <BasicBarChart selectedPrIds={selectedPrIds} />,
-    // },
   ];
-
-  const graphTypes = GRAPHS.map((graph) => graph.title);
 
   useEffect(() => {
     loadReports();
@@ -245,16 +244,12 @@ const Report = ({ isDarkMode }) => {
     setIsTitleModalOpen(false);
 
     try {
-      const selectedPrIdsArray = Array.from(selectedItems).map(id => Number(id));
-      console.log("Creating report with title:", reportTitle);
-      console.log("Selected PR IDs:", selectedPrIdsArray);
+      // 더미 PR ID 설정
+      const dummyPrIds = [1, 2, 3, 4, 5, 6, 7, 8];
+      setSelectedPrIds(dummyPrIds);
 
-      setSelectedPrIds(selectedPrIdsArray);
-
-      // createReport 함수가 객체를 인자로 받도록 수정
-      const response = await createReport({ title: reportTitle, prIds: selectedPrIdsArray });
-
-      console.log("Report creation response:", response);
+      // 실제 선택된 PR IDs 대신 더미 데이터 사용
+      const response = await createReport(reportTitle, dummyPrIds);
 
       setIsLoading(false);
       setIsModalOpen(false);
@@ -265,7 +260,7 @@ const Report = ({ isDarkMode }) => {
       const newReport = {
         id: response.report_id,
         title: response.title,
-        createdAt: response.created_at.split(" ")[0],
+        createdAt: response.created_at,
         reviewCount: response.review_num,
       };
 
@@ -276,8 +271,7 @@ const Report = ({ isDarkMode }) => {
     } catch (error) {
       setIsLoading(false);
       console.error("보고서 생성 실패:", error);
-      const errorMessage = error.response?.data?.message || "보고서 생성에 실패했습니다.";
-      alert(errorMessage);
+      alert("보고서 생성에 실패했습니다.");
     }
   };
 
@@ -428,76 +422,36 @@ const Report = ({ isDarkMode }) => {
 
   const MarkdownRenderer = ({ markdown, isDarkMode }) => {
     return (
-      <MarkdownContainer isDarkMode={isDarkMode}>
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || "");
-              return !inline && match ? (
-                <SyntaxHighlighter
-                  style={dark}
-                  language={match[1]}
-                  PreTag="div"
-                  {...props}
-                >
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            },
-          }}
-        >
-          {markdown}
-        </ReactMarkdown>
-      </MarkdownContainer>
+        <MarkdownContainer isDarkMode={isDarkMode}>
+            <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                    code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || "");
+                        return !inline && match ? (
+                            <SyntaxHighlighter
+                                style={dark}
+                                language={match[1]}
+                                PreTag="div"
+                                {...props}
+                            >
+                                {String(children).replace(/\n$/, "")}
+                            </SyntaxHighlighter>
+                        ) : (
+                            <code className={className} {...props}>
+                                {children}
+                            </code>
+                        );
+                    },
+                }}
+            >
+                {markdown}
+            </ReactMarkdown>
+        </MarkdownContainer>
     );
   };
 
-  // PR ID 추출 함수 수정
-  const extractPrIdsFromContent = (contentString) => {
-    if (!contentString) return [];
-
-    console.log("🔍 Original contentString:", contentString); // 추가된 로그
-
-    // ✅를 다시 큰따옴표로 복원
-    const restoredContent = contentString.replace(/✅/g, '"');
-    console.log("🔍 Restored contentString:", restoredContent); // 추가된 로그
-
-    try {
-      // JSON 파싱 시도
-      const jsonData = JSON.parse(restoredContent);
-      console.log("🔍 Parsed JSON data:", jsonData); // 추가된 로그
-
-      if (jsonData.review_table && Array.isArray(jsonData.review_table)) {
-        // "review_table" 배열에서 "id" 추출
-        const prIds = jsonData.review_table
-          .map((pr) => pr.id)
-          .filter((id) => typeof id === 'number');
-        console.log("✅ 추출된 PR IDs:", prIds);
-        return prIds;
-      } else {
-        console.error('"review_table" 배열이 존재하지 않거나 형식이 올바르지 않습니다.');
-      }
-    } catch (error) {
-      console.error("JSON 파싱 오류:", error);
-    }
-
-    // Fallback: regex로 모든 "id": 숫자 패턴 추출
-    const prIds = [];
-    const regex = /"id"\s*:\s*(\d+)/g;
-    let match;
-    while ((match = regex.exec(restoredContent)) !== null) {
-      prIds.push(parseInt(match[1], 10));
-    }
-    console.log("✅ 추출된 PR IDs via regex:", prIds);
-    return prIds;
-  };
-
-  // 보고서 상세 보기 핸들러 수정
+  // 보고서 상세 보기 핸들러
   const handleReportClick = async (report) => {
     setIsDetailModalOpen(true);
     setSelectedReport(report);
@@ -506,18 +460,11 @@ const Report = ({ isDarkMode }) => {
     try {
       const detail = await getReportById(report.id);
       console.log("📄 API 응답 데이터:", detail);
-
-       // 더미 PR ID 설정
-       const dummyPrIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-       console.log("✅ 더미 PR IDs 설정:", dummyPrIds);
-       setSelectedPrIds(dummyPrIds);
- 
-       // 실제 PR ID 추출 로직은 주석 처리하거나 제거
-       // const prIds = extractPrIdsFromContent(detail.content);
-       // setSelectedPrIds(prIds);
-
-      const detailreport = generateMarkdownReport(detail.content);
+      const detailreport = generateMarkdownReport(detail.content); 
       setReportDetail(detailreport);
+
+      // 더미 PR ID 설정 (보고서를 클릭할 때도 동일하게 적용)
+      setSelectedPrIds([1, 2, 3, 4, 5, 6, 7, 8]);
     } catch (error) {
       console.error("보고서 상세 정보 로드 실패:", error);
       alert("보고서 상세 정보를 불러오는데 실패했습니다.");
@@ -525,7 +472,7 @@ const Report = ({ isDarkMode }) => {
       setIsLoadingDetail(false);
     }
   };
-
+  
   const generateMarkdownReport = (contentString) => {
     if (!contentString) return "🚨 데이터 로드 실패: content 필드가 없습니다.";
 
@@ -560,38 +507,38 @@ const Report = ({ isDarkMode }) => {
     // 🛠 6️⃣ PR 리뷰 테이블 추출 (마크다운 표 유지)
     let reviewTableMatch = contentString.match(/"review_table"\s*:\s*\[(.*?)\]/s);
     if (reviewTableMatch) {
-      let reviewTableContent = reviewTableMatch[1];
+        let reviewTableContent = reviewTableMatch[1];
 
-      // 테이블 헤더 추가
-      markdown += `## 1. PR 리뷰 테이블\n\n`;
-      markdown += `| ID | 제목 | 평균 등급 | 리뷰 모드 | 문제 유형 | 작성일자 |\n`;
-      markdown += `|----|------|-----------|-----------|-----------|----------|\n`;
+        // 테이블 헤더 추가
+        markdown += `## 1. PR 리뷰 테이블\n\n`;
+        markdown += `| ID | 제목 | 평균 등급 | 리뷰 모드 | 문제 유형 | 작성일자 |\n`;
+        markdown += `|----|------|-----------|-----------|-----------|----------|\n`;
 
-      // 개별 PR 리뷰 항목 추출 (마크다운 표 유지)
-      let reviews = [...reviewTableContent.matchAll(/\{([^}]+)\}/g)];
-      reviews.forEach((review) => {
-        let id = review[1].match(/"id"\s*:\s*(\d+)/)?.[1] || "N/A";
-        let title = review[1].match(/"title"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
-        let grade = review[1].match(/"aver_grade"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
-        let mode = review[1].match(/"review_mode"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
-        let problem = review[1].match(/"problem_type"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
-        let date = review[1].match(/"created_at"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+        // 개별 PR 리뷰 항목 추출 (마크다운 표 유지)
+        let reviews = [...reviewTableContent.matchAll(/\{([^}]+)\}/g)];
+        reviews.forEach((review) => {
+            let id = review[1].match(/"id"\s*:\s*(\d+)/)?.[1] || "N/A";
+            let title = review[1].match(/"title"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let grade = review[1].match(/"aver_grade"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let mode = review[1].match(/"review_mode"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let problem = review[1].match(/"problem_type"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
+            let date = review[1].match(/"created_at"\s*:\s*"([^"]+)"/)?.[1] || "N/A";
 
-        markdown += `| ${id} | ${title} | ${grade} | ${mode} | ${problem} | ${date} |\n`;
-      });
+            markdown += `| ${id} | ${title} | ${grade} | ${mode} | ${problem} | ${date} |\n`;
+        });
 
-      markdown += `\n---\n\n`;
+        markdown += `\n---\n\n`;
     } else {
-      markdown += `\n**PR 리뷰 데이터가 없습니다.**\n\n`;
+        markdown += `\n**PR 리뷰 데이터가 없습니다.**\n\n`;
     }
 
     // 🛠 7️⃣ 분석 결과 추출
     const analysisMatch = contentString.match(/"analysis"\s*:\s*"([\s\S]+?)"/);
     if (analysisMatch) {
-      markdown += `## 2. 분석 결과\n\n`;
-      markdown += `${analysisMatch[1].replace(/\\n/g, "\n")}\n\n---\n\n`;
+        markdown += `## 2. 분석 결과\n\n`;
+        markdown += `${analysisMatch[1].replace(/\\n/g, "\n")}\n\n---\n\n`;
     } else {
-      markdown += `\n**분석 결과가 없습니다.**\n\n`;
+        markdown += `\n**분석 결과가 없습니다.**\n\n`;
     }
 
     // 🛠 8️⃣ ✅를 다시 큰따옴표(`"`)로 복원
@@ -601,15 +548,15 @@ const Report = ({ isDarkMode }) => {
     return markdown;
   };
 
+
   // 상세 모달 닫기 핸들러
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);
     setSelectedReport(null);
     setReportDetail(null);
-    setSelectedPrIds([]); // 선택된 PR ID 초기화
   };
 
-  // 그래프 네비게이션 함수
+  // 그래프 네비게이션 함수 수정
   const navigateGraph = (direction) => {
     if (direction === "next") {
       setCurrentGraphIndex((prev) =>
@@ -922,16 +869,13 @@ const Report = ({ isDarkMode }) => {
                 </LoadingWrapper>
               ) : reportDetail ? (
                 <>
-                  <ReportContent isDarkMode={isDarkMode}>
+                  <ReportContent>
                     <ContentTitle>AI 코드리뷰 보고서</ContentTitle>
-                    <MarkdownRenderer
-                      markdown={reportDetail}
-                      isDarkMode={isDarkMode}
-                    />
+                    <MarkdownRenderer markdown={reportDetail} isDarkMode={isDarkMode} />
                   </ReportContent>
 
                   <ReportGraph>
-                    <GraphTitle isDarkMode={isDarkMode}>
+                    <GraphTitle>
                       {GRAPHS[currentGraphIndex].title}
                     </GraphTitle>
                     <GraphNavButton
@@ -1004,8 +948,6 @@ const Report = ({ isDarkMode }) => {
   );
 };
 
-// 스타일 컴포넌트들...
-
 const ReportWrapper = styled.div`
   height: 100%;
   margin-top: 10px;
@@ -1013,6 +955,7 @@ const ReportWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
   margin-left: 10px;
+  // background-color: ${({ isDarkMode }) => (isDarkMode ? '#121212' : '#f0f0f0')};
   background-color: '#f0f0f0';
   padding: 20px;
 `;
@@ -1199,7 +1142,7 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: ${({ isDarkMode }) => (isDarkMode ? "#e8e8e8" : "#e8e8e8")}; /* 수정: 다크 모드 배경색 통일 */
+  background: ${({ isDarkMode }) => (isDarkMode ? "#00000050" : "#e8e8e8")};
   border: ${({ isDarkMode }) => (isDarkMode ? "1px solid #FFFFFF" : "none")};
   width: 90rem;
   height: 90vh;
@@ -1499,18 +1442,11 @@ const GraphNavButton = styled.button`
     background-color: rgba(0, 0, 0, 0.2);
   }
 
-  /* 왼쪽과 오른쪽 버튼의 위치 설정 */
-  ${(props) =>
-    props.left &&
-    `
-    left: 10px;
-  `}
-
-  ${(props) =>
-    props.right &&
-    `
-    right: 10px;
-  `}
+  svg {
+    width: 24px;
+    height: 24px;
+    color: #666;
+  }
 `;
 
 const GraphTitle = styled.h2`

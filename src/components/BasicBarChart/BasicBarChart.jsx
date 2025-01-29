@@ -41,8 +41,9 @@ const categoryColorMap = {
 
 // 차트 컨테이너 스타일링
 const ChartContainer = styled.div`
-  min-width: 310px;
+  min-width: 524px;
   max-width: 800px;
+  min-height: 600px;
   margin: 2em auto;
   padding: 20px;
   background-color: #ffffff;
@@ -184,6 +185,7 @@ const BasicBarChart = ({ selectedPrIds }) => {
       labels: { format: "{value} 점" },
       gridLineWidth: 5,
       lineWidth: 1,
+
     },
     plotOptions: {
       column: {

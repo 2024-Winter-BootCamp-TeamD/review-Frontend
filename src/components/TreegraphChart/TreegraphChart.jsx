@@ -36,14 +36,16 @@ const categoryColorMap = {
 };
 
 // 차트 컨테이너 스타일링
-const ChartWrapper = styled.div`
-  width: 800px;
-  max-width: 100%;
-  height: 600px;
-  background-color: #ffffff;
+const ChartContainer = styled.div`
+  min-width: 524px;
+  max-width: 800px;
+  min-height: 600px;
+  margin: 2em auto;
   padding: 20px;
+  background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: visible; /* 레이블이 잘리지 않도록 설정 */
   
   textPath {
     display: none !important;
@@ -186,6 +188,7 @@ const TreegraphChart = ({ selectedPrIds }) => {
     chart: {
       type: "treegraph",
       backgroundColor: "#ffffff",
+      marginTop: 100,
       events: {
         render: function () {
           const chart = this;
@@ -276,7 +279,7 @@ const TreegraphChart = ({ selectedPrIds }) => {
   }, []);
 
   return (
-    <ChartWrapper>
+    <ChartContainer>
       {isLoading ? (
         <LoadingIndicator />
       ) : error ? (
@@ -286,7 +289,7 @@ const TreegraphChart = ({ selectedPrIds }) => {
       ) : (
         <HighchartsReact highcharts={Highcharts} options={chartOptions} />
       )}
-    </ChartWrapper>
+    </ChartContainer>
   );
 };
 

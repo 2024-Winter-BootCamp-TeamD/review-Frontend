@@ -157,7 +157,7 @@ const Report = ({ isDarkMode }) => {
   // GRAPHS 배열에 모든 차트 컴포넌트 추가
   const GRAPHS = [
     {
-      title: "PR별 점수 지표",
+      title: "Category별 점수 지표",
       component: <RadialBarCharts selectedPrIds={selectedPrIds} />,
     },
     {

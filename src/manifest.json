@@ -3,12 +3,10 @@
   "name": "코드 리뷰 어시스턴트",
   "version": "1.0",
   "description": "GitHub 코드 리뷰를 위한 AI 어시스턴트",
-  "permissions": ["activeTab", "storage", "tabs", "scripting", "identity"],
+  "permissions": ["activeTab", "storage", "tabs", "scripting"],
   "host_permissions": [
     "https://github.com/*",
-    "http://localhost:8000/*",
-    "http://127.0.0.1:8000/*",
-    "http://refactory.store:8000/*"
+    "https://refactory.store:8000/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -36,16 +34,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": [
-        "icons/basic.png",
-        "icons/optimize.png",
-        "icons/clean.png",
-        "icons/dashboard.png",
-        "icons/study.png",
-        "icons/newbie.png",
-        "icons/logout.png",
-        "icons/popup_background.jpeg"
-      ],
+      "resources": ["icons/*"],
       "matches": ["<all_urls>"]
     }
   ]

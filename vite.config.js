@@ -10,35 +10,35 @@ export default defineConfig({
     copy({
       targets: [
         {
-          src: "./extension/manifest.json",
+          src: "./src/manifest.json",
           dest: "./dist",
         },
         {
-          src: "./extension/icons/*",
+          src: "./src/icons/*",
           dest: "./dist/icons",
         },
         {
-          src: "./extension/background.js",
+          src: "./src/background.js",
           dest: "./dist",
         },
         {
-          src: "./extension/content.js",
+          src: "./src/content.js",
           dest: "./dist",
         },
         {
-          src: "./extension/content.css", // content.css 추가
+          src: "./src/content.css", // content.css 추가
           dest: "./dist",
         },
         {
-          src: "./extension/popup.html", // content.css 추가
+          src: "./src/popup.html", // content.css 추가
           dest: "./dist",
         },
         {
-          src: "./extension/popup.js", // content.css 추가
+          src: "./src/popup.js", // content.css 추가
           dest: "./dist",
         },
         {
-          src: "./extension/popup.css", // content.css 추가
+          src: "./src/popup.css", // content.css 추가
           dest: "./dist",
         },
       ],

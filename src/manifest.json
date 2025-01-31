@@ -1,12 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "코드 리뷰 어시스턴트",
+  "name": "REFACTORY",
   "version": "1.0",
   "description": "GitHub 코드 리뷰를 위한 AI 어시스턴트",
   "permissions": ["activeTab", "storage", "tabs", "scripting"],
   "host_permissions": [
     "https://github.com/*",
-    "https://refactory.store:8000/*"
+    "https://refactory.store:8000/*",
+    "http://refactory.store:8000/*",
+    "https://refactory.store/*"
   ],
   "action": {
     "default_popup": "popup.html",

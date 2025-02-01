@@ -105,7 +105,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function handleButtonClick(mode, backgroundColor) {
+async function handleButtonClick(mode, backgroundColor) {
   const svgIcons = {
     dashboard: `<img src="${chrome.runtime.getURL("icons/dashboard.png")}" 
           height="40" 
@@ -143,18 +143,44 @@ function handleButtonClick(mode, backgroundColor) {
           style="margin-top: 14px;"
           alt="Newbie Mode Icon" />`,
   };
-
-  // ** 드래그 하이라이트 색상 **
+  // 기존 UI 업데이트 로직
   setSelectionColor(backgroundColor);
-
   setDragButtonColor(backgroundColor);
-
   window.floatingButtonState.selectedButton = {
     text: svgIcons[mode],
     backgroundColor,
   };
   window.floatingButtonState.isOpen = false;
   updateFloatingButton();
+  try {
+    // 사용자 정보 가져오기
+    const userInfo = await new Promise((resolve) => {
+      chrome.storage.local.get("userInfo", (result) => {
+        resolve(result.userInfo);
+      });
+    });
+
+    // API 요청 보내기
+    const response = await fetch(
+      `https://refactory.store/api/v1/users/${userInfo.id}/mode/`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          review_mode: mode,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("모드 변경에 실패했습니다.");
+    }
+  } catch (error) {
+    console.error("모드 변경 중 오류 발생:", error);
+  }
 }
 
 function toggleMenu() {
